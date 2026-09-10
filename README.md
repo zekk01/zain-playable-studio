@@ -1,6 +1,8 @@
 # Zain Kassem — The Playable Studio (3D)
 
-A 3D, animated variant of the portfolio at zain-playable-studio.zainkassem00.chatgpt.site. Runs entirely on localhost with no build step.
+A 3D, animated variant of the portfolio at zain-playable-studio.zainkassem00.chatgpt.site. No build step.
+
+**Live:** https://zekk01.github.io/zain-playable-studio/ (GitHub Pages, built from the `main` branch of this repo; every push republishes within a minute or two).
 
 ## Run it
 
