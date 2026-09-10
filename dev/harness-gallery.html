@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base href="/">
+<link rel="icon" href="data:,">
+<title>Harness — gallery.js</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap">
+<style>
+  :root { --bg:#151616; --panel:#1c1d1d; --line:#353636; --ink:#f2f1ec; --muted:#a0a29e; --accent:#f3a65a; --accent-2:#3ec6c0; --glow:rgba(243,166,90,.35); }
+  html { background: var(--bg); color: var(--ink); }
+  body { margin: 0; font: 15px/1.5 'DM Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  header { position: fixed; top: 0; left: 0; right: 0; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: rgba(21,22,22,.8); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); z-index: 10; font-family: 'Space Grotesk', sans-serif; }
+  header b { letter-spacing: .12em; font-size: 12px; color: var(--accent); }
+  main { max-width: 1040px; margin: 0 auto; padding: 120px 24px 80px; }
+  h1 { font: 600 clamp(28px, 5vw, 44px)/1.05 'Space Grotesk', sans-serif; letter-spacing: -.02em; margin: 0 0 12px; }
+  p.lead { color: var(--muted); max-width: 60ch; margin: 0 0 32px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
+  .btn { font: 500 14px/1 'Space Grotesk', sans-serif; letter-spacing: .02em; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 14px 20px; cursor: pointer; transition: border-color .16s, color .16s, background .16s; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn--ghost { background: transparent; color: var(--muted); font-size: 13px; padding: 10px 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .card { display: block; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); cursor: pointer; aspect-ratio: 4/3; }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+  .card:hover img { transform: scale(1.04); }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .filler { height: 140vh; border-top: 1px dashed var(--line); margin-top: 60px; padding-top: 24px; color: var(--muted); }
+  .glow { position: fixed; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, var(--glow), transparent 60%); filter: blur(40px); right: -20vw; top: -10vw; pointer-events: none; opacity: .5; }
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<header><b>ZK ✳ HARNESS</b><span style="color:var(--muted);font-size:13px">js/gallery.js</span></header>
+<main>
+  <h1>Lightbox harness</h1>
+  <p class="lead">Three galleries opened from real assets. Keyboard: ← → Home End Esc. Click the backdrop or swipe on touch. Tab cycles inside the dialog; focus returns here on close.</p>
+
+  <div class="row">
+    <button class="btn" id="open-lala" type="button">Lala Poker — 9 screenshots</button>
+    <button class="btn" id="open-hxr" type="button">Hologram Cloud — 5 images + Google link</button>
+    <button class="btn" id="open-single" type="button">Single image</button>
+    <button class="btn btn--ghost" id="open-broken" type="button">Broken image (error state)</button>
+  </div>
+
+  <div class="grid" id="cards" aria-label="Lala Poker screenshots"></div>
+
+  <div class="filler">Scroll filler — the page behind the lightbox should not scroll while it is open, and the header must not shift when the scrollbar is locked.</div>
+</main>
+
+<script type="module">
+  import { openGallery } from '/js/gallery.js';
+
+  const G = (q) => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
+  const lala = Array.from({ length: 9 }, (_, i) => ({
+    src: `assets/img/lalapoker/shot-${String(i + 1).padStart(2, '0')}.jpg`,
+    alt: ['Texas Hold’em table with a Two Pair hand', 'Hold’em: check or bet', 'Casino lobby', 'Lobby with jackpots', 'Roulette table', 'Tournament schedule', 'Active quest', 'Blackjack win', 'Active quest: word puzzle for chips'][i],
+  }));
+  const hxr = [
+    { src: 'assets/img/hxr/holo-wireframe.jpg', alt: 'Holographic wireframe of a building' },
+    { src: 'assets/img/hxr/realestate-tower.jpg', alt: 'Real-estate tower visualization' },
+    { src: 'assets/img/hxr/dubai-balcony.jpg', alt: 'Dubai skyline from a property balcony' },
+    { src: 'assets/img/hxr/lightframe-27.jpg', alt: 'LightFrame 27-inch holographic display' },
+    { src: 'assets/img/hxr/vista-table.png', alt: 'Vista Table holographic display' },
+  ];
+  const single = [{ src: 'assets/img/nirah/concept.jpg', alt: 'Nirah Studios concept art: a masked hunter in tall grass' }];
+  const broken = [
+    { src: 'assets/img/lalapoker/shot-03.jpg', alt: 'Casino lobby' },
+    { src: 'assets/img/lalapoker/does-not-exist.jpg', alt: 'A screenshot that no longer exists' },
+    { src: 'assets/img/lalapoker/shot-05.jpg', alt: 'Roulette table' },
+  ];
+
+  document.getElementById('open-lala').addEventListener('click', () => openGallery(lala, 0, { title: 'Lala Poker' }));
+  document.getElementById('open-hxr').addEventListener('click', () => openGallery(hxr, 0, { title: 'Hologram Cloud', google: G('City Crafters HXR hologram real estate visualization Dubai') }));
+  document.getElementById('open-single').addEventListener('click', () => openGallery(single));
+  document.getElementById('open-broken').addEventListener('click', () => openGallery(broken, 1, { title: 'Error state' }));
+
+  const cards = document.getElementById('cards');
+  lala.forEach((im, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'card'; b.setAttribute('aria-label', `Open ${im.alt}`);
+    b.innerHTML = `<img src="${im.src}" alt="" loading="lazy" decoding="async">`;
+    b.addEventListener('click', () => openGallery(lala, i, { title: 'Lala Poker', google: G('Lala Poker app LALAGAMING Texas Holdem') }));
+    cards.append(b);
+  });
+</script>
+</body>
+</html>

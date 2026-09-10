@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harness — scene.js</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:wght@400;500&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<style>
+  :root { --bg:#151616; --panel:#1c1d1d; --line:#353636; --ink:#f2f1ec; --muted:#a0a29e; --accent:#f3a65a; --accent-2:#3ec6c0; --display:'Space Grotesk', system-ui, sans-serif; --body:'DM Sans', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); }
+  /* Same author rule as css/style.css:21 — it outranks the UA [hidden] rule, which is the bug the module guards against. */
+  img { max-width: 100%; display: block; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .bar { position: fixed; z-index: 10; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; background: rgba(28,29,29,.85); border: 1px solid var(--line); border-radius: 10px; font-size: 12px; backdrop-filter: blur(6px); }
+  .bar button, .bar label { font: inherit; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+  .bar output { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hero { position: relative; height: 100vh; min-height: 480px; overflow: hidden; }
+  body.stage-fixed .hero { height: var(--stage-h); width: var(--stage-w); margin: 120px auto 0; overflow: visible; border: 1px dashed var(--line); }
+  .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 1; }
+  .hero__labels { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+  .hero__fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: lighten; z-index: 1; }
+  .hero__copy { position: absolute; left: 24px; bottom: 28px; max-width: 420px; pointer-events: none; z-index: 2; }
+  body.stage-fixed .hero__copy { display: none; }
+  .hero__copy h1 { font: 700 clamp(26px, 4vw, 44px)/1.05 var(--display); margin: 0 0 8px; letter-spacing: -.02em; }
+  .hero__copy p { margin: 0; color: var(--muted); }
+
+  /* hotspot labels — verbatim from css/style.css so the harness reproduces the shipped metrics */
+  .hotspot { position: absolute; left: 0; top: 0; background: transparent; border: 0; display: flex; align-items: center; gap: 8px; filter: drop-shadow(0 4px 8px #0009); pointer-events: auto; padding: 0; transition: opacity .3s; }
+  .hotspot__dot, .hotspot > span { background: var(--accent); border: 5px solid #322e27; color: #141714; border-radius: 50%; width: 38px; height: 38px; display: grid; place-items: center; font: 500 12px var(--display); box-shadow: 0 0 0 1px #f3a65a88; flex: none; }
+  .hotspot__label, .hotspot b { font-weight: 400; background: #242723ee; border: 1px solid #656958; border-radius: 4px; font-size: 12px; padding: 5px 12px; white-space: nowrap; font-family: var(--body); }
+  .hotspot i { font-style: normal; color: var(--accent); margin-left: 10px; }
+  .hotspot:hover .hotspot__dot, .hotspot:hover > span { box-shadow: 0 0 0 6px rgba(243,166,90,.22); }
+  .hotspot:focus-visible { outline: none; }
+  .hotspot:focus-visible .hotspot__dot { box-shadow: 0 0 0 3px var(--ink); }
+  @media (max-width: 760px) { .hotspot__label, .hotspot b { font-size: 11px; padding: 4px 8px; } }
+
+  .poker { position: relative; height: 420px; margin: 40px auto; max-width: 1100px; border: 1px solid var(--line); border-radius: 18px; background: radial-gradient(60% 80% at 50% 60%, rgba(243,166,90,.08), transparent 70%), var(--panel); overflow: hidden; }
+  .poker canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .poker__fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .poker__caption { position: absolute; left: 20px; top: 16px; font: 600 12px var(--display); letter-spacing: .12em; color: var(--muted); }
+  .target { height: 70vh; margin: 24px; padding: 24px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); }
+  .target h2 { color: var(--ink); font-family: var(--display); margin: 0 0 6px; }
+</style>
+</head>
+<body>
+  <div class="bar" role="toolbar" aria-label="Harness controls">
+    <label><input type="checkbox" id="rm"> reducedMotion</label>
+    <button id="pause" type="button">pause</button>
+    <button id="resume" type="button">resume</button>
+    <button id="destroy" type="button">destroy</button>
+    <button id="reinit" type="button">re-init</button>
+    <output id="stats">…</output>
+  </div>
+
+  <section class="hero" id="hero">
+    <canvas class="hero__canvas" id="studio" aria-hidden="true"></canvas>
+    <div class="hero__labels" id="labels"></div>
+    <!-- same shape as index.html: a [hidden] fallback image that page CSS would otherwise paint over the canvas -->
+    <img class="hero__fallback" id="studio-fallback" src="/assets/img/studio.png" alt="" hidden>
+    <div class="hero__copy">
+      <h1>I build worlds.<br>And the rules that make them work.</h1>
+      <p>Harness for js/scene.js — hotspots are live buttons.</p>
+    </div>
+  </section>
+
+  <section class="poker" id="poker-box" aria-label="LalaPoker scene">
+    <canvas id="poker" aria-hidden="true"></canvas>
+    <img class="poker__fallback" id="poker-fallback" src="/assets/img/lalapoker/og.jpg" alt="" hidden>
+    <div class="poker__caption">04 / THE CARD TABLE</div>
+  </section>
+
+  <section class="target" id="work"><h2>#work</h2>The workbench (dummy target)</section>
+  <section class="target" id="book"><h2>#book</h2>The field manual (dummy target)</section>
+  <section class="target" id="ideas"><h2>#ideas</h2>Behind the ideas (dummy target)</section>
+  <section class="target" id="lalapoker"><h2>#lalapoker</h2>The card table (dummy target)</section>
+
+<script type="module">
+  import { initStudioScene, initPokerScene } from '/js/scene.js';
+
+  const hotspots = [
+    { id: 'work', number: '01', label: 'The workbench', target: '#work' },
+    { id: 'book', number: '02', label: 'The field manual', target: '#book' },
+    { id: 'ideas', number: '03', label: 'Behind the ideas', target: '#ideas' },
+    { id: 'lalapoker', number: '04', label: 'The card table', target: '#lalapoker' },
+  ];
+  const $ = (s) => document.querySelector(s);
+  const params = new URLSearchParams(location.search);
+  // ?stage=352x335 pins the hero to a fixed box (the phone-sized stage index.html produces at 400px)
+  const stage = /^(\d+)x(\d+)$/.exec(params.get('stage') || '');
+  if (stage) { document.body.classList.add('stage-fixed'); document.body.style.setProperty('--stage-w', stage[1] + 'px'); document.body.style.setProperty('--stage-h', stage[2] + 'px'); }
+
+  const H = { studio: null, poker: null, ready: false, reduced: false };
+  window.__scene = H;
+
+  H.init = (reduced) => {
+    H.reduced = !!reduced;
+    H.studio = initStudioScene({ canvas: $('#studio'), labelLayer: $('#labels'), hotspots, reducedMotion: H.reduced });
+    H.poker = initPokerScene({ canvas: $('#poker'), reducedMotion: H.reduced });
+    H.ready = !!(H.studio && H.poker);
+    return H.ready;
+  };
+  H.destroy = () => { H.studio?.destroy(); H.poker?.destroy(); H.studio = H.poker = null; H.ready = false; };
+  H.reinit = (reduced) => { H.destroy(); return H.init(reduced); };
+
+  $('#rm').addEventListener('change', (e) => H.reinit(e.target.checked));
+  $('#pause').addEventListener('click', () => { H.studio?.pause(); H.poker?.pause(); });
+  $('#resume').addEventListener('click', () => { H.studio?.resume(); H.poker?.resume(); });
+  $('#destroy').addEventListener('click', () => H.destroy());
+  $('#reinit').addEventListener('click', () => H.reinit($('#rm').checked));
+
+  // page-level fps meter (independent of the module)
+  let frames = 0, last = performance.now();
+  H.fps = 0;
+  (function loop(now) { frames++; if (now - last >= 1000) { H.fps = Math.round(frames * 1000 / (now - last)); frames = 0; last = now; const s = H.studio?.stats(); $('#stats').textContent = `page ${H.fps} fps · studio ${s ? `${s.triangles} tris, ${s.calls} calls, ${s.fps} fps` : 'off'}`; } requestAnimationFrame(loop); })(performance.now());
+
+  H.init(matchMedia('(prefers-reduced-motion: reduce)').matches && params.get('rm') !== '0');
+  $('#rm').checked = H.reduced;
+</script>
+</body>
+</html>

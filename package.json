@@ -1,0 +1,19 @@
+{
+  "name": "zain-playable-studio-3d",
+  "version": "1.0.0",
+  "description": "3D animated portfolio for Zain Kassem — game designer & developer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node scripts/check.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "three": "^0.170.0"
+  },
+  "private": true
+}

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Zain Kassem’s playable studio, in 3D: game design, real-time experiences, Lala Poker, the Arabic game-design book, and the thinking behind it all.">
+<meta name="theme-color" content="#151616">
+<title>Zain Kassem — The Playable Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23151616'/%3E%3Ctext x='32' y='44' font-family='Arial' font-size='34' font-weight='700' text-anchor='middle' fill='%23f3a65a'%3EZK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=Tajawal:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}</script>
+<script src="vendor/gsap.min.js" defer></script>
+<script src="vendor/ScrollTrigger.min.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#work">Skip to work</a>
+
+<header class="site-header" id="top">
+  <a class="brand" href="#studio" aria-label="Zain Kassem, back to the studio">
+    <span class="brand-mark">ZK<span>✳</span></span>
+    <span class="brand-name">ZAIN KASSEM<small>GAME DESIGNER &amp; DEVELOPER</small></span>
+  </a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="#studio" data-nav="studio" class="active">The studio</a>
+    <a href="#work" data-nav="work">Selected work</a>
+    <a href="#citycrafters" data-nav="citycrafters">City Crafters</a>
+    <a href="#lalapoker" data-nav="lalapoker">Lala Poker</a>
+    <a href="#book" data-nav="book">The book</a>
+    <a href="#ideas" data-nav="ideas">Beyond the build</a>
+  </nav>
+  <a class="contact" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto title="zainkassem7@gmail.com">Let’s talk <span>↗</span></a>
+</header>
+
+<main>
+  <!-- 01 · The Playable Studio (3D hero) -->
+  <section id="studio" class="studio-section" aria-labelledby="hero-title">
+    <div class="intro">
+      <div class="eyebrow"><span class="tiny-square"></span> PLAYER ONE · DUBAI, UAE</div>
+      <h1 id="hero-title">
+        <span class="line"><span>I build worlds.</span></span>
+        <span class="line dim"><span>And the rules</span></span>
+        <span class="line"><span>that make them work.</span></span>
+      </h1>
+      <p class="intro-sub">Game designer. Developer. Curious by default.<br>Welcome to the place where it all connects.</p>
+      <div class="intro-actions">
+        <a class="primary" href="#work">Explore my work <span>↗</span></a>
+        <a class="ghost" href="#book">Open the book</a>
+      </div>
+      <div class="intro-bottom"><span class="plus">+</span> DESIGNING THE EXPERIENCE.<br><span class="indent">BUILDING WHAT’S UNDERNEATH.</span></div>
+    </div>
+
+    <div class="studio-canvas" id="studio-canvas">
+      <div class="scene-top"><span>01 / THE PLAYABLE STUDIO</span><span>DRAG YOUR CURSOR · EXPLORE AT YOUR OWN PACE</span></div>
+      <div class="scene-stage">
+        <canvas id="scene" aria-hidden="true"></canvas>
+        <div class="scene-labels" id="scene-labels"></div>
+        <img class="scene-fallback" id="scene-fallback" src="assets/img/studio.png" alt="An isometric game designer’s studio with a softly lit desk, monitors, books, and creative equipment" hidden>
+        <div class="scene-fallback-hotspots" id="scene-fallback-hotspots" hidden></div>
+      </div>
+      <div class="scene-bottom"><span><span class="crosshair">⌖</span> EVERY OBJECT HAS A STORY</span><span>SELECT A MARKER TO EXPLORE</span></div>
+      <div class="scene-legend" id="scene-legend" aria-label="Studio markers"></div>
+    </div>
+  </section>
+
+  <!-- Toolkit marquee -->
+  <div class="chapter-strip" aria-label="Toolkit">
+    <span class="strip-label">THE TOOLKIT</span>
+    <div class="marquee" id="toolkit-marquee"><div class="marquee__track"></div></div>
+    <span class="strip-end">IDEA → EXPERIENCE</span>
+  </div>
+
+  <!-- 02 · Career campaign -->
+  <section id="work" class="work-section" aria-labelledby="work-title">
+    <div class="section-heading reveal">
+      <div>
+        <div class="eyebrow">THE CAREER CAMPAIGN</div>
+        <h2 id="work-title">Different teams. <span>Same curiosity.</span></h2>
+      </div>
+      <span class="section-number" id="work-chapters">CHAPTERS 01—08</span>
+    </div>
+    <div class="career-layout">
+      <div class="company-list" id="company-list" role="tablist" aria-label="Companies"></div>
+      <div id="company-content" role="tabpanel" tabindex="0"></div>
+    </div>
+  </section>
+
+  <!-- 05 · City Crafters spotlight -->
+  <section id="citycrafters" class="city-section" aria-labelledby="city-title">
+    <div class="section-heading reveal">
+      <div>
+        <div class="eyebrow" id="city-eyebrow"></div>
+        <h2 id="city-title"></h2>
+      </div>
+      <span class="section-number">CHAPTER 01 · EXPANDED</span>
+    </div>
+    <div class="city-intro">
+      <p id="city-intro"></p>
+      <dl class="city-stats" id="city-stats"></dl>
+    </div>
+    <div class="city-stage" id="city-stage">
+      <canvas id="city-scene" aria-hidden="true"></canvas>
+      <img class="city-fallback" id="city-fallback" src="assets/img/citycrafters/pit-protocol-recap.jpg" alt="" hidden>
+      <div class="city-stage__hint"><span><span class="crosshair">⌖</span> TURN THE FLOOR · PICK A PROJECT</span><span>CLICK A DIORAMA OR A TAB</span></div>
+      <div class="city-tabs" id="city-tabs" role="tablist" aria-label="City Crafters projects"></div>
+    </div>
+    <div class="city-feature" id="city-feature" role="tabpanel" tabindex="0"></div>
+    <div class="city-roles" id="city-roles"></div>
+  </section>
+
+  <!-- 04 · Lala Poker spotlight -->
+  <section id="lalapoker" class="poker-section" aria-labelledby="poker-title">
+    <div class="poker-grid">
+      <div class="poker-visual">
+        <canvas id="poker-scene" aria-hidden="true"></canvas>
+        <img class="poker-fallback" id="poker-fallback" src="assets/img/lalapoker/og.jpg" alt="Lala Poker key art" hidden>
+        <div class="poker-visual__caption"><img src="assets/img/lalapoker/icon.png" alt="" width="44" height="44"><span>Lala Poker<small>iOS · Android · Web</small></span></div>
+      </div>
+      <div class="poker-copy reveal">
+        <div class="eyebrow">04 / THE CARD TABLE</div>
+        <h2 id="poker-title">Real players. <span>Real pressure.</span></h2>
+        <p class="poker-sub" id="poker-sub"></p>
+        <ul class="feature-chips" id="poker-features"></ul>
+        <dl class="poker-stats" id="poker-stats"></dl>
+        <div class="poker-links" id="poker-links"></div>
+      </div>
+    </div>
+    <div class="shot-rail-wrap">
+      <div class="shot-rail" id="poker-rail" tabindex="0" aria-label="Lala Poker screenshots, scroll horizontally"></div>
+      <div class="shot-rail__hint"><span>← drag / scroll →</span><button class="text-button" id="poker-gallery-btn" type="button">Open all screenshots <span>↗</span></button></div>
+    </div>
+  </section>
+
+  <!-- 02 · The Book -->
+  <section id="book" class="book-section" aria-labelledby="book-title">
+    <div class="section-heading reveal">
+      <div>
+        <div class="eyebrow">THE FIELD MANUAL</div>
+        <h2 id="book-title">From idea to player. <span>Read it in Arabic.</span></h2>
+      </div>
+      <span class="section-number">91 PAGES · 30 CHAPTERS</span>
+    </div>
+    <div class="book-layout">
+      <div class="flipbook" id="flipbook" aria-label="Book preview, use the arrow keys to turn pages"></div>
+      <aside class="book-aside">
+        <div class="book-badge" id="book-badge"><span class="book-badge__dot"></span>The only book about game design in Arabic</div>
+        <div class="book-title" lang="ar" dir="rtl"><span class="book-title__main" id="book-title-ar"></span><span class="book-title__sub" id="book-subtitle-ar"></span><span class="book-title__author" id="book-author-ar"></span></div>
+        <p class="book-blurb" id="book-blurb"></p>
+        <details class="book-toc" open>
+          <summary>What’s inside</summary>
+          <ol id="book-toc"></ol>
+        </details>
+        <div class="book-actions">
+          <a class="primary" id="book-open-pdf" href="assets/book/Game-Design-Booklet.pdf" target="_blank" rel="noopener">Read the full book <span>↗</span></a>
+          <a class="ghost" id="book-download" href="assets/book/Game-Design-Booklet.pdf" download="From-Idea-To-Player-Game-Design-Arabic.pdf">Download PDF</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 03 · Beyond the build -->
+  <section id="ideas" class="ideas-section" aria-labelledby="ideas-title">
+    <div class="section-heading reveal">
+      <div>
+        <div class="eyebrow">BEYOND THE BUILD</div>
+        <h2 id="ideas-title">Make things. <span>Share the thinking.</span></h2>
+      </div>
+      <span class="section-number">THE OTHER SIDE OF THE DESK</span>
+    </div>
+    <div class="ideas-grid">
+      <article class="thought-card">
+        <div class="thought-card__head">
+          <img class="avatar" src="assets/img/instagram/profile.jpg" alt="" width="56" height="56">
+          <div><b id="ig-handle">@zainkassem000</b><small id="ig-followers">34.6K followers</small></div>
+        </div>
+        <h3 id="review-title"></h3>
+        <p id="review-text"></p>
+        <div class="highlights" id="ig-highlights"></div>
+        <a class="text-button" id="ig-link" href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Visit my Instagram <span>↗</span></a>
+      </article>
+      <div class="reels-grid" id="reels-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="eyebrow">NEXT CHAPTER</div>
+  <h2>Got something worth <span>building?</span></h2>
+  <p class="footer-lead">Write to me directly. I read every message.</p>
+  <div class="footer-email">
+    <a class="footer-email__link" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto data-email-text>zainkassem7@gmail.com</a>
+    <button class="copy-email" type="button" data-copy-email aria-live="polite">Copy email</button>
+  </div>
+  <div class="footer-actions">
+    <a class="primary" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto>Email me <span>↗</span></a>
+    <a class="ghost" href="https://www.linkedin.com/in/zain-kassem-a60176183/" target="_blank" rel="noopener">Message on LinkedIn</a>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ZAIN KASSEM</span>
+    <div>
+      <a href="mailto:zainkassem7@gmail.com" data-mailto data-email-text>zainkassem7@gmail.com</a>
+      <a href="https://www.linkedin.com/in/zain-kassem-a60176183/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Instagram ↗</a>
+      <a href="assets/cv/Zain_Kassem_GameDesigner.pdf" target="_blank">Design CV ↓</a>
+      <a href="assets/cv/Zain_Kassem.pdf" target="_blank">Technical CV ↓</a>
+    </div>
+    <a href="#top">BACK TO STUDIO ↑</a>
+  </div>
+</footer>
+
+<dialog id="detail" class="detail" aria-labelledby="detail-title">
+  <button class="close" type="button" aria-label="Close details">×</button>
+  <div id="detail-content"></div>
+</dialog>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

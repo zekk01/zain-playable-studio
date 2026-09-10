@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harness — cityscene.js</title>
+<link rel="icon" href="data:,">
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<style>
+  :root { --bg:#151616; --panel:#1c1d1d; --line:#353636; --ink:#f2f1ec; --muted:#a0a29e; --accent:#f3a65a; --accent-2:#3ec6c0; --display:'Space Grotesk', system-ui, sans-serif; --body:'DM Sans', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); }
+  img { max-width: 100%; display: block; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; margin: 10px; background: rgba(28,29,29,.85); border: 1px solid var(--line); border-radius: 10px; font-size: 12px; }
+  .bar button, .bar label { font: inherit; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+  .bar button.is-active { border-color: var(--accent); color: var(--accent); }
+  /* the live readout never wraps the toolbar: a second line would shift #stage under a test's measured rect */
+  .bar output { color: var(--muted); font-variant-numeric: tabular-nums; flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* the stage: 1440x520 on desktop, 400x360 on phones (capped by the viewport) */
+  .city-stage { position: relative; width: 1440px; max-width: 100%; height: 520px; margin: 0 auto; border: 1px dashed var(--line); border-radius: 18px; overflow: hidden; }
+  .city-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .city-stage__fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 480px) { .city-stage { width: 400px; height: 360px; } .bar { font-size: 11px; gap: 5px; } }
+  .log { margin: 10px; color: var(--muted); font-size: 12px; white-space: pre-wrap; }
+  .tail { height: 160vh; margin: 24px; padding: 24px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="bar" role="toolbar" aria-label="Harness controls">
+    <button id="f0" type="button" data-i="0">0 Pit Protocol</button>
+    <button id="f1" type="button" data-i="1">1 Hologram Cloud</button>
+    <button id="f2" type="button" data-i="2">2 Unseen Blade</button>
+    <button id="f3" type="button" data-i="3">3 Target Destroyed</button>
+    <label><input type="checkbox" id="rm"> reducedMotion</label>
+    <button id="pause" type="button">pause</button>
+    <button id="resume" type="button">resume</button>
+    <button id="destroy" type="button">destroy</button>
+    <button id="reinit" type="button">re-init</button>
+    <output id="stats">…</output>
+  </div>
+
+  <section class="city-stage" id="stage" aria-label="City Crafters turntable">
+    <canvas id="city" aria-hidden="true"></canvas>
+    <!-- same shape as index.html: a [hidden] fallback image that page CSS would otherwise paint over the canvas -->
+    <img class="city-stage__fallback" id="city-fallback" src="/assets/img/citycrafters/neon-city.jpg" alt="" hidden>
+  </section>
+  <div class="log" id="log" aria-live="polite">onFocus log: (none yet)</div>
+  <section class="tail">scroll target (the stage leaves the viewport → its loop pauses)</section>
+
+<script type="module">
+  import { initCityScene } from '/js/cityscene.js';
+
+  const $ = (s) => document.querySelector(s);
+  const params = new URLSearchParams(location.search);
+  const H = { ctl: null, ready: false, reduced: false, focusLog: [], fps: 0 };
+  window.__city = H;
+
+  const markActive = (i) => { for (const b of document.querySelectorAll('.bar button[data-i]')) b.classList.toggle('is-active', Number(b.dataset.i) === i); };
+  H.init = (reduced) => {
+    H.reduced = !!reduced;
+    H.ctl = initCityScene({
+      canvas: $('#city'), reducedMotion: H.reduced,
+      onFocus: (i) => { H.focusLog.push({ i, t: performance.now() }); $('#log').textContent = `onFocus log: ${H.focusLog.map((e) => e.i).join(', ')}`; H.ctl?.focus(i); markActive(i); },
+    });
+    H.ready = !!H.ctl;
+    markActive(0);
+    return H.ready;
+  };
+  H.destroy = () => { H.ctl?.destroy(); H.ctl = null; H.ready = false; };
+  H.reinit = (reduced) => { H.destroy(); return H.init(reduced); };
+  H.focus = (i) => { H.ctl?.focus(i); markActive(i); };
+
+  for (const b of document.querySelectorAll('.bar button[data-i]')) b.addEventListener('click', () => H.focus(Number(b.dataset.i)));
+  $('#rm').addEventListener('change', (e) => H.reinit(e.target.checked));
+  $('#pause').addEventListener('click', () => H.ctl?.pause());
+  $('#resume').addEventListener('click', () => H.ctl?.resume());
+  $('#destroy').addEventListener('click', () => H.destroy());
+  $('#reinit').addEventListener('click', () => H.reinit($('#rm').checked));
+
+  // page-level fps meter (independent of the module)
+  let frames = 0, last = performance.now();
+  (function loop(now) {
+    frames++;
+    if (now - last >= 1000) {
+      H.fps = Math.round(frames * 1000 / (now - last)); frames = 0; last = now;
+      const s = H.ctl?.stats();
+      $('#stats').textContent = s ? `page ${H.fps} fps · ${s.triangles} tris · ${s.calls} calls · ${s.fps} fps · focused ${s.focused} · mem ${s.memory.geometries}g/${s.memory.textures}t` : `page ${H.fps} fps · scene off`;
+    }
+    requestAnimationFrame(loop);
+  })(performance.now());
+
+  const rm = params.get('rm') === '1' || (matchMedia('(prefers-reduced-motion: reduce)').matches && params.get('rm') !== '0');
+  $('#rm').checked = rm;
+  H.init(rm);
+</script>
+</body>
+</html>
