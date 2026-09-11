@@ -61,6 +61,7 @@
  */
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { createDioramaSet } from './cityscene.js';
 
 /* ───────────────────────────── palette / constants ───────────────────────────── */
 
@@ -854,7 +855,7 @@ function mergeStaticMeshes(root) {
         const key = `${o.material.uuid}|${o.castShadow ? 1 : 0}${o.receiveShadow ? 1 : 0}`;
         let list = buckets.get(key); if (!list) buckets.set(key, (list = []));
         list.push(o);
-      } else if (!o.isLight && o.children.length) visit(o);
+      } else if (!o.isLight && o.children.length && !o.userData.noMerge) visit(o); // noMerge groups (the embedded turntable) are pre-merged
     }
     for (const list of buckets.values()) {
       if (list.length < 2) continue;
@@ -1130,15 +1131,18 @@ function buildStudio(rig) {
   box(sofa, throwMat, 0.05, 0.42, 0.86, 1.52, 0.5, 0.02, { rz: -0.04 });
   box(sofa, M.accent, 0.42, 0.34, 0.12, -0.85, 0.7, 0.16, { ry: 0.2, rz: 0.06 });
   box(sofa, M.tealCloth, 0.4, 0.32, 0.12, 0.9, 0.7, 0.16, { ry: -0.15 });
-  const table = group(0.5, 0, 0.55, 0.34);
-  box(table, M.wood, 1.2, 0.05, 0.6, 0, 0.37, 0);
-  box(table, M.black, 1.1, 0.03, 0.5, 0, 0.34, 0, { cast: false });
-  for (const [lx, lz] of [[-0.55, -0.25], [0.55, -0.25], [-0.55, 0.25], [0.55, 0.25]]) box(table, M.black, 0.05, 0.36, 0.05, lx, 0, lz);
-  box(table, M.paper, 0.26, 0.012, 0.34, 0.08, 0.42, 0.1, { ry: -0.25 });     // magazine
-  box(table, M.accent, 0.26, 0.012, 0.09, 0.08, 0.432, 0.1, { ry: -0.25, cast: false });
-  box(table, M.charcoal2, 0.18, 0.04, 0.12, 0.38, 0.42, -0.14, { ry: 0.4 });  // controller
-  cyl(table, M.ink, 0.045, 0.1, -0.12, 0.42, -0.14, 12);                       // mug
-  cyl(table, M.pot, 0.07, 0.1, -0.35, 0.42, 0.05, 12); sphere(table, M.green2, 0.1, -0.35, 0.58, 0.05, 0.9);
+  /* ---- display table: a tabletop miniature of the City Crafters turntable (the four project dioramas) ---- */
+  const table = group(0.45, 0, 0.5, 0.34);
+  const tableTop = cyl(table, M.woodDark, 1.08, 0.05, 0, 0.40, 0, 56); tableTop.receiveShadow = true;   // round top
+  cyl(table, M.black, 1.0, 0.03, 0, 0.37, 0, 56);                                                          // under-lip
+  cyl(table, M.black, 0.09, 0.37, 0, 0, 0, 16);                                                            // pedestal leg
+  cyl(table, M.black, 0.5, 0.03, 0, 0, 0, 32);                                                             // foot
+  const MINI = 0.245;
+  const mini = createDioramaSet();
+  mini.group.userData.noMerge = true;                        // already merged inside cityscene.js; keep the room merger out of it
+  mini.group.scale.setScalar(MINI); mini.group.position.set(0, 0.45 + 0.16 * MINI, 0); table.add(mini.group);
+  const miniLight = new THREE.PointLight(C.accent, 1.6, 3.0, 2); miniLight.position.set(0, 1.2, 0); table.add(miniLight);
+  anchor('citycrafters', table, -0.25, 1.75, -0.1);   // high enough that the label pill clears the miniature
   // floor lamp beside the sofa — the warm fill that lifts the front-left of the room
   const floorLamp = group(-1.35, 0, 2.55, 0.46, { rise: 0.5 });
   cyl(floorLamp, M.brass, 0.16, 0.03, 0, 0, 0, 20);
@@ -1281,6 +1285,8 @@ function buildStudio(rig) {
     anchors.book.position.y = 0.62 + bob;
     // chips spin
     stacks[0].rotation.y = t * 0.45; stacks[1].rotation.y = -t * 0.3;
+    // tabletop turntable: slow spin + the dioramas' own loops (pit crew, scan plane, echo rings, jet)
+    if (dt > 0) { mini.group.rotation.y += dt * 0.12; mini.update(dt, t, rig.camera); }
     sideLight.intensity = 1.6 + Math.sin(t * 1.7) * 0.25;
     // dust drift
     if (dt > 0) {

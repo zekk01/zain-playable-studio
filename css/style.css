@@ -92,12 +92,12 @@ h1 .line.dim > span { color: #9e9f99; }
 .hotspot:hover .hotspot__dot, .hotspot:hover > span { box-shadow: 0 0 0 6px rgba(243,166,90,.22); }
 .hotspot:focus-visible { outline: none; }
 .hotspot:focus-visible .hotspot__dot { box-shadow: 0 0 0 3px var(--ink); }
-.scene-legend { display: none; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+.scene-legend { display: none; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 14px; }
 .scene-legend button { display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 9px 12px; font-size: 13px; text-align: left; transition: border-color .25s; }
 .scene-legend button span { font: 500 11px var(--display); color: var(--accent); letter-spacing: 1px; }
 .scene-legend button:hover, .scene-legend button:active { border-color: var(--accent); }
 .studio-canvas.is-compact .scene-legend { display: grid; }
-.fallback-spot--work { left: 9%; top: 53%; } .fallback-spot--book { right: 4%; top: 33%; } .fallback-spot--ideas { right: 8%; bottom: 25%; } .fallback-spot--lalapoker { left: 40%; bottom: 14%; }
+.fallback-spot--work { left: 9%; top: 53%; } .fallback-spot--book { right: 4%; top: 33%; } .fallback-spot--ideas { right: 8%; bottom: 25%; } .fallback-spot--lalapoker { left: 40%; bottom: 14%; } .fallback-spot--citycrafters { left: 44%; bottom: 30%; }
 .scene-fallback-hotspots .hotspot { position: absolute; }
 
 /* ---------- toolkit marquee ---------- */

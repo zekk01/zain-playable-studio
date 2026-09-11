@@ -30,6 +30,7 @@ export const hero = {
     { id: 'book', number: '02', label: 'The field manual', target: '#book' },
     { id: 'ideas', number: '03', label: 'Behind the ideas', target: '#ideas' },
     { id: 'lalapoker', number: '04', label: 'The card table', target: '#lalapoker' },
+    { id: 'citycrafters', number: '05', label: 'The studio floor', target: '#citycrafters' },
   ],
 };
 

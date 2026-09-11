@@ -1324,3 +1324,38 @@ export function initCityScene({ canvas, reducedMotion = false, onFocus = null } 
     },
   };
 }
+
+/* ───────────────────────────── embeddable diorama set ───────────────────────────── */
+
+/**
+ * The four dioramas on their turntable disc as a plain group — no renderer, camera, lights or observers — so
+ * another scene can embed them (the hero studio shows this as a tabletop miniature). The dioramas' own point
+ * lights are detached to keep the host scene's lighting cost flat; nothing casts or receives shadows.
+ * Returns { group, update(dt, t, camera) } — call update every frame; camera is used for billboarded FX.
+ */
+export function createDioramaSet() {
+  const G = makeShared();
+  const B = makeBuilders(G);
+  const group = new THREE.Group();
+  const discTop = std(0xffffff, { map: discTexture(), roughness: 0.9 });
+  const discSide = std(0x181919, { roughness: 0.9 });
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(RING_R + 1.35, RING_R + 1.45, 0.16, 72), [discSide, discTop, discSide]);
+  disc.position.y = -0.08; group.add(disc);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(RING_R + 1.4, 0.018, 5, 96), new THREE.MeshStandardMaterial({ color: 0x000000, emissive: C.accent, emissiveIntensity: 1.1, roughness: 1 }));
+  rim.rotation.x = HALF_PI; group.add(rim);
+  const builders = [buildPit, buildHolo, buildBlade, buildJet];
+  const dioramas = [];
+  for (let i = 0; i < 4; i++) {
+    const theta = i * HALF_PI;
+    const g = new THREE.Group(); g.position.set(Math.sin(theta) * RING_R, 0, Math.cos(theta) * RING_R); g.rotation.y = theta; group.add(g);
+    const R = registry();
+    const built = builders[i](g, G, B, R);
+    R.apply(1);
+    dioramas.push({ update: built.update });
+  }
+  mergeStaticMeshes(group);
+  const lights = [];
+  group.traverse((o) => { if (o.isLight) lights.push(o); else if (o.isMesh || o.isLine || o.isPoints) { o.castShadow = false; o.receiveShadow = false; } });
+  for (const l of lights) l.parent?.remove(l);
+  return { group, update(dt, t, camera) { for (const d of dioramas) d.update(dt, t, 1, camera); } };
+}
