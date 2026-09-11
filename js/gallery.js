@@ -81,7 +81,7 @@ const MARKUP = `
     </div>
     <div class="lightbox__meta">
       <span class="lightbox__counter" aria-hidden="true"></span>
-      <a class="lightbox__google" target="_blank" rel="noopener noreferrer" hidden>More images on Google&nbsp;↗</a>
+      <a class="lightbox__google" target="_blank" rel="noopener noreferrer" hidden>More images on Google&nbsp;<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-.12em;flex:none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
     </div>
   </div>
   </div>

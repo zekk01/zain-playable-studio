@@ -16,11 +16,22 @@
 <script src="vendor/ScrollTrigger.min.js" defer></script>
 </head>
 <body>
+<svg hidden aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-ne" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" stroke-width="2.6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></symbol>
+</svg>
 <a class="skip" href="#work">Skip to work</a>
 
 <header class="site-header" id="top">
   <a class="brand" href="#studio" aria-label="Zain Kassem, back to the studio">
-    <span class="brand-mark">ZK<span>✳</span></span>
+    <span class="brand-mark">ZK<svg class="ico ico--star" aria-hidden="true" focusable="false"><use href="#i-star"/></svg></span>
     <span class="brand-name">ZAIN KASSEM<small>GAME DESIGNER &amp; DEVELOPER</small></span>
   </a>
   <nav class="site-nav" aria-label="Main navigation">
@@ -31,7 +42,7 @@
     <a href="#book" data-nav="book">The book</a>
     <a href="#ideas" data-nav="ideas">Beyond the build</a>
   </nav>
-  <a class="contact" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto title="zainkassem7@gmail.com">Let’s talk <span>↗</span></a>
+  <a class="contact" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto title="zainkassem7@gmail.com">Let’s talk <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
 </header>
 
 <main>
@@ -46,7 +57,7 @@
       </h1>
       <p class="intro-sub">Game designer. Developer. Curious by default.<br>Welcome to the place where it all connects.</p>
       <div class="intro-actions">
-        <a class="primary" href="#work">Explore my work <span>↗</span></a>
+        <a class="primary" href="#work">Explore my work <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
         <a class="ghost" href="#book">Open the book</a>
       </div>
       <div class="intro-bottom"><span class="plus">+</span> DESIGNING THE EXPERIENCE.<br><span class="indent">BUILDING WHAT’S UNDERNEATH.</span></div>
@@ -60,7 +71,7 @@
         <img class="scene-fallback" id="scene-fallback" src="assets/img/studio.png" alt="An isometric game designer’s studio with a softly lit desk, monitors, books, and creative equipment" hidden>
         <div class="scene-fallback-hotspots" id="scene-fallback-hotspots" hidden></div>
       </div>
-      <div class="scene-bottom"><span><span class="crosshair">⌖</span> EVERY OBJECT HAS A STORY</span><span>SELECT A MARKER TO EXPLORE</span></div>
+      <div class="scene-bottom"><span><span class="crosshair"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-target"/></svg></span> EVERY OBJECT HAS A STORY</span><span>SELECT A MARKER TO EXPLORE</span></div>
       <div class="scene-legend" id="scene-legend" aria-label="Studio markers"></div>
     </div>
   </section>
@@ -69,7 +80,7 @@
   <div class="chapter-strip" aria-label="Toolkit">
     <span class="strip-label">THE TOOLKIT</span>
     <div class="marquee" id="toolkit-marquee"><div class="marquee__track"></div></div>
-    <span class="strip-end">IDEA → EXPERIENCE</span>
+    <span class="strip-end">IDEA <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-right"/></svg> EXPERIENCE</span>
   </div>
 
   <!-- 02 · Career campaign -->
@@ -103,7 +114,7 @@
     <div class="city-stage" id="city-stage">
       <canvas id="city-scene" aria-hidden="true"></canvas>
       <img class="city-fallback" id="city-fallback" src="assets/img/citycrafters/pit-protocol-recap.jpg" alt="" hidden>
-      <div class="city-stage__hint"><span><span class="crosshair">⌖</span> TURN THE FLOOR · PICK A PROJECT</span><span>CLICK A DIORAMA OR A TAB</span></div>
+      <div class="city-stage__hint"><span><span class="crosshair"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-target"/></svg></span> TURN THE FLOOR · PICK A PROJECT</span><span>CLICK A DIORAMA OR A TAB</span></div>
       <div class="city-tabs" id="city-tabs" role="tablist" aria-label="City Crafters projects"></div>
     </div>
     <div class="city-feature" id="city-feature" role="tabpanel" tabindex="0"></div>
@@ -129,7 +140,7 @@
     </div>
     <div class="shot-rail-wrap">
       <div class="shot-rail" id="poker-rail" tabindex="0" aria-label="Lala Poker screenshots, scroll horizontally"></div>
-      <div class="shot-rail__hint"><span>← drag / scroll →</span><button class="text-button" id="poker-gallery-btn" type="button">Open all screenshots <span>↗</span></button></div>
+      <div class="shot-rail__hint"><span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-left"/></svg> drag / scroll <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-right"/></svg></span><button class="text-button" id="poker-gallery-btn" type="button">Open all screenshots <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></button></div>
     </div>
   </section>
 
@@ -153,7 +164,7 @@
           <ol id="book-toc"></ol>
         </details>
         <div class="book-actions">
-          <a class="primary" id="book-open-pdf" href="assets/book/Game-Design-Booklet.pdf" target="_blank" rel="noopener">Read the full book <span>↗</span></a>
+          <a class="primary" id="book-open-pdf" href="assets/book/Game-Design-Booklet.pdf" target="_blank" rel="noopener">Read the full book <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
           <a class="ghost" id="book-download" href="assets/book/Game-Design-Booklet.pdf" download="From-Idea-To-Player-Game-Design-Arabic.pdf">Download PDF</a>
         </div>
       </aside>
@@ -178,7 +189,7 @@
         <h3 id="review-title"></h3>
         <p id="review-text"></p>
         <div class="highlights" id="ig-highlights"></div>
-        <a class="text-button" id="ig-link" href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Visit my Instagram <span>↗</span></a>
+        <a class="text-button" id="ig-link" href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Visit my Instagram <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
       </article>
       <div class="reels-grid" id="reels-grid"></div>
     </div>
@@ -194,19 +205,19 @@
     <button class="copy-email" type="button" data-copy-email aria-live="polite">Copy email</button>
   </div>
   <div class="footer-actions">
-    <a class="primary" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto>Email me <span>↗</span></a>
+    <a class="primary" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto>Email me <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
     <a class="ghost" href="https://www.linkedin.com/in/zain-kassem-a60176183/" target="_blank" rel="noopener">Message on LinkedIn</a>
   </div>
   <div class="footer-bottom">
     <span>© 2026 ZAIN KASSEM</span>
     <div>
       <a href="mailto:zainkassem7@gmail.com" data-mailto data-email-text>zainkassem7@gmail.com</a>
-      <a href="https://www.linkedin.com/in/zain-kassem-a60176183/" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Instagram ↗</a>
-      <a href="assets/cv/Zain_Kassem_GameDesigner.pdf" target="_blank">Design CV ↓</a>
-      <a href="assets/cv/Zain_Kassem.pdf" target="_blank">Technical CV ↓</a>
+      <a href="https://www.linkedin.com/in/zain-kassem-a60176183/" target="_blank" rel="noopener">LinkedIn <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></a>
+      <a href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Instagram <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></a>
+      <a href="assets/cv/Zain_Kassem_GameDesigner.pdf" target="_blank">Design CV <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-down"/></svg></a>
+      <a href="assets/cv/Zain_Kassem.pdf" target="_blank">Technical CV <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-down"/></svg></a>
     </div>
-    <a href="#top">BACK TO STUDIO ↑</a>
+    <a href="#top">BACK TO STUDIO <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-up"/></svg></a>
   </div>
 </footer>
 

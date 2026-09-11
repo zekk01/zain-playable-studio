@@ -1,5 +1,6 @@
 // Boot: renders every section from js/data.js, wires the 3D scenes, flipbook, gallery, and page motion.
 import { site, hero, companies, lalapoker, book, ideas, citycrafters } from './data.js';
+import { colors } from './colors.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -10,6 +11,8 @@ if (reducedMotion) html.classList.add('motion-off');
 // Modules are loaded defensively: if one fails, the rest of the page still works.
 async function load(path) { try { return await import(path); } catch (err) { console.error(`[portfolio] failed to load ${path}`, err); return null; } }
 
+// Inline SVG icon from the sprite in index.html (glyphs like ↗ ✳ ▶ turn into emoji on phones).
+const ico = (name, cls = 'ico') => `<svg class="${cls}" aria-hidden="true" focusable="false"><use href="#${name}"/></svg>`;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const scrollTo = (target) => { const el = typeof target === 'string' ? $(target) : target; if (el) el.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' }); };
 
@@ -19,7 +22,7 @@ let openGallery = () => {};
 function renderToolkit() {
   const track = $('#toolkit-marquee .marquee__track');
   const items = [...site.toolkit, ...site.toolkit]; // duplicated so the loop is seamless
-  track.innerHTML = items.map((t) => `<b>${esc(t)}</b>`).join('');
+  track.innerHTML = items.map((t) => `<b>${esc(t)}${ico('i-star')}</b>`).join('');
 }
 
 /* ------------------------------------------------------------------ career campaign */
@@ -55,9 +58,9 @@ const pic = (im, attrs = '') => im.fit === 'contain'
 function projectCard(c, p, n) {
   const first = p.images[0];
   const media = first
-    ? `<div class="project__media">${pic(first, 'loading="lazy" decoding="async"')}${(p.videos && p.videos.length) ? `<span class="project__count">▶ ${p.videos.length} VIDEO${p.videos.length > 1 ? 'S' : ''} · ${p.images.length} IMAGES</span>` : p.images.length > 1 ? `<span class="project__count">${p.images.length} IMAGES</span>` : ''}</div>`
+    ? `<div class="project__media">${pic(first, 'loading="lazy" decoding="async"')}${(p.videos && p.videos.length) ? `<span class="project__count">${ico('i-play')} ${p.videos.length} VIDEO${p.videos.length > 1 ? 'S' : ''} · ${p.images.length} IMAGES</span>` : p.images.length > 1 ? `<span class="project__count">${p.images.length} IMAGES</span>` : ''}</div>`
     : `<div class="project__media project__media--empty"><span>${String(n + 1).padStart(2, '0')}</span></div>`;
-  return `<button class="project" type="button" data-project="${n}" aria-haspopup="dialog">${media}<span class="arrow">↗</span><div class="project__body"><span class="tag">${esc(p.tag)}</span><h4>${esc(p.title)}</h4><p>${esc(p.hook)}</p></div></button>`;
+  return `<button class="project" type="button" data-project="${n}" aria-haspopup="dialog">${media}<span class="arrow">${ico('i-ne')}</span><div class="project__body"><span class="tag">${esc(p.tag)}</span><h4>${esc(p.title)}</h4><p>${esc(p.hook)}</p></div></button>`;
 }
 
 function selectCompany(i, silent = false) {
@@ -73,7 +76,7 @@ function selectCompany(i, silent = false) {
     <div class="tag">${esc(c.role)}</div>
     <p class="company-description">${esc(c.description)}</p>
     <div class="project-grid">${c.projects.map((p, n) => projectCard(c, p, n)).join('')}</div>
-    <div class="company-foot"><span>${esc(c.foot)}</span>${c.site ? `<a href="${c.site}" target="_blank" rel="noopener">${esc(c.name)} ↗</a>` : ''}</div>
+    <div class="company-foot"><span>${esc(c.foot)}</span>${c.site ? `<a href="${c.site}" target="_blank" rel="noopener">${esc(c.name)} ${ico('i-ne')}</a>` : ''}</div>
   </div>`;
   $$('[data-project]', panel).forEach((b) => b.addEventListener('click', () => openProject(c, c.projects[Number(b.dataset.project)], b)));
   attachTilt($$('.project', panel));
@@ -92,10 +95,10 @@ function openProject(c, p, opener) {
   const strip = p.images.length > 1
     ? `<div class="detail-strip" aria-label="Image gallery">${p.images.map((im, k) => `<button type="button" data-k="${k}" aria-label="Open image ${k + 1}">${pic(im, 'loading="lazy"')}</button>`).join('')}</div>` : '';
   const videos = (p.videos && p.videos.length)
-    ? `<h3>Watch</h3><div class="detail-videos">${p.videos.map((v) => `<figure class="detail-video${v.portrait ? ' detail-video--portrait' : ''}"><video controls preload="none" playsinline poster="${v.poster || ''}" aria-label="${esc(v.alt)}"><source src="${v.src}" type="video/mp4">Your browser can’t play this video.</video><figcaption>${esc(v.alt)}${v.href ? ` <a href="${v.href}" target="_blank" rel="noopener">Watch on ${esc(v.source || 'source')} ↗</a>` : ''}</figcaption></figure>`).join('')}</div>` : '';
+    ? `<h3>Watch</h3><div class="detail-videos">${p.videos.map((v) => `<figure class="detail-video${v.portrait ? ' detail-video--portrait' : ''}"><video controls preload="none" playsinline poster="${v.poster || ''}" aria-label="${esc(v.alt)}"><source src="${v.src}" type="video/mp4">Your browser can’t play this video.</video><figcaption>${esc(v.alt)}${v.href ? ` <a href="${v.href}" target="_blank" rel="noopener">Watch on ${esc(v.source || 'source')} ${ico('i-ne')}</a>` : ''}</figcaption></figure>`).join('')}</div>` : '';
   const links = [
-    ...p.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${esc(l.label)}</a>`),
-    p.google ? `<a class="google" href="${p.google}" target="_blank" rel="noopener">More images on Google ↗</a>` : '',
+    ...p.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${esc(l.label)} ${ico('i-ne')}</a>`),
+    p.google ? `<a class="google" href="${p.google}" target="_blank" rel="noopener">More images on Google ${ico('i-ne')}</a>` : '',
   ].join('');
   detail.innerHTML = `${media}<div class="detail-body">
     <div class="detail-label">${esc(c.name.toUpperCase())} / ${esc(p.tag)}</div>
@@ -176,8 +179,8 @@ function selectShowcase(i, { instant = false, fromScene = false } = {}) {
       ? `<video ${reducedMotion ? '' : 'autoplay muted loop'} playsinline controls preload="metadata" poster="${m.poster}" aria-label="${esc(m.alt)}"><source src="${m.src}" type="video/mp4"></video>`
       : `<button type="button" aria-label="Open image gallery: ${esc(project.title)}"><img src="${m.src}" alt="${esc(m.alt)}" loading="lazy" decoding="async"></button>`;
     const links = [
-      `<button class="primary" type="button" data-open-project>Open the case study <span>↗</span></button>`,
-      ...project.links.map((l) => `<a class="ghost" href="${l.href}" target="_blank" rel="noopener">${esc(l.label)}</a>`),
+      `<button class="primary" type="button" data-open-project>Open the case study <span>${ico('i-ne')}</span></button>`,
+      ...project.links.map((l) => `<a class="ghost" href="${l.href}" target="_blank" rel="noopener">${esc(l.label)} ${ico('i-ne')}</a>`),
     ].join('');
     $('#city-feature').innerHTML = `<div class="city-feature__media">${media}<span class="city-feature__badge">${String(i + 1).padStart(2, '0')} / ${String(cc.showcase.length).padStart(2, '0')}</span></div>
       <div class="city-feature__copy">
@@ -215,7 +218,7 @@ function renderPoker() {
   $('#poker-sub').textContent = lalapoker.sub;
   $('#poker-features').innerHTML = lalapoker.features.map((f) => `<li>${esc(f)}</li>`).join('');
   $('#poker-stats').innerHTML = lalapoker.stats.map((s) => `<div><dt>${esc(s.value)}</dt><dd>${esc(s.label)}</dd></div>`).join('');
-  $('#poker-links').innerHTML = lalapoker.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('');
+  $('#poker-links').innerHTML = lalapoker.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${esc(l.label)} ${ico('i-ne')}</a>`).join('');
   const rail = $('#poker-rail');
   rail.innerHTML = lalapoker.screenshots.map((s, k) => `<button type="button" data-k="${k}" aria-label="Screenshot: ${esc(s.alt)}"><img src="${s.src}" alt="" loading="lazy" decoding="async"><span>${esc(s.alt)}</span></button>`).join('');
   const open = (k) => openGallery(lalapoker.screenshots, k, { title: 'Lala Poker', google: lalapoker.google });
@@ -258,7 +261,7 @@ function renderIdeas() {
   $('#ig-handle').textContent = site.instagramHandle; $('#ig-followers').textContent = `${site.instagramFollowers} followers`;
   $('#ig-link').href = site.instagram;
   $('#ig-highlights').innerHTML = ideas.highlights.map((h) => `<figure><img src="${h.src}" alt="" loading="lazy"><figcaption>${esc(h.label)}</figcaption></figure>`).join('');
-  $('#reels-grid').innerHTML = ideas.reels.map((r) => `<a class="reel${r.landscape ? ' reel--landscape' : ''}" href="${r.href}" target="_blank" rel="noopener" aria-label="${esc(r.en)} (Instagram)">${r.landscape ? `<img class="reel__bg" src="${r.src}" alt="" aria-hidden="true" loading="lazy">` : ''}<img src="${r.src}" alt="" loading="lazy" decoding="async"><span class="reel__play" aria-hidden="true">▶</span><div class="reel__meta"><b lang="ar" dir="rtl">${esc(r.ar)}</b><small>${esc(r.en)} · ${esc(r.date)}</small></div></a>`).join('');
+  $('#reels-grid').innerHTML = ideas.reels.map((r) => `<a class="reel${r.landscape ? ' reel--landscape' : ''}" href="${r.href}" target="_blank" rel="noopener" aria-label="${esc(r.en)} (Instagram)">${r.landscape ? `<img class="reel__bg" src="${r.src}" alt="" aria-hidden="true" loading="lazy">` : ''}<img src="${r.src}" alt="" loading="lazy" decoding="async"><span class="reel__play" aria-hidden="true">${ico('i-play')}</span><div class="reel__meta"><b lang="ar" dir="rtl">${esc(r.ar)}</b><small>${esc(r.en)} · ${esc(r.date)}</small></div></a>`).join('');
 }
 
 /* ------------------------------------------------------------------ hero scene */
@@ -267,7 +270,7 @@ async function initScene() {
   const fallback = $('#scene-fallback'), fbSpots = $('#scene-fallback-hotspots');
   const showFallback = () => {
     $('#scene').hidden = true; fallback.hidden = false; fbSpots.hidden = false;
-    fbSpots.innerHTML = hero.hotspots.map((h) => `<button class="hotspot fallback-spot--${h.id}" type="button" data-target="${h.target}"><span class="hotspot__dot">${h.number}</span><b class="hotspot__label">${esc(h.label)} <i>↗</i></b></button>`).join('');
+    fbSpots.innerHTML = hero.hotspots.map((h) => `<button class="hotspot fallback-spot--${h.id}" type="button" data-target="${h.target}"><span class="hotspot__dot">${h.number}</span><b class="hotspot__label">${esc(h.label)} <i>${ico('i-ne')}</i></b></button>`).join('');
     $$('button', fbSpots).forEach((b) => b.addEventListener('click', () => scrollTo(b.dataset.target)));
   };
   // Small-screen legend: the in-scene labels are hidden there, so the markers get a row of buttons instead.
@@ -363,10 +366,34 @@ function setupContact() {
       const ta = document.createElement('textarea'); ta.value = site.email; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
       document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch { ok = false; } ta.remove();
     }
-    copy.textContent = ok ? 'Copied ✓' : site.email; copy.classList.toggle('is-copied', ok);
+    copy.innerHTML = ok ? `Copied ${ico('i-check')}` : esc(site.email); copy.classList.toggle('is-copied', ok);
     setTimeout(() => { copy.textContent = label; copy.classList.remove('is-copied'); }, 2200);
   });
 }
+
+/* ------------------------------------------------------------------ loading placeholders (shimmer + average colour) */
+const SHIMMER_BOXES = '.project__media, .company-cover, .reel, .shot-rail button, .detail-hero, .detail-strip button, .city-feature__media, .highlights figure, .thought-card__head';
+function primeImages(root = document) {
+  $$('img', root).forEach((img) => {
+    if (img.dataset.sh || img.classList.contains('media-contain__bg') || img.closest('.flipbook, #lightbox, .poker-visual__caption')) return;
+    const box = img.closest(SHIMMER_BOXES);
+    if (!box) return;
+    img.dataset.sh = '1';
+    box.classList.add('sh');
+    const key = (img.getAttribute('src') || '').replace(/^\.\//, '');
+    if (colors[key]) box.style.setProperty('--ph', colors[key]);
+    img.classList.add('sh-img');
+    const done = () => box.classList.add('is-loaded');
+    if (img.complete && img.naturalWidth > 0) done();
+    else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+  });
+}
+function setupShimmer() {
+  primeImages();
+  new MutationObserver(() => primeImages()).observe(document.body, { childList: true, subtree: true });
+  ['.scene-stage', '.poker-visual', '.city-stage'].forEach((sel) => $(sel)?.classList.add('sh'));
+}
+const stageReady = (sel) => { const el = $(sel); if (el) requestAnimationFrame(() => el.classList.add('is-loaded')); };
 
 /* ------------------------------------------------------------------ boot */
 async function boot() {
@@ -379,6 +406,7 @@ async function boot() {
   renderIdeas();
   setupNav();
   setupContact();
+  setupShimmer();
 
   const galleryMod = await load('./gallery.js');
   if (galleryMod?.openGallery) openGallery = galleryMod.openGallery;
@@ -392,9 +420,12 @@ async function boot() {
   window.__portfolio = { scene: null, poker: null, flip: null };
   const studio = await initScene();
   window.__portfolio.scene = studio;
+  stageReady('.scene-stage');
   heroIntro();
   window.__portfolio.poker = await initPoker(sceneMod);
+  stageReady('.poker-visual');
   window.__portfolio.city = await initCityScene();
+  stageReady('.city-stage');
   await initFlipbook();
   window.__portfolio.flip = flip;
 }

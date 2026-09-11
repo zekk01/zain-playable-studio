@@ -747,7 +747,7 @@ function createLabels(labelLayer, hotspots, anchorFor, reducedMotion) {
     btn.setAttribute('aria-label', `${h.number ?? ''} ${h.label ?? ''}`.trim());
     const dot = document.createElement('span'); dot.className = 'hotspot__dot'; dot.textContent = h.number;
     const lab = document.createElement('b'); lab.className = 'hotspot__label'; lab.textContent = `${h.label} `;
-    const arrow = document.createElement('i'); arrow.textContent = '↗'; arrow.setAttribute('aria-hidden', 'true');
+    const arrow = document.createElement('i'); arrow.innerHTML = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="1em" height="1em" style="vertical-align:-.12em;flex:none" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>'; arrow.setAttribute('aria-hidden', 'true'); // SVG, not a glyph: ↗ renders as an emoji on phones
     lab.appendChild(arrow);
     btn.append(dot, lab);
     Object.assign(btn.style, { position: 'absolute', left: '0', top: '0', pointerEvents: 'auto', willChange: 'transform', opacity: '0' });
