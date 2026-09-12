@@ -23,7 +23,7 @@ The site is fully static. Everything except `node_modules/` and `dev/shots/` can
 | Path | What it is |
 |---|---|
 | `index.html` | The page: hero, career campaign, City Crafters spotlight, Lala Poker, the book, beyond the build, footer |
-| `js/data.js` | **All content lives here.** Companies, projects, images, links, book, reels. Edit this to change the site. |
+| `js/data.js` | **All content lives here.** Companies, projects, images, links, book, reels, the City Crafters spotlight, and the side quests (DR3 and Gaya Wallet, sister companies shown at the end). Edit this to change the site. |
 | `js/scene.js` | Three.js studio scene (hero) and the poker card scene |
 | `js/cityscene.js` | Three.js turntable of four City Crafters dioramas (pit lane, hologram tower, blind blade, jet) |
 | `js/book.js` | Right-to-left 3D flipbook for the Arabic book |

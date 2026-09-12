@@ -269,51 +269,6 @@ export const companies = [
       },
     ],
   },
-  {
-    id: 'dr3', name: 'DR3', period: 'MAR 2026–PRESENT',
-    role: 'Sensing systems · Python · Edge / cloud architecture',
-    description: 'Exploring how wireless signals can become useful information about physical spaces.',
-    foot: 'Experimental engineering beyond games.',
-    cover: '',
-    projects: [
-      {
-        id: 'wifi-sensing', title: 'Wi-Fi sensing platform', tag: 'R&D / PROOF OF CONCEPT', hook: 'Understanding a room through signals.',
-        contribution: 'Architected a three-layer sensing, signal-processing, and decision-output platform. Built the Python processing pipeline.',
-        challenge: 'Filter noise and drift, select useful sub-carriers, and identify patterns that can support presence and motion-intensity sensing.',
-        outcome: 'Working proof of concept for camera-free sensing applications.',
-        images: [],
-        google: G('WiFi CSI sensing presence detection visualization'),
-        links: [],
-      },
-    ],
-  },
-  {
-    id: 'gaya', name: 'Gaya Wallet', period: 'FEB–OCT 2025',
-    role: 'Mobile engineering · React Native · Product integration',
-    description: 'Production engineering for Gaya, an AI-powered, multichain, non-custodial Web3 super app: email or social onboarding into an MPC wallet, human-readable @handles, gamified airdrops, staking, automated DCA investing, and a built-in dApp explorer.',
-    foot: 'Contributed features to an existing mobile product with 100K+ installs on iOS and Android.',
-    cover: 'assets/img/gaya/mobile.jpg',
-    site: 'https://gayawallet.com/',
-    projects: [
-      {
-        id: 'multichain-wallet', title: 'Multichain wallet', tag: 'REACT NATIVE / MOBILE', hook: 'Complex transactions. Clear interactions.',
-        contribution: 'Built production features covering payments, fiat on-ramp flows, chain integrations, multichain balance aggregation, and swap-routing UX, with secure on-device key management.',
-        challenge: 'Make the flow understandable while respecting the requirements of secure key handling and auditable transactions.',
-        outcome: 'Production feature work in a security-sensitive codebase with strict review.',
-        images: [
-          { src: 'assets/img/gaya/mobile.jpg', alt: 'Gaya Wallet on a phone' },
-          { src: 'assets/img/gaya/c1.jpg', alt: 'Web2.5 onboarding: sign up with email or social' },
-          { src: 'assets/img/gaya/c2.jpg', alt: 'Gaya Quest leaderboard and referrals' },
-          { src: 'assets/img/gaya/c3.jpg', alt: 'Protect your wallet with MPC security' },
-          { src: 'assets/img/gaya/staking.jpg', alt: 'Staking with multipliers' },
-          { src: 'assets/img/gaya/airdrop.jpg', alt: 'Gamified airdrops' },
-          { src: 'assets/img/gaya/security.jpg', alt: 'Bank-grade security illustration' },
-        ],
-        google: G('Gaya Wallet multichain app'),
-        links: [{ label: 'gayawallet.com', href: 'https://gayawallet.com/' }],
-      },
-    ],
-  },
 ];
 
 export const lalapoker = {
@@ -480,5 +435,61 @@ export const citycrafters = {
       numbers: [{ value: '30 s', label: 'sorties, extended by kills' }, { value: '3', label: 'global leaderboards' }, { value: '60 fps', label: 'on modern devices' }],
       media: { type: 'image', src: 'assets/img/targetdestroyed/02.jpg', alt: 'Target Destroyed: missile lock on a drone' },
     },
+  ],
+};
+
+// ---------------------------------------------------------------- Side quests (section #side-quests)
+// DR3 and Gaya Wallet are sister companies of City Crafters (same group). The work happened alongside the City Crafters
+// role, which is why the dates overlap; they sit here rather than in the main campaign.
+export const sideQuests = {
+  eyebrow: 'SIDE QUESTS · SAME GROUP, DIFFERENT DOORS',
+  headline: ['Same group.', 'Two more doors.'],
+  note: 'DR3 and Gaya Wallet belong to the same group as City Crafters. When those teams needed a hand, I stepped in alongside my City Crafters role, which is why these dates overlap with the main campaign. Smaller chapters, but real production work.',
+  companies: [
+  {
+    id: 'dr3', name: 'DR3', period: 'MAR 2026–PRESENT',
+    role: 'Sensing systems · Python · Edge / cloud architecture',
+    description: 'Exploring how wireless signals can become useful information about physical spaces.',
+    foot: 'Experimental engineering beyond games.',
+    cover: '',
+    projects: [
+      {
+        id: 'wifi-sensing', title: 'Wi-Fi sensing platform', tag: 'R&D / PROOF OF CONCEPT', hook: 'Understanding a room through signals.',
+        contribution: 'Architected a three-layer sensing, signal-processing, and decision-output platform. Built the Python processing pipeline.',
+        challenge: 'Filter noise and drift, select useful sub-carriers, and identify patterns that can support presence and motion-intensity sensing.',
+        outcome: 'Working proof of concept for camera-free sensing applications.',
+        images: [],
+        google: G('WiFi CSI sensing presence detection visualization'),
+        links: [],
+      },
+    ],
+  },
+  {
+    id: 'gaya', name: 'Gaya Wallet', period: 'FEB–OCT 2025',
+    role: 'Mobile engineering · React Native · Product integration',
+    description: 'Production engineering for Gaya, an AI-powered, multichain, non-custodial Web3 super app: email or social onboarding into an MPC wallet, human-readable @handles, gamified airdrops, staking, automated DCA investing, and a built-in dApp explorer.',
+    foot: 'Contributed features to an existing mobile product with 100K+ installs on iOS and Android.',
+    cover: 'assets/img/gaya/mobile.jpg',
+    site: 'https://gayawallet.com/',
+    projects: [
+      {
+        id: 'multichain-wallet', title: 'Multichain wallet', tag: 'REACT NATIVE / MOBILE', hook: 'Complex transactions. Clear interactions.',
+        contribution: 'Built production features covering payments, fiat on-ramp flows, chain integrations, multichain balance aggregation, and swap-routing UX, with secure on-device key management.',
+        challenge: 'Make the flow understandable while respecting the requirements of secure key handling and auditable transactions.',
+        outcome: 'Production feature work in a security-sensitive codebase with strict review.',
+        images: [
+          { src: 'assets/img/gaya/mobile.jpg', alt: 'Gaya Wallet on a phone' },
+          { src: 'assets/img/gaya/c1.jpg', alt: 'Web2.5 onboarding: sign up with email or social' },
+          { src: 'assets/img/gaya/c2.jpg', alt: 'Gaya Quest leaderboard and referrals' },
+          { src: 'assets/img/gaya/c3.jpg', alt: 'Protect your wallet with MPC security' },
+          { src: 'assets/img/gaya/staking.jpg', alt: 'Staking with multipliers' },
+          { src: 'assets/img/gaya/airdrop.jpg', alt: 'Gamified airdrops' },
+          { src: 'assets/img/gaya/security.jpg', alt: 'Bank-grade security illustration' },
+        ],
+        google: G('Gaya Wallet multichain app'),
+        links: [{ label: 'gayawallet.com', href: 'https://gayawallet.com/' }],
+      },
+    ],
+  }
   ],
 };

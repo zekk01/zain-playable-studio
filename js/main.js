@@ -1,5 +1,5 @@
 // Boot: renders every section from js/data.js, wires the 3D scenes, flipbook, gallery, and page motion.
-import { site, hero, companies, lalapoker, book, ideas, citycrafters } from './data.js';
+import { site, hero, companies, lalapoker, book, ideas, citycrafters, sideQuests } from './data.js';
 import { colors } from './colors.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -347,6 +347,27 @@ function setupNav() {
   $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => { const t = $(a.getAttribute('href')); if (t) { e.preventDefault(); scrollTo(t); history.replaceState(null, '', a.getAttribute('href')); } }));
 }
 
+/* ------------------------------------------------------------------ side quests: sister companies, compact cards */
+function renderSideQuests() {
+  const sq = sideQuests;
+  $('#side-eyebrow').textContent = sq.eyebrow;
+  $('#side-title').innerHTML = `${esc(sq.headline[0])} <span>${esc(sq.headline[1])}</span>`;
+  $('#side-note').textContent = sq.note;
+  const grid = $('#side-grid');
+  grid.innerHTML = sq.companies.map((c, ci) => c.projects.map((p, pi) => {
+    const im = p.images[0] || (c.cover ? { src: c.cover, alt: '' } : null);
+    const media = im ? `<div class="side-card__media">${pic(im, 'loading="lazy" decoding="async"')}</div>`
+      : `<div class="side-card__media side-card__media--empty"><span>${esc(c.name.slice(0, 3).toUpperCase())}</span></div>`;
+    return `<article class="side-card">${media}<div>
+      <div class="tag">${esc(c.name)} · ${esc(c.period)}</div>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.hook)} ${esc(c.role)}.</p>
+      <div class="side-card__links"><button class="text-button" type="button" data-side="${ci}:${pi}">Open the case study <span>${ico('i-ne')}</span></button>${c.site ? `<a class="ghost" href="${c.site}" target="_blank" rel="noopener">${esc(c.name)} ${ico('i-ne')}</a>` : ''}</div>
+    </div></article>`;
+  }).join('')).join('');
+  $$('[data-side]', grid).forEach((b) => b.addEventListener('click', () => { const [ci, pi] = b.dataset.side.split(':').map(Number); openProject(sq.companies[ci], sq.companies[ci].projects[pi], b); }));
+}
+
 /* ------------------------------------------------------------------ contact: one email, wired everywhere */
 function setupContact() {
   const subject = encodeURIComponent('Let’s build something');
@@ -404,6 +425,7 @@ async function boot() {
   renderPoker();
   renderBookAside();
   renderIdeas();
+  renderSideQuests();
   setupNav();
   setupContact();
   setupShimmer();

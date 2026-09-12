@@ -108,6 +108,14 @@ const check = (name, ok, extra = '') => { results.push({ name, ok, extra }); con
     const fb2 = await page.evaluate(() => (document.querySelector('#flipbook')?.textContent.match(/\d+\s*\/\s*91/) || [''])[0]);
     check(`${name}: TOC click jumps the flipbook`, fb2 && fb2 !== fb1, `${fb1} → ${fb2}`);
 
+    // side quests
+    await page.evaluate(() => document.getElementById('side-quests').scrollIntoView()); await page.waitForTimeout(800);
+    const side = await page.evaluate(() => ({ cards: document.querySelectorAll('.side-card').length, tabs: document.querySelectorAll('#company-list button').length, chapters: document.getElementById('work-chapters').textContent }));
+    check(`${name}: DR3 and Gaya live in the side-quests section, not the campaign`, side.cards === 2 && side.tabs === 6 && /06$/.test(side.chapters), JSON.stringify(side));
+    await page.click('.side-card [data-side]'); await page.waitForTimeout(500);
+    check(`${name}: side-quest card opens its case study`, await page.evaluate(() => document.getElementById('detail').open && /Wi-Fi/.test(document.getElementById('detail-title')?.textContent || '')));
+    await page.evaluate(() => document.getElementById('detail').close()); await page.waitForTimeout(300);
+
     // ideas
     await page.evaluate(() => document.getElementById('ideas').scrollIntoView()); await page.waitForTimeout(1000);
     const reels = await page.evaluate(() => document.querySelectorAll('.reel').length);

@@ -333,6 +333,24 @@ dialog::backdrop { background: #080b09cc; backdrop-filter: blur(8px); }
 .reel__play { position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; border-radius: 50%; background: #0f100fcc; display: grid; place-items: center; color: var(--ink); }
 .reel__play .ico { width: 14px; height: 14px; }
 
+/* ---------- side quests (sister companies) ---------- */
+.side-section { padding: 80px var(--gutter) 0; }
+.side-section .section-heading { margin-bottom: 18px; }
+.side-note { margin: 0 0 24px; color: var(--muted); max-width: 70ch; }
+.side-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.side-card { display: grid; grid-template-columns: 150px 1fr; gap: 20px; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 16px; background: var(--panel); transition: border-color .3s; }
+.side-card:hover { border-color: var(--line-2); }
+.side-card__media { position: relative; aspect-ratio: 4/3; border-radius: 4px; overflow: hidden; background: #191a19; }
+.side-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.side-card__media--empty { display: grid; place-items: center; background: radial-gradient(120% 80% at 20% 0%, #2a2c27, #191a19 60%); }
+.side-card__media--empty span { font: 500 34px/1 var(--display); letter-spacing: -2px; color: #3a3d37; }
+.side-card__media--empty::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(#ffffff08 1px, transparent 1px), linear-gradient(90deg, #ffffff08 1px, transparent 1px); background-size: 18px 18px; }
+.side-card h3 { font-size: 19px; letter-spacing: -.3px; margin: 6px 0 4px; }
+.side-card p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+.side-card__links { display: flex; flex-wrap: wrap; gap: 8px; }
+.side-card__links .text-button { padding: 8px 0; font-size: 13px; }
+.side-card__links a.ghost { padding: 8px 12px; font-size: 13px; }
+
 /* ---------- footer ---------- */
 .site-footer { max-width: var(--max); margin: auto; padding: 100px var(--gutter) 25px; }
 .site-footer .eyebrow { margin-bottom: 15px; }
@@ -360,6 +378,7 @@ dialog::backdrop { background: #080b09cc; backdrop-filter: blur(8px); }
   .reels-grid { grid-template-columns: repeat(3, 1fr); }
   .poker-grid { grid-template-columns: 1fr; gap: 28px; }
   .section-number { display: none; }
+  .side-grid { grid-template-columns: 1fr; }
   .city-intro { grid-template-columns: 1fr; gap: 20px; }
   .city-stage { height: 460px; }
   .city-feature { grid-template-columns: 1fr; gap: 22px; }
@@ -405,6 +424,8 @@ dialog::backdrop { background: #080b09cc; backdrop-filter: blur(8px); }
   .city-tabs button { padding: 8px 11px; font-size: 12px; } .city-tabs button span { display: none; }
   .city-feature { padding: 16px; }
   .role-card { padding: 20px; }
+  .side-section { padding-top: 56px; }
+  .side-card { grid-template-columns: 96px 1fr; gap: 14px; padding: 12px; }
   .poker-stats { grid-template-columns: repeat(3, 1fr); gap: 14px; } .poker-stats dt { font-size: 24px; }
   .reels-grid { grid-template-columns: repeat(2, 1fr); }
   .book-aside { padding: 22px; } .book-toc ol { columns: 1; }
