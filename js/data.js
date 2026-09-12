@@ -85,7 +85,7 @@ export const companies = [
         challenge: 'You play a fallen warrior left blind after a betrayal. Echo-location turns sound into spatial information: enemy movement, incoming danger and hidden paths all emerge through your senses, so stealth, movement and the rhythm of encounters have to stay readable without sight.',
         outcome: 'First playable version live on Google Play (April 2026), set in a stylized feudal Japan with a dark, futuristic edge. Three campaign chapters, story mode, shadow trials and training grounds.',
         images: [
-          { src: 'assets/img/unseenblade/02.jpg', alt: 'Unseen Blade: the swordsman on the main menu (story mode, shadow trials, training grounds)' },
+          { src: 'assets/img/unseenblade/02.jpg', alt: 'Unseen Blade: the swordsman on the main menu (story mode, shadow trials, training grounds)', pos: '50% 28%' },
           { src: 'assets/img/unseenblade/03.jpg', alt: 'Unseen Blade: sensing an enemy through echo-location' },
           { src: 'assets/img/unseenblade/05.jpg', alt: 'Unseen Blade: a strike lands' },
           { src: 'assets/img/unseenblade/04.jpg', alt: 'Unseen Blade: moving through the dark' },

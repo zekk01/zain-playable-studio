@@ -51,9 +51,10 @@ function renderCompanies() {
 }
 
 // An image with fit:'contain' (logos, posters) is shown whole over a blurred copy of itself instead of being cropped.
+// `pos` (e.g. '50% 30%') anchors the crop of a cover-fit image so its important part stays in frame.
 const pic = (im, attrs = '') => im.fit === 'contain'
   ? `<span class="media-contain"><img class="media-contain__bg" src="${im.src}" alt="" aria-hidden="true" ${attrs}><img src="${im.src}" alt="${esc(im.alt)}" ${attrs}></span>`
-  : `<img src="${im.src}" alt="${esc(im.alt)}" ${attrs}>`;
+  : `<img src="${im.src}" alt="${esc(im.alt)}" ${attrs}${im.pos ? ` style="object-position:${esc(im.pos)}"` : ''}>`;
 
 function projectCard(c, p, n) {
   const first = p.images[0];

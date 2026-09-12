@@ -163,7 +163,7 @@ dialog::backdrop { background: #080b09cc; backdrop-filter: blur(8px); }
 @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.98); } }
 .close { position: absolute; right: 12px; top: 10px; border: 0; background: #00000066; width: 40px; height: 40px; border-radius: 50%; font-size: 26px; color: var(--ink); z-index: 2; display: grid; place-items: center; line-height: 1; }
 .close:hover { background: #00000099; }
-.detail-hero { position: relative; display: block; width: 100%; height: 320px; background: #191a19; overflow: hidden; cursor: zoom-in; border: 0; padding: 0; margin: 0; }
+.detail-hero { position: relative; display: block; width: 100%; height: 380px; background: #191a19; overflow: hidden; cursor: zoom-in; border: 0; padding: 0; margin: 0; }
 .detail-hero img { width: 100%; height: 100%; object-fit: cover; }
 /* whole-image treatment for logos/posters: blurred copy behind, contained image in front */
 .media-contain { position: absolute; inset: 0; display: block; overflow: hidden; }
