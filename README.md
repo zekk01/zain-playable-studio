@@ -25,7 +25,7 @@ The site is fully static. Everything except `node_modules/` and `dev/shots/` can
 | `index.html` | The page: hero, career campaign, City Crafters spotlight, Lala Poker, the book, beyond the build, footer |
 | `technical.html` | **Under the hood**: technical breakdowns of six systems (Pit Protocol, Unseen Blade, Target Destroyed, Lala Poker, the Swave holographic pipeline, AbjadPolis) with hand-drawn SVG figures and code sketches. Content is authored directly in this file; `css/technical.css` and `js/technical.js` belong to it. Linked from the nav, the hero, studio marker 06, the project dialogs (`tech` field in `js/data.js`) and the footer |
 | `js/data.js` | **All content lives here.** Companies, projects, images, links, book, reels, the City Crafters spotlight, and the side quests (DR3 and Gaya Wallet, sister companies shown at the end). Edit this to change the site. |
-| `js/scene.js` | Three.js studio scene (hero) and the poker card scene |
+| `js/scene.js` | Three.js studio scene (hero: desk, lab bay with a holographic world-builder, sofa with the City Crafters miniature, book, poker table) and the poker card scene |
 | `js/cityscene.js` | Three.js turntable of four City Crafters dioramas (pit lane, hologram tower, blind blade, jet) |
 | `js/book.js` | Right-to-left 3D flipbook for the Arabic book |
 | `js/gallery.js` | Image lightbox |
@@ -54,6 +54,8 @@ npm run check        # every asset referenced by data.js and index.html exists
 node dev/e2e.js      # Playwright integration suite across 1440 / 768 / 400 widths
 node dev/test-technical.js   # technical.html: structure, figures, legibility, rail, no overflow, no errors
 node dev/tech-shots.js 1440  # element screenshots of every figure for visual review (dev/shots/tech-*)
+node dev/lab-shots.js        # hero studio screenshots at three widths with triangle / draw-call / fps stats (dev/shots/lab-*)
+node dev/fps-probe.js        # software-GL fps probe for the hero scene, for A/B comparisons while editing js/scene.js
 ```
 
 The suite uses the globally installed Playwright with Microsoft Edge (`channel: 'msedge'`). Module harnesses for the scene, flipbook, and lightbox live in `dev/harness-*.html` with their own test scripts in `dev/test-*.js`. Screenshots land in `dev/shots/`.

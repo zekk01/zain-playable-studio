@@ -16,7 +16,7 @@ export function initStudioScene({ canvas, labelLayer, hotspots, reducedMotion })
 // canvas: <canvas> already in DOM, fills its parent (position:absolute; inset:0).
 // labelLayer: a <div> (position:absolute; inset:0; pointer-events:none) where the module places hotspot DOM labels.
 // hotspots: [{ id, number:'01', label:'The workbench', target:'#work' }] — module decides 3D anchor points for each id:
-//   'work' → desk/monitors, 'book' → floating book, 'ideas' → bookshelf/lamp, 'lalapoker' → poker chips + cards on the side table.
+//   'work' → desk/monitors, 'book' → floating book, 'ideas' → the hologram over the lab's holotable, 'lalapoker' → poker chips + cards on the side table.
 //   For each hotspot create: <button class="hotspot" data-target="#work"><span class="hotspot__dot">01</span><b class="hotspot__label">The workbench <i>↗</i></b></button>
 //   with pointer-events:auto, positioned every frame by projecting the 3D anchor to screen space (CSS transform translate).
 //   On click: document.querySelector(target)?.scrollIntoView({behavior:'smooth'}).

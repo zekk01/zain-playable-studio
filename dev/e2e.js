@@ -27,6 +27,8 @@ const check = (name, ok, extra = '') => { results.push({ name, ok, extra }); con
       return { canvasHidden: c.hidden, fallbackShown: !fb.hidden, labels, sceneCtrl: !!(window.__portfolio && window.__portfolio.scene) };
     });
     check(`${name}: 3D studio scene initialised (not fallback)`, hero.sceneCtrl && !hero.fallbackShown, JSON.stringify({ fallback: hero.fallbackShown }));
+    const sceneStats = await page.evaluate(() => window.__portfolio.scene?.stats?.() || null);
+    check(`${name}: studio scene within budget (≤ 60k triangles, ≤ 400 draw calls)`, !!sceneStats && sceneStats.triangles > 0 && sceneStats.triangles <= 60000 && sceneStats.calls <= 400, JSON.stringify(sceneStats && { triangles: sceneStats.triangles, calls: sceneStats.calls }));
     check(`${name}: 6 hotspot labels rendered`, hero.labels.length === 6, JSON.stringify(hero.labels.map((l) => l.t)));
     check(`${name}: studio page links to Under the hood (nav + hero)`, await page.evaluate(() => !!document.querySelector('.site-nav a[href="technical.html"]') && !!document.querySelector('.intro-actions a[href="technical.html"]')));
     const inView = hero.labels.filter((l) => l.x >= 0 && l.x + l.w <= vp.width && l.y >= 0 && l.y <= vp.height).length;
@@ -46,7 +48,9 @@ const check = (name, ok, extra = '') => { results.push({ name, ok, extra }); con
     // fps of hero scene
     const fps = await page.evaluate(() => new Promise((res) => { let n = 0; const t0 = performance.now(); const tick = () => { n++; if (performance.now() - t0 < 2000) requestAnimationFrame(tick); else res(Math.round(n / 2)); }; requestAnimationFrame(tick); }));
     // Headless runs use SwiftShader (software GL), so this is a jank smoke floor, not a performance target; real GPUs run at vsync.
-    check(`${name}: page runs ≥ 15 fps with the scene visible (software GL floor)`, fps >= 15, `${fps} fps`);
+    // The studio fills a larger canvas since the lab bay (2026-09), which costs fill rate in software rendering; the triangle and
+    // draw-call budgets above are the real guard for weak GPUs.
+    check(`${name}: page runs ≥ 10 fps with the scene visible (software GL floor)`, fps >= 10, `${fps} fps`);
 
     // career: tabs + dialog + gallery
     await page.click('#company-list button:nth-child(2)'); await page.waitForTimeout(500);

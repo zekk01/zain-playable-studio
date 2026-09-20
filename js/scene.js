@@ -13,14 +13,15 @@
  * `initStudioScene({ canvas, labelLayer, hotspots, reducedMotion })`
  *   A low-poly isometric game-designer studio built entirely from primitives with procedural
  *   CanvasTextures (no external assets): open corner room, desk with three glowing monitors
- *   (scrolling code + a tiny game view), chair, bookshelf, breathing lamp, floating open book,
+ *   (scrolling code + a tiny game view), chair, a lab bay (bench, robotic arm, reactor ring, holotable
+ *   building a holographic world), breathing lamp, floating open book,
  *   side table with poker chips and cards, framed art, plants, VR headset, racing wheel, sofa,
  *   drifting dust. Hotspot DOM labels are created inside `labelLayer` and projected to screen
  *   space every frame:
  *     <button class="hotspot" data-target="#work">
  *       <span class="hotspot__dot">01</span><b class="hotspot__label">The workbench <i>↗</i></b>
  *     </button>
- *   Anchors: 'work' → above the monitors, 'book' → the floating book, 'ideas' → bookshelf top,
+ *   Anchors: 'work' → above the monitors, 'book' → the floating book, 'ideas' → above the hologram,
  *   'lalapoker' → the chips. Labels are hidden (opacity 0) while their anchor is behind the
  *   camera or outside the canvas. Clicking a label smooth-scrolls to `data-target`.
  *   Each button also carries `aria-label="01 The workbench"` so its accessible name does not
@@ -213,7 +214,7 @@ function createRig({ canvas, reducedMotion, shadows }) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
-  if (shadows) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; }
+  if (shadows) { renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap; }
   const restoreSiblings = suppressHiddenSiblings(canvas);
 
   const scene = new THREE.Scene();
@@ -246,7 +247,8 @@ function createRig({ canvas, reducedMotion, shadows }) {
   function tick() {
     raf = 0;
     if (!running()) return;
-    const dt = Math.min(clock.getDelta(), 1 / 20);
+    const rawDt = clock.getDelta();
+    const dt = Math.min(rawDt, 1 / 20);   // animation never jumps more than 50 ms, but the fps meter below counts real time
     rig.time += dt;
     tweens.update(dt);
     // pointer parallax lerp (0.06 per frame @60fps)
@@ -255,7 +257,7 @@ function createRig({ canvas, reducedMotion, shadows }) {
     pointer.y += (pointer.ty - pointer.y) * k;
     rig.onFrame?.(dt, rig.time);
     renderer.render(scene, camera);
-    fpsMeter.frames++; fpsMeter.t += dt;
+    fpsMeter.frames++; fpsMeter.t += rawDt;
     if (fpsMeter.t >= 1) { fpsMeter.fps = fpsMeter.frames / fpsMeter.t; fpsMeter.frames = 0; fpsMeter.t = 0; }
     raf = requestAnimationFrame(tick);
   }
@@ -553,6 +555,54 @@ function screenGraphTexture() {
   const state = { t: 0, acc: 0, nodes, edges };
   const tex = canvasTexture(256, 160, drawGraph, { state, mipmaps: false });
   tex.userData.tick = (dt) => { state.t += dt; state.acc += dt; if (state.acc < 0.08) return false; state.acc = 0; tex.userData.redraw(); return true; };
+  return tex;
+}
+
+/* ---- lab: holographic readout panels (teal line art on a transparent canvas; `tick` animates them) ---- */
+function holoPanelTexture(kind, seed = 3) {
+  const r = rng(seed);
+  const state = { t: 0, acc: 0, bars: Array.from({ length: 8 }, () => 0.3 + r() * 0.7), heights: Array.from({ length: 40 }, (_, i) => 0.35 + 0.3 * Math.sin(i * 0.5) + 0.15 * Math.sin(i * 1.7 + 1)) };
+  const draw = (ctx, w, h, s) => {
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = rgba(HEX.teal, 0.9); ctx.lineWidth = 2; roundRect(ctx, 2, 2, w - 4, h - 4, 6); ctx.stroke();
+    ctx.fillStyle = rgba(HEX.teal, 0.12); ctx.fillRect(2, 2, w - 4, 22);
+    ctx.font = `600 13px ${FONT_DISPLAY}`; ctx.fillStyle = HEX.teal; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.fillText(kind === 'terrain' ? 'WORLD · ELEVATION' : 'WORLD · TILES', 12, 13);
+    ctx.textAlign = 'right'; ctx.fillStyle = HEX.accent;
+    ctx.fillText(kind === 'terrain' ? `SEED ${20260910 + Math.floor(s.t)}` : `${Math.round(55 + 30 * Math.sin(s.t * 0.7))}%`, w - 12, 13);
+    ctx.textAlign = 'left';
+    ctx.strokeStyle = rgba(HEX.teal, 0.14); ctx.lineWidth = 1;
+    for (let x = 12; x < w; x += 24) { ctx.beginPath(); ctx.moveTo(x, 30); ctx.lineTo(x, h - 8); ctx.stroke(); }
+    for (let y = 30; y < h; y += 24) { ctx.beginPath(); ctx.moveTo(6, y); ctx.lineTo(w - 6, y); ctx.stroke(); }
+    if (kind === 'terrain') {
+      // a scrolling elevation profile with a filled area and a sweeping cursor
+      const off = Math.floor(s.t * 6);
+      ctx.beginPath(); ctx.moveTo(10, h - 12);
+      for (let i = 0; i < 40; i++) ctx.lineTo(10 + (i / 39) * (w - 20), h - 12 - s.heights[(i + off) % 40] * (h - 60));
+      ctx.lineTo(w - 10, h - 12); ctx.closePath();
+      ctx.fillStyle = rgba(HEX.teal, 0.22); ctx.fill();
+      ctx.strokeStyle = HEX.teal; ctx.lineWidth = 2; ctx.stroke();
+      const mx = 10 + ((s.t * 0.15) % 1) * (w - 20);
+      ctx.strokeStyle = rgba(HEX.accent, 0.9); ctx.beginPath(); ctx.moveTo(mx, 30); ctx.lineTo(mx, h - 10); ctx.stroke();
+    } else {
+      // hex tiles, a few lit in turn, and a row of bars
+      const R = 13;
+      for (let row = 0; row < 4; row++) for (let col = 0; col < 7; col++) {
+        const cx = 24 + col * R * 1.8 + (row % 2) * R * 0.9, cy = 44 + row * R * 1.6;
+        const lit = ((row * 7 + col * 3 + Math.floor(s.t * 1.5)) % 9) === 0;
+        ctx.beginPath();
+        for (let k = 0; k < 6; k++) { const a = (k / 6) * Math.PI * 2 + Math.PI / 6; const px = cx + Math.cos(a) * R, py = cy + Math.sin(a) * R; if (k) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+        ctx.closePath();
+        ctx.fillStyle = lit ? rgba(HEX.accent, 0.75) : rgba(HEX.teal, 0.14); ctx.fill();
+        ctx.strokeStyle = rgba(HEX.teal, 0.7); ctx.lineWidth = 1; ctx.stroke();
+      }
+      for (let i = 0; i < 8; i++) { const bh = s.bars[i] * 22 * (0.7 + 0.3 * Math.sin(s.t * 2 + i)); ctx.fillStyle = rgba(i % 3 === 1 ? HEX.accent : HEX.teal, 0.8); ctx.fillRect(14 + i * 28, h - 12 - bh, 18, bh); }
+    }
+    const sy = 26 + ((s.t * 0.35) % 1) * (h - 32);
+    ctx.fillStyle = rgba(HEX.teal, 0.18); ctx.fillRect(4, sy, w - 8, 3);
+  };
+  const tex = canvasTexture(256, 160, draw, { state, mipmaps: false, usesText: true });
+  tex.userData.tick = (dt) => { state.t += dt; state.acc += dt; if (state.acc < 0.125) return false; state.acc = 0; tex.userData.redraw(); return true; };
   return tex;
 }
 
@@ -958,6 +1008,20 @@ function buildStudio(rig) {
     led: new THREE.MeshStandardMaterial({ color: 0x000000, emissive: C.accent, emissiveIntensity: 2.2, roughness: 1 }),
     ledTeal: new THREE.MeshStandardMaterial({ color: 0x000000, emissive: C.teal, emissiveIntensity: 1.6, roughness: 1 }),
     bulb: new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffd08a, emissiveIntensity: 3, roughness: 1 }),
+    // lab bay: brushed metal, glass, and additive "light" materials for the hologram
+    metal: std(0x2b2e30, { roughness: 0.42, metalness: 0.75 }),
+    metal2: std(0x474b4e, { roughness: 0.5, metalness: 0.6 }),
+    glass: new THREE.MeshStandardMaterial({ color: C.teal, transparent: true, opacity: 0.22, roughness: 0.15, metalness: 0.1, emissive: 0x0f4b49, emissiveIntensity: 0.8, depthWrite: false }),
+    holoCone: new THREE.MeshBasicMaterial({ color: C.teal, transparent: true, opacity: 0.07, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }),
+    holoWire: new THREE.MeshBasicMaterial({ color: C.teal, wireframe: true, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoCore: new THREE.MeshBasicMaterial({ color: 0x0d4744, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoLine: new THREE.MeshBasicMaterial({ color: C.teal, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoAmberLine: new THREE.MeshBasicMaterial({ color: C.accent, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoAmber: new THREE.MeshBasicMaterial({ color: C.accent, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoRock: new THREE.MeshBasicMaterial({ color: 0x1d7f7a, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoWater: new THREE.MeshBasicMaterial({ color: 0x2ea8c9, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoLand: new THREE.MeshBasicMaterial({ color: C.accent, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }),
+    holoPeak: new THREE.MeshBasicMaterial({ color: 0xf2f1ec, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }),
   };
   const bookMats = BOOK_COLORS.map((c) => std(new THREE.Color(c), { roughness: 0.8 }));
 
@@ -983,12 +1047,12 @@ function buildStudio(rig) {
   const anchor = (id, parent, x, y, z) => { const o = new THREE.Object3D(); o.position.set(x, y, z); parent.add(o); anchors[id] = o; return o; };
   const textTextures = [];
 
-  /* ---- room (floor x −5.0…4.8, z −5.0…3.7: the empty front strip is trimmed so the furniture fills the frame) ---- */
+  /* ---- room (floor x −6.0…4.8, z −5.0…3.7: a metre was added on the left for the lab bay; the empty front strip is trimmed) ---- */
   const room = group(0, 0, 0, 0, { rise: 1.4, scale: false });
-  const floor = box(room, M.floor, 9.8, 0.35, 8.7, -0.1, -0.35, -0.65, { cast: false }); floor.receiveShadow = true;
-  box(room, M.slab, 10.2, 0.12, 9.1, -0.1, -0.47, -0.65, { cast: false });
-  const wallB = box(room, M.wallBack, 10.0, 4.4, 0.3, -0.2, 0, -5.05, { cast: false }); wallB.receiveShadow = true;
-  const wallL = box(room, M.wallLeft, 0.3, 4.4, 8.9, -5.05, 0, -0.75, { cast: false }); wallL.receiveShadow = true;
+  const floor = box(room, M.floor, 10.8, 0.35, 8.7, -0.6, -0.35, -0.65, { cast: false }); floor.receiveShadow = true;
+  box(room, M.slab, 11.2, 0.12, 9.1, -0.6, -0.47, -0.65, { cast: false });
+  const wallB = box(room, M.wallBack, 11.0, 4.4, 0.3, -0.7, 0, -5.05, { cast: false }); wallB.receiveShadow = true;
+  const wallL = box(room, M.wallLeft, 0.3, 4.4, 8.9, -6.05, 0, -0.75, { cast: false }); wallL.receiveShadow = true;
   const rug = box(room, M.rug, 5.2, 0.03, 3.8, 0.4, 0, -0.2, { cast: false }); rug.receiveShadow = true;
   // wood slat feature panel on the back wall (right side) with a warm strip behind it
   for (let i = 0; i < 7; i++) box(room, M.woodDark, 0.09, 3.6, 0.08, 3.55 + i * 0.17, 0.3, -4.86, { cast: false });
@@ -1008,8 +1072,8 @@ function buildStudio(rig) {
   frame(room, -1.45, 3.35, -4.9, 1.05, 0.78, 'island', 0, 0.5);
   frame(room, 0.3, 3.4, -4.9, 1.35, 0.98, 'sunset', 0, 0.55);
   frame(room, 2.05, 3.35, -4.9, 1.05, 0.78, 'planet', 0, 0.6);
-  frame(room, -4.9, 3.0, 1.0, 0.8, 1.05, 'peaks', Math.PI / 2, 0.55);
-  frame(room, -4.9, 2.75, 2.75, 1.25, 0.85, 'sunset', Math.PI / 2, 0.6);
+  frame(room, -5.9, 3.0, 1.0, 0.8, 1.05, 'peaks', Math.PI / 2, 0.55);
+  frame(room, -5.9, 2.75, 2.75, 1.25, 0.85, 'sunset', Math.PI / 2, 0.6);
 
   /* ---- desk ---- */
   const desk = group(0.3, 0, -3.65, 0.12);
@@ -1073,45 +1137,101 @@ function buildStudio(rig) {
   box(chair, M.accent, 0.5, 0.06, 0.03, 0, 0.9, 0.325, { cast: false });
   for (const ax of [-0.33, 0.33]) box(chair, M.charcoal, 0.06, 0.05, 0.36, ax, 0.72, 0.05);
 
-  /* ---- bookshelf ---- */
-  const shelf = group(-4.67, 0, -1.4, 0.2);
-  const SW = 2.0, SD = 0.42, SH = 3.5;
-  box(shelf, M.woodDark, SD, SH, 0.05, 0, 0, -SW / 2 + 0.025);
-  box(shelf, M.woodDark, SD, SH, 0.05, 0, 0, SW / 2 - 0.025);
-  box(shelf, M.woodDark, 0.03, SH, SW, -SD / 2 + 0.015, 0, 0, { cast: false });
-  const boards = [0.06, 0.92, 1.78, 2.64, SH - 0.05];
-  for (const by of boards) { box(shelf, M.wood, SD, 0.05, SW, 0, by, 0); }
-  for (const by of boards.slice(1)) box(shelf, M.led, 0.02, 0.02, SW - 0.2, SD / 2 - 0.05, by - 0.02, 0, { cast: false });
-  let fig = 0;
-  for (let si = 0; si < 4; si++) {
-    const by = boards[si] + 0.05;
-    let z = -SW / 2 + 0.12;
-    const lean = si === 1 ? 0.2 : 0;
-    while (z < SW / 2 - 0.14) {
-      const p = r();
-      if (p < 0.12 && z < SW / 2 - 0.45) { // horizontal stack
-        for (let k = 0; k < 3; k++) box(shelf, bookMats[Math.floor(r() * bookMats.length)], 0.28 - k * 0.02, 0.05, 0.22, 0.02, by + k * 0.05, z + 0.11);
-        z += 0.3;
-      } else if (p < 0.24 && fig < 3) { // figurine / plant
-        fig++;
-        if (fig === 2) { cyl(shelf, M.pot, 0.07, 0.12, 0, by, z + 0.08, 12); sphere(shelf, M.green2, 0.11, 0, by + 0.2, z + 0.08, 0.8); }
-        else { cyl(shelf, M.brass, 0.06, 0.03, 0, by, z + 0.07, 12); cyl(shelf, fig === 1 ? M.ink : M.accent, 0.05, 0.22, 0, by + 0.03, z + 0.07, 8, 0.03); sphere(shelf, fig === 1 ? M.ink : M.accent, 0.045, 0, by + 0.3, z + 0.07); }
-        z += 0.26;
-      } else if (p < 0.34) { z += 0.12; } // gap
-      else {
-        const bw = 0.05 + r() * 0.06, bh = 0.24 + r() * 0.16;
-        const b = box(shelf, bookMats[Math.floor(r() * bookMats.length)], 0.3 - r() * 0.06, bh, bw, 0.02, by, z + bw / 2);
-        if (lean && r() < 0.15) b.rotation.x = 0.12;
-        z += bw + 0.008;
-      }
+  /* ---- lab + workshop (left wall): bench with a robotic arm, readouts, a reactor ring, and a holotable building a world ---- */
+  const lab = group(-5.9, 0, -2.3, 0.2);
+  // bench: dark metal top on two cabinets, teal under-glow, pegboard behind it
+  box(lab, M.metal, 0.8, 0.07, 2.9, 0.46, 1.15, -0.9);
+  box(lab, M.charcoal, 0.72, 1.12, 1.1, 0.42, 0, -1.75);
+  box(lab, M.charcoal, 0.72, 1.12, 1.1, 0.42, 0, -0.05);
+  for (const bz of [-1.75, -0.05]) for (const by of [0.28, 0.62, 0.96]) box(lab, M.muted, 0.02, 0.02, 0.4, 0.79, by, bz, { cast: false });
+  box(lab, M.ledTeal, 0.02, 0.02, 2.8, 0.85, 1.13, -0.9, { cast: false });
+  box(lab, M.charcoal2, 0.04, 0.8, 2.9, 0.05, 1.25, -0.9, { cast: false });
+  for (let i = 0; i < 9; i++) for (let j = 0; j < 3; j++) box(lab, M.black, 0.02, 0.03, 0.03, 0.075, 1.35 + j * 0.25, -2.2 + i * 0.32, { cast: false });
+  // hanging tools: two wrenches, a driver, a coil of cable
+  box(lab, M.metal2, 0.03, 0.42, 0.06, 0.09, 1.42, -2.05); box(lab, M.metal2, 0.03, 0.09, 0.14, 0.09, 1.82, -2.05);
+  box(lab, M.metal2, 0.03, 0.34, 0.05, 0.09, 1.46, -1.78); box(lab, M.metal2, 0.03, 0.08, 0.12, 0.09, 1.78, -1.78);
+  cyl(lab, M.accent, 0.02, 0.3, 0.09, 1.42, -1.52, 8); cyl(lab, M.metal2, 0.008, 0.16, 0.09, 1.72, -1.52, 6);
+  const coil = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.022, 6, 16), M.tealCloth); coil.position.set(0.1, 1.68, -0.5); coil.rotation.y = Math.PI / 2; coil.castShadow = true; lab.add(coil);
+  // on the bench: vice, soldering station, parts tray, a workpiece (small drone chassis) and a tablet
+  box(lab, M.metal2, 0.18, 0.1, 0.16, 0.5, 1.22, 0.3); box(lab, M.metal2, 0.06, 0.16, 0.2, 0.4, 1.22, 0.3); box(lab, M.metal2, 0.06, 0.16, 0.2, 0.6, 1.22, 0.3);
+  cyl(lab, M.metal2, 0.022, 0.03, 0.62, 1.29, 0.3, 8); box(lab, M.metal2, 0.16, 0.012, 0.012, 0.62, 1.3, 0.3);
+  cyl(lab, M.charcoal2, 0.07, 0.04, 0.3, 1.22, -0.55, 12); cyl(lab, M.metal2, 0.012, 0.22, 0.3, 1.26, -0.55, 6); box(lab, M.led, 0.03, 0.02, 0.03, 0.3, 1.48, -0.55, { cast: false });
+  box(lab, M.charcoal2, 0.28, 0.03, 0.2, 0.62, 1.22, -0.2, { cast: false });
+  for (let i = 0; i < 8; i++) cyl(lab, i % 3 ? M.metal2 : M.brass, 0.014, 0.05, 0.52 + (i % 4) * 0.06, 1.25, -0.26 + Math.floor(i / 4) * 0.1, 6);
+  box(lab, M.charcoal2, 0.16, 0.05, 0.16, 0.48, 1.22, -0.95); for (const [ax, az] of [[-0.11, -0.11], [0.11, -0.11], [-0.11, 0.11], [0.11, 0.11]]) { box(lab, M.metal2, 0.14, 0.015, 0.02, 0.48 + ax, 1.25, -0.95 + az, { ry: ax * az > 0 ? 0.785 : -0.785 }); cyl(lab, M.ledTeal, 0.012, 0.01, 0.48 + ax * 1.5, 1.265, -0.95 + az * 1.5, 8); }
+  const tabTex = holoPanelTexture('hex', 11); textTextures.push(tabTex);
+  const tablet = new THREE.Mesh(G.plane, new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: tabTex, emissiveIntensity: 1.2, roughness: 0.6 }));
+  tablet.scale.set(0.34, 0.22, 1); tablet.position.set(0.5, 1.232, -1.4); tablet.rotation.order = 'YXZ'; tablet.rotation.set(-Math.PI / 2, 0.22, 0); tablet.castShadow = false; lab.add(tablet);
+  // readout screens above the bench
+  const readouts = [screenGraphTexture(), holoPanelTexture('terrain', 5), screenCodeTexture(21)];
+  readouts.forEach((tex, i) => {
+    const mat = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 1.3, roughness: 0.8 });
+    const m = new THREE.Mesh(G.plane, mat); m.scale.set(0.56, 0.34, 1); m.position.set(0.075, 2.3, -2.05 + i * 0.66); m.rotation.y = Math.PI / 2; m.castShadow = false; lab.add(m);
+    box(lab, M.black, 0.02, 0.4, 0.62, 0.06, 2.1, -2.05 + i * 0.66, { cast: false });
+    screens.push({ mat, tex, phase: r() * 10 });
+  });
+  // reactor ring on the wall: teal outer ring, amber inner ring, warm core, twelve ticks
+  const reactor = new THREE.Group(); reactor.position.set(0.08, 3.1, -1.4); reactor.rotation.y = Math.PI / 2; lab.add(reactor);
+  reactor.add(new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.04, 8, 28), M.ledTeal));
+  reactor.add(new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.018, 6, 24), M.led));
+  const core = new THREE.Mesh(G.cyl(0.13, 0.05, 24), M.bulb); core.rotation.x = Math.PI / 2; reactor.add(core);
+  for (let i = 0; i < 12; i++) { const tick = new THREE.Mesh(G.box, M.metal2); tick.scale.set(0.03, 0.09, 0.03); const a = (i / 12) * Math.PI * 2; tick.position.set(Math.cos(a) * 0.44, Math.sin(a) * 0.44, 0); tick.rotation.z = a - Math.PI / 2; reactor.add(tick); }
+  // robotic arm: base on the bench, shoulder → elbow → wrist groups animated per frame, weld spark at the tip
+  cyl(lab, M.metal2, 0.17, 0.06, 0.5, 1.22, -1.95, 20); cyl(lab, M.metal, 0.1, 0.12, 0.5, 1.28, -1.95, 16);
+  const shoulder = new THREE.Group(); shoulder.position.set(0.5, 1.4, -1.95); lab.add(shoulder);
+  sphere(shoulder, M.metal2, 0.11, 0, 0, 0);
+  box(shoulder, M.metal, 0.11, 0.11, 0.7, 0, -0.055, 0.35);
+  box(shoulder, M.ledTeal, 0.02, 0.02, 0.5, 0.062, -0.01, 0.35, { cast: false });
+  const elbow = new THREE.Group(); elbow.position.set(0, 0, 0.7); shoulder.add(elbow);
+  sphere(elbow, M.metal2, 0.085, 0, 0, 0);
+  box(elbow, M.metal, 0.09, 0.09, 0.55, 0, -0.045, 0.275);
+  const wrist = new THREE.Group(); wrist.position.set(0, 0, 0.55); elbow.add(wrist);
+  sphere(wrist, M.metal2, 0.06, 0, 0, 0);
+  box(wrist, M.charcoal, 0.06, 0.06, 0.18, 0, -0.03, 0.09);
+  const tipRing = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 6, 14), M.ledTeal); tipRing.position.set(0, 0, 0.13); wrist.add(tipRing);
+  const spark = new THREE.Mesh(G.sphere, M.bulb); spark.scale.setScalar(0.001); spark.position.set(0, 0, 0.21); spark.castShadow = false; spark.userData.noMerge = true; wrist.add(spark);
+  // holotable: charcoal pedestal, teal ring, glass top, amber emitters
+  const holoBase = new THREE.Group(); holoBase.position.set(1.5, 0, 1.55); lab.add(holoBase);
+  cyl(holoBase, M.charcoal, 0.6, 0.12, 0, 0, 0, 28, 0.66);
+  cyl(holoBase, M.charcoal2, 0.42, 0.7, 0, 0.12, 0, 24, 0.5);
+  cyl(holoBase, M.metal, 0.56, 0.1, 0, 0.82, 0, 28, 0.5);
+  const tableRing = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.02, 6, 32), M.ledTeal); tableRing.position.y = 0.9; tableRing.rotation.x = Math.PI / 2; holoBase.add(tableRing);
+  const glassTop = new THREE.Mesh(G.cyl(0.5, 0.03, 32), M.glass); glassTop.position.y = 0.935; glassTop.castShadow = false; holoBase.add(glassTop);
+  for (let i = 0; i < 4; i++) { const a = (i / 4) * Math.PI * 2 + 0.4; box(holoBase, M.led, 0.04, 0.5, 0.04, Math.cos(a) * 0.46, 0.2, Math.sin(a) * 0.46, { cast: false }); }
+  // the hologram: projection cone, an island that assembles itself tile by tile, a wireframe planet with two orbits, two readout panels
+  const holo = new THREE.Group(); holo.position.set(1.5, 0.95, 1.55); holo.userData.noMerge = true; lab.add(holo);
+  const cone = new THREE.Mesh(G.cyl(0.14, 0.5, 32, 0.48), M.holoCone); cone.position.y = 0.25; cone.castShadow = false; holo.add(cone);
+  const island = new THREE.Group(); island.position.y = 0.42; holo.add(island);
+  const cubeSpecs = { rock: [], water: [], land: [], peak: [] };
+  for (let i = -4; i <= 4; i++) for (let j = -4; j <= 4; j++) {
+    const d = Math.hypot(i, j); if (d > 4.3) continue;
+    const n = 0.5 + 0.5 * Math.sin(i * 0.9 + 1.3) * Math.cos(j * 0.8 - 0.4) - d * 0.06;
+    const h = n > 0.62 ? 3 : n > 0.3 ? 2 : 1;
+    for (let k = 0; k < h; k++) {
+      const kind = k < h - 1 ? 'rock' : h === 1 ? 'water' : h === 2 ? 'land' : 'peak';
+      cubeSpecs[kind].push({ x: i * 0.1, y: k * 0.1, z: j * 0.1, at: (d / 4.3) * 0.28 + k * 0.03 + r() * 0.04 });
     }
   }
-  // bonsai on top + a tall figurine
-  cyl(shelf, M.pot, 0.15, 0.14, 0, SH, 0.45, 14, 0.12);
-  cyl(shelf, M.woodDark, 0.025, 0.28, 0.02, SH + 0.14, 0.45, 6);
-  sphere(shelf, M.green, 0.22, 0.05, SH + 0.5, 0.42, 0.55); sphere(shelf, M.green2, 0.15, -0.08, SH + 0.62, 0.55, 0.6); sphere(shelf, M.green3, 0.12, 0.12, SH + 0.36, 0.62, 0.7);
-  cyl(shelf, M.brass, 0.08, 0.04, 0, SH, -0.5, 14); cyl(shelf, M.tealCloth, 0.06, 0.3, 0, SH + 0.04, -0.5, 8, 0.04); sphere(shelf, M.tealCloth, 0.06, 0, SH + 0.4, -0.5);
-  anchor('ideas', shelf, 0.35, SH + 0.55, 0.05);
+  const islandMeshes = Object.entries(cubeSpecs).map(([kind, specs]) => {
+    const mat = { rock: M.holoRock, water: M.holoWater, land: M.holoLand, peak: M.holoPeak }[kind];
+    const im = new THREE.InstancedMesh(G.box, mat, specs.length); im.castShadow = false; im.receiveShadow = false; im.frustumCulled = false; island.add(im);
+    return { im, specs };
+  });
+  const islandDummy = new THREE.Object3D();
+  const globe = new THREE.Mesh(new THREE.IcosahedronGeometry(0.4, 2), M.holoWire); globe.position.y = 1.55; globe.castShadow = false; holo.add(globe);
+  const globeCore = new THREE.Mesh(new THREE.IcosahedronGeometry(0.36, 1), M.holoCore); globeCore.position.y = 1.55; globeCore.castShadow = false; holo.add(globeCore);
+  const orbit1 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.008, 5, 48), M.holoLine); orbit1.position.y = 1.55; orbit1.rotation.x = Math.PI / 2 - 0.35; orbit1.castShadow = false; holo.add(orbit1);
+  const orbit2 = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.006, 5, 48), M.holoAmberLine); orbit2.position.y = 1.55; orbit2.rotation.set(Math.PI / 2 + 0.5, 0.6, 0); orbit2.castShadow = false; holo.add(orbit2);
+  const moon = new THREE.Mesh(G.sphere, M.holoAmber); moon.scale.setScalar(0.035); moon.position.set(0.74, 0, 0); moon.castShadow = false; orbit2.add(moon);
+  const panelTexA = holoPanelTexture('terrain', 3), panelTexB = holoPanelTexture('hex', 7); textTextures.push(panelTexA, panelTexB);
+  const panels = [];
+  for (const [tex, pz, ry] of [[panelTexA, -0.86, 0.3], [panelTexB, 0.86, 0.7]]) {
+    const m = new THREE.Mesh(G.plane, new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
+    m.scale.set(0.62, 0.4, 1); m.position.set(0.15, 1.05, pz); m.rotation.y = Math.PI / 2 - ry; m.castShadow = false; holo.add(m);
+    panels.push({ m, tex, base: 1.05 });
+  }
+  const holoLight = new THREE.PointLight(C.teal, 4.2, 5.5, 2); holoLight.position.set(1.5, 2.0, 1.55); lab.add(holoLight);
+  anchor('ideas', lab, 1.5, 3.45, 1.55);
 
   /* ---- sofa + coffee table ---- */
   const sofa = group(0.55, 0, 2.15, 0.26);
@@ -1208,7 +1328,7 @@ function buildStudio(rig) {
   book.rotation.y = 0.35;
 
   /* ---- plants ---- */
-  const plant1 = group(-3.85, 0, 2.7, 0.5);
+  const plant1 = group(-4.55, 0, 2.95, 0.5);
   cyl(plant1, M.pot, 0.3, 0.55, 0, 0, 0, 16, 0.22); cyl(plant1, M.soil, 0.27, 0.03, 0, 0.53, 0, 16);
   for (let i = 0; i < 7; i++) {
     const a = (i / 7) * Math.PI * 2;
@@ -1222,7 +1342,7 @@ function buildStudio(rig) {
   cyl(desk, M.pot, 0.09, 0.14, 2.05, 1.41, 0.35, 12); sphere(desk, M.green2, 0.13, 2.05, 1.65, 0.35, 0.85);
 
   /* ---- racing wheel rig ---- */
-  const rigW = group(-3.95, 0, 1.15, 0.48);
+  const rigW = group(-4.75, 0, 1.45, 0.48);
   box(rigW, M.charcoal, 0.75, 0.74, 0.55, 0, 0, 0);
   box(rigW, M.led, 0.7, 0.02, 0.02, 0, 0.72, 0.28, { cast: false });
   box(rigW, M.black, 0.12, 0.22, 0.14, 0, 0.74, 0.02);
@@ -1241,7 +1361,7 @@ function buildStudio(rig) {
   const dust = new THREE.Points(dustGeo, dustMat); scene.add(dust);
 
   /* ---- lights ---- */
-  scene.add(new THREE.HemisphereLight(0x4f6266, 0x4a3524, 2.0));
+  scene.add(new THREE.HemisphereLight(0x4f6266, 0x4a3524, 2.5));
   const key = new THREE.DirectionalLight(0xffd6ae, 3.6); key.position.set(6, 9, 5); key.target.position.set(0, 1, -1); scene.add(key, key.target);
   key.castShadow = true; key.shadow.mapSize.set(1024, 1024);
   Object.assign(key.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 30 });
@@ -1278,7 +1398,6 @@ function buildStudio(rig) {
     // lamp breath
     lampLight.intensity = 9 + Math.sin(t * 1.25) * 1.1 + Math.sin(t * 4.9) * 0.3;
     floorLight.intensity = 5.5 + Math.sin(t * 0.9 + 1.7) * 0.35;
-    M.bulb.emissiveIntensity = 2.6 + Math.sin(t * 1.25) * 0.5;
     // book bob / rotate / page flutter
     book.rotation.y = 0.35 + Math.sin(t * 0.35) * 0.35;
     const bob = Math.sin(t * 1.1) * 0.07;
@@ -1290,6 +1409,43 @@ function buildStudio(rig) {
     // tabletop turntable: slow spin + the dioramas' own loops (pit crew, scan plane, echo rings, jet)
     if (dt > 0) { mini.group.rotation.y += dt * 0.12; mini.update(dt, t, rig.camera); }
     sideLight.intensity = 1.6 + Math.sin(t * 1.7) * 0.25;
+    // lab: robotic arm sweep + weld spark, the hologram (island build cycle, planet, orbits, panels), its lights
+    const sweep = Math.sin(t * 0.45), bend = Math.sin(t * 0.9 + 1.2);
+    shoulder.rotation.y = sweep * 0.42;
+    shoulder.rotation.x = -0.55 + bend * 0.2;
+    elbow.rotation.x = 0.75 + bend * 0.45;
+    wrist.rotation.x = -0.55 - bend * 0.35;
+    const welding = bend > 0.9 && Math.sin(t * 57) > -0.2;
+    spark.scale.setScalar(welding ? 0.03 + 0.03 * Math.abs(Math.sin(t * 91)) : 0.001);
+    // the island assembles (tile by tile, from the centre out), holds, dissolves, and rebuilds on a 12 s cycle;
+    // the phase is offset so a still frame (reduced motion, t = 0) shows it fully built
+    const cycle = ((t / 12) + 0.55) % 1;
+    // instance matrices only change while tiles are appearing or dissolving; the hold and gap phases skip the uploads
+    const islandChanging = cycle < 0.36 || (cycle >= 0.72 && cycle < 0.9) || t < 0.5;
+    for (const { im, specs } of (islandChanging ? islandMeshes : [])) {
+      for (let i = 0; i < specs.length; i++) {
+        const c = specs[i];
+        let s;
+        if (cycle < 0.34) s = clamp((cycle - c.at) / 0.045, 0, 1);
+        else if (cycle < 0.72) s = 1;
+        else if (cycle < 0.88) s = 1 - clamp((cycle - 0.72 - c.at * 0.4) / 0.04, 0, 1);
+        else s = 0;
+        const e = s >= 1 ? 1 : 1 - Math.pow(1 - s, 3);
+        islandDummy.position.set(c.x, c.y + (1 - e) * 0.3, c.z);
+        islandDummy.scale.setScalar(Math.max(0.001, e) * 0.094);
+        islandDummy.updateMatrix();
+        im.setMatrixAt(i, islandDummy.matrix);
+      }
+      im.instanceMatrix.needsUpdate = true;
+    }
+    island.rotation.y = t * 0.12;
+    globe.rotation.y = t * 0.25; globeCore.rotation.y = -t * 0.1;
+    if (dt > 0) { orbit1.rotateZ(dt * 0.35); orbit2.rotateZ(-dt * 0.5); }
+    for (let i = 0; i < panels.length; i++) { const p = panels[i]; p.m.position.y = p.base + Math.sin(t * 0.9 + i * 2.1) * 0.04; if (dt > 0) p.tex.userData.tick(dt); }
+    if (dt > 0) tabTex.userData.tick(dt);
+    holoLight.intensity = 4.2 + Math.sin(t * 7.3) * 0.3 + Math.sin(t * 1.3) * 0.5;
+    M.bulb.emissiveIntensity = 2.6 + Math.sin(t * 1.25) * 0.5;
+    M.holoCone.opacity = 0.06 + Math.sin(t * 9.1) * 0.012 + Math.sin(t * 1.7) * 0.015;
     // dust drift
     if (dt > 0) {
       const p = dustGeo.attributes.position.array;
@@ -1314,19 +1470,19 @@ export function initStudioScene({ canvas, labelLayer, hotspots = [], reducedMoti
   const rig = createRig({ canvas, reducedMotion, shadows: true });
   if (!rig) return null;
   const { scene, camera, pointer, size } = rig;
-  rig.renderer.toneMappingExposure = 1.42;
+  rig.renderer.toneMappingExposure = 1.6;
   camera.fov = 35;
 
   const studio = buildStudio(rig);
   const fallback = new THREE.Object3D(); fallback.position.set(0, 1.5, -1); scene.add(fallback);
   const labels = createLabels(labelLayer, hotspots, (id) => studio.anchors[id] || fallback, reducedMotion);
 
-  const cam = { yaw: 39 * DEG, pitch: 28 * DEG, dist: 22, target: new THREE.Vector3(-0.35, 1.35, -0.85) };
-  // full room (walls, plinth, sofa) — governs the vertical fit everywhere and the horizontal fit on wide canvases
-  const fitAll = { points: boxCorners(-5.2, -0.5, -5.2, 5.0, 4.4, 3.9), h: true, v: true };
-  // "core" — desk, shelf, book, side table — governs the horizontal fit on narrow canvases (sofa may crop)
-  const fitCore = { points: boxCorners(-5.2, 0, -5.2, 4.3, 4.4, 0.6), h: true, v: false };
-  const fitTall = { points: boxCorners(-5.2, -0.5, -5.2, 5.0, 4.4, 3.9), h: false, v: true };
+  const cam = { yaw: 39 * DEG, pitch: 28 * DEG, dist: 22, target: new THREE.Vector3(-0.8, 1.35, -0.85) };
+  // walls and furniture, but not the plinth or the empty front strip of floor: the camera sits closer and the room reads large
+  const fitAll = { points: boxCorners(-6.2, -0.1, -5.2, 4.7, 3.9, 2.4), h: true, v: true };
+  // "core" — lab, desk, book, side table — governs the horizontal fit on narrow canvases (sofa may crop)
+  const fitCore = { points: boxCorners(-6.2, 0, -5.2, 4.3, 4.4, 0.6), h: true, v: false };
+  const fitTall = { points: boxCorners(-6.2, -0.1, -5.2, 4.7, 3.9, 2.4), h: false, v: true };
   const remeasure = () => { for (const L of labels) L.measure = true; };
   rig.onResize = (w, h) => {
     const aspect = w / h;
@@ -1334,8 +1490,8 @@ export function initStudioScene({ canvas, labelLayer, hotspots = [], reducedMoti
     camera.fov = narrow ? 40 : 35;
     camera.updateProjectionMatrix();
     // choose the framing target first, then solve the distance for it
-    cam.target.set(-0.35, narrow ? 1.5 : 1.3, narrow ? -1.2 : -0.95);
-    const margin = narrow ? 0.96 : aspect < 1.25 ? 0.89 : 0.87;
+    cam.target.set(-0.8, narrow ? 1.5 : 1.3, narrow ? -1.2 : -0.95);
+    const margin = narrow ? 0.98 : aspect < 1.25 ? 0.96 : 0.97;
     cam.dist = fitDistance(camera, cam.yaw, cam.pitch, cam.target, narrow ? [fitTall, fitCore] : [fitAll], margin);
     remeasure();
   };
