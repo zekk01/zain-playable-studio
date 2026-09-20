@@ -1047,17 +1047,17 @@ function buildStudio(rig) {
   const anchor = (id, parent, x, y, z) => { const o = new THREE.Object3D(); o.position.set(x, y, z); parent.add(o); anchors[id] = o; return o; };
   const textTextures = [];
 
-  /* ---- room (floor x −6.0…4.8, z −5.0…3.7: a metre was added on the left for the lab bay; the empty front strip is trimmed) ---- */
+  /* ---- room (floor x −6.0…3.9, z −5.0…3.7: a metre was added on the left for the lab bay, the empty right side was trimmed) ---- */
   const room = group(0, 0, 0, 0, { rise: 1.4, scale: false });
-  const floor = box(room, M.floor, 10.8, 0.35, 8.7, -0.6, -0.35, -0.65, { cast: false }); floor.receiveShadow = true;
-  box(room, M.slab, 11.2, 0.12, 9.1, -0.6, -0.47, -0.65, { cast: false });
-  const wallB = box(room, M.wallBack, 11.0, 4.4, 0.3, -0.7, 0, -5.05, { cast: false }); wallB.receiveShadow = true;
+  const floor = box(room, M.floor, 9.9, 0.35, 8.7, -1.05, -0.35, -0.65, { cast: false }); floor.receiveShadow = true;
+  box(room, M.slab, 10.3, 0.12, 9.1, -1.05, -0.47, -0.65, { cast: false });
+  const wallB = box(room, M.wallBack, 10.1, 4.4, 0.3, -1.15, 0, -5.05, { cast: false }); wallB.receiveShadow = true;
   const wallL = box(room, M.wallLeft, 0.3, 4.4, 8.9, -6.05, 0, -0.75, { cast: false }); wallL.receiveShadow = true;
   const rug = box(room, M.rug, 5.2, 0.03, 3.8, 0.4, 0, -0.2, { cast: false }); rug.receiveShadow = true;
   // wood slat feature panel on the back wall (right side) with a warm strip behind it
-  for (let i = 0; i < 7; i++) box(room, M.woodDark, 0.09, 3.6, 0.08, 3.55 + i * 0.17, 0.3, -4.86, { cast: false });
-  box(room, M.led, 0.04, 3.4, 0.04, 3.46, 0.4, -4.84, { cast: false });
-  box(room, M.led, 0.04, 3.4, 0.04, 4.66, 0.4, -4.84, { cast: false });
+  for (let i = 0; i < 7; i++) box(room, M.woodDark, 0.09, 3.6, 0.08, 2.65 + i * 0.17, 0.3, -4.86, { cast: false });
+  box(room, M.led, 0.04, 3.4, 0.04, 2.56, 0.4, -4.84, { cast: false });
+  box(room, M.led, 0.04, 3.4, 0.04, 3.76, 0.4, -4.84, { cast: false });
 
   /* ---- framed art ---- */
   function frame(parent, x, y, z, w, h, kind, ry = 0, delay = 0.45) {
@@ -1275,7 +1275,7 @@ function buildStudio(rig) {
   const floorLight = new THREE.PointLight(0xffc27a, 5.5, 6.5, 2); floorLight.position.set(0, 1.3, 0); floorLamp.add(floorLight);
 
   /* ---- side table with poker chips + cards ---- */
-  const side = group(3.35, 0, -1.25, 0.42);
+  const side = group(2.7, 0, -1.2, 0.42);
   cyl(side, M.wood, 0.56, 0.06, 0, 0.88, 0, 28);
   cyl(side, M.charcoal, 0.05, 0.86, 0, 0.03, 0, 10);
   cyl(side, M.charcoal, 0.3, 0.035, 0, 0, 0, 24);
@@ -1335,7 +1335,7 @@ function buildStudio(rig) {
     const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.85, 6), i % 2 ? M.green : M.green2);
     leaf.position.set(Math.cos(a) * 0.12, 0.9, Math.sin(a) * 0.12); leaf.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5); leaf.castShadow = true; plant1.add(leaf);
   }
-  const plant2 = group(4.25, 0, 0.35, 0.55);
+  const plant2 = group(3.35, 0, 0.6, 0.55);
   cyl(plant2, M.pot, 0.26, 0.4, 0, 0, 0, 16, 0.2);
   sphere(plant2, M.green3, 0.36, 0, 0.66, 0, 0.8); sphere(plant2, M.green, 0.22, 0.22, 0.85, 0.1, 0.9); sphere(plant2, M.green2, 0.18, -0.2, 0.9, -0.12);
   // small desk plant
@@ -1479,10 +1479,10 @@ export function initStudioScene({ canvas, labelLayer, hotspots = [], reducedMoti
 
   const cam = { yaw: 39 * DEG, pitch: 28 * DEG, dist: 22, target: new THREE.Vector3(-0.8, 1.35, -0.85) };
   // walls and furniture, but not the plinth or the empty front strip of floor: the camera sits closer and the room reads large
-  const fitAll = { points: boxCorners(-6.2, -0.1, -5.2, 4.7, 3.9, 2.4), h: true, v: true };
+  const fitAll = { points: boxCorners(-5.7, 0.1, -5.2, 3.7, 3.8, 1.8), h: true, v: true };
   // "core" — lab, desk, book, side table — governs the horizontal fit on narrow canvases (sofa may crop)
-  const fitCore = { points: boxCorners(-6.2, 0, -5.2, 4.3, 4.4, 0.6), h: true, v: false };
-  const fitTall = { points: boxCorners(-6.2, -0.1, -5.2, 4.7, 3.9, 2.4), h: false, v: true };
+  const fitCore = { points: boxCorners(-6.2, 0, -5.2, 3.6, 4.4, 0.6), h: true, v: false };
+  const fitTall = { points: boxCorners(-6.2, -0.1, -5.2, 3.9, 3.9, 2.4), h: false, v: true };
   const remeasure = () => { for (const L of labels) L.measure = true; };
   rig.onResize = (w, h) => {
     const aspect = w / h;
@@ -1490,7 +1490,7 @@ export function initStudioScene({ canvas, labelLayer, hotspots = [], reducedMoti
     camera.fov = narrow ? 40 : 35;
     camera.updateProjectionMatrix();
     // choose the framing target first, then solve the distance for it
-    cam.target.set(-0.8, narrow ? 1.5 : 1.3, narrow ? -1.2 : -0.95);
+    cam.target.set(narrow ? -1.0 : -1.1, narrow ? 1.5 : 1.35, narrow ? -1.2 : -1.3);
     const margin = narrow ? 0.98 : aspect < 1.25 ? 0.96 : 0.97;
     cam.dist = fitDistance(camera, cam.yaw, cam.pitch, cam.target, narrow ? [fitTall, fitCore] : [fitAll], margin);
     remeasure();
