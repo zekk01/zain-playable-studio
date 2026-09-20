@@ -240,7 +240,7 @@ export const companies = [
     ],
   },
   {
-    id: 'hyphonics', name: 'Hyphonics / X on Board', period: '2018–2021',
+    id: 'hyphonics', name: 'Hyphonics', period: '2018–2021',
     role: 'Unity development · Mobile · Educational games',
     description: 'The early chapters: building complete Unity experiences, from gameplay and resource systems to UI, audio, and content spawning. The headline: AbjadPolis, an Arabic-learning game that turns your phone into a city you build word by word.',
     foot: 'Toronto & Beirut. Demos supported national TV coverage and $31K+ in grants and investment.',
