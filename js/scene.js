@@ -753,6 +753,7 @@ function createLabels(labelLayer, hotspots, anchorFor, reducedMotion) {
     btn.append(dot, lab);
     Object.assign(btn.style, { position: 'absolute', left: '0', top: '0', pointerEvents: 'auto', willChange: 'transform', opacity: '0' });
     btn.addEventListener('click', () => {
+      if (h.target && !h.target.startsWith('#')) { location.assign(h.target); return; } // a marker can open another page
       const el = h.target ? document.querySelector(h.target) : null;
       el?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     });
@@ -1049,6 +1050,7 @@ function buildStudio(rig) {
   monitor(-1.72, 2.02, 0.08, 1.3, 0.76, 0.36, screenCodeTexture(3), 0.38);
   monitor(1.72, 2.02, 0.08, 1.3, 0.76, -0.36, screenGraphTexture(), 0.44);
   anchor('work', desk, 0, 3.0, -0.1);
+  anchor('tech', desk, 2.05, 1.55, 0.55);   // the node-graph monitor: the technical breakdowns page
   // lamp
   const lamp = group(-1.7, 1.46, -3.95, 0.4, { rise: 0.4 });
   cyl(lamp, M.brass, 0.13, 0.03, 0, 0, 0, 20);

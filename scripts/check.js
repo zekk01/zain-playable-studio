@@ -11,10 +11,18 @@ const ROOT = path.join(__dirname, '..');
   walk(data.site); walk(data.companies); walk(data.lalapoker); walk(data.ideas);
   walk({ cover: data.book.cover, back: data.book.back, pdf: data.book.pdf });
   for (let i = 0; i < data.book.pages; i++) add(data.book.pageSrc(i));
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  for (const m of html.matchAll(/(?:src|href)="(assets\/[^"]+)"/g)) add(m[1]);
-  for (const m of html.matchAll(/(?:src|href)="\.?\/?(vendor\/[^"]+)"/g)) refs.add(m[1]);
-  for (const m of html.matchAll(/"\.\/(vendor\/[^"]+\.js)"/g)) refs.add(m[1]);
+  for (const page of ['index.html', 'technical.html']) {
+    const html = fs.readFileSync(path.join(ROOT, page), 'utf8');
+    for (const m of html.matchAll(/(?:src|href)="(assets\/[^"]+)"/g)) add(m[1]);
+    for (const m of html.matchAll(/(?:src|href)="\.?\/?(vendor\/[^"]+)"/g)) refs.add(m[1]);
+    for (const m of html.matchAll(/"\.\/(vendor\/[^"]+\.js)"/g)) refs.add(m[1]);
+    for (const m of html.matchAll(/(?:src|href)="((?:css|js)\/[^"]+)"/g)) refs.add(m[1]);
+  }
+  // every `tech: 'page#anchor'` in data.js must point at a real section
+  for (const m of fs.readFileSync(path.join(ROOT, 'js/data.js'), 'utf8').matchAll(/tech: '([^'#]+)#([^']+)'/g)) {
+    refs.add(m[1]);
+    if (!fs.readFileSync(path.join(ROOT, m[1]), 'utf8').includes(`id="${m[2]}"`)) { console.error(`MISSING anchor #${m[2]} in ${m[1]}`); process.exit(1); }
+  }
   refs.add('css/style.css'); refs.add('js/main.js'); refs.add('js/scene.js'); refs.add('js/book.js'); refs.add('js/gallery.js');
   const missing = [...refs].filter((r) => !fs.existsSync(path.join(ROOT, r)));
   console.log(`checked ${refs.size} referenced files`);

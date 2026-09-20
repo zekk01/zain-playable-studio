@@ -369,7 +369,7 @@ dialog::backdrop { background: #080b09cc; backdrop-filter: blur(8px); }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1150px) {
-  .site-header { gap: 15px; } .site-nav { gap: 18px; } .brand-name small { display: none; }
+  .site-header { gap: 12px; } .site-nav { gap: 12px; font-size: 13px; } .brand-name small { display: none; }
   .studio-section { grid-template-columns: 42% 58%; min-height: 0; }
   .scene-top span:last-child, .scene-bottom span:last-child, .strip-end { display: none; }
   .career-layout { grid-template-columns: 200px 1fr; } .company-list button { padding-inline: 15px; }
@@ -433,6 +433,10 @@ dialog::backdrop { background: #080b09cc; backdrop-filter: blur(8px); }
   .footer-bottom { flex-direction: column; margin-top: 45px; gap: 20px; }
 }
 @media (max-width: 420px) { .reels-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } .poker-links a { flex: 1 1 100%; justify-content: center; } }
+
+/* link into the technical breakdowns (technical.html) from a project dialog or the City Crafters feature */
+.detail-links a.tech, .city-feature__links a.tech { border-color: var(--accent); color: var(--accent); }
+.detail-links a.tech:hover, .city-feature__links a.tech:hover { background: rgba(243,166,90,.08); }
 
 /* ---------- motion preferences ---------- */
 @media (prefers-reduced-motion: reduce) {

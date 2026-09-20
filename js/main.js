@@ -14,7 +14,9 @@ async function load(path) { try { return await import(path); } catch (err) { con
 // Inline SVG icon from the sprite in index.html (glyphs like ↗ ✳ ▶ turn into emoji on phones).
 const ico = (name, cls = 'ico') => `<svg class="${cls}" aria-hidden="true" focusable="false"><use href="#${name}"/></svg>`;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const scrollTo = (target) => { const el = typeof target === 'string' ? $(target) : target; if (el) el.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' }); };
+const scrollTo = (target) => {
+  if (typeof target === 'string' && !target.startsWith('#')) { location.assign(target); return; } // a hotspot can point at another page
+  const el = typeof target === 'string' ? $(target) : target; if (el) el.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' }); };
 
 let openGallery = () => {};
 
@@ -98,6 +100,7 @@ function openProject(c, p, opener) {
   const videos = (p.videos && p.videos.length)
     ? `<h3>Watch</h3><div class="detail-videos">${p.videos.map((v) => `<figure class="detail-video${v.portrait ? ' detail-video--portrait' : ''}"><video controls preload="none" playsinline poster="${v.poster || ''}" aria-label="${esc(v.alt)}"><source src="${v.src}" type="video/mp4">Your browser can’t play this video.</video><figcaption>${esc(v.alt)}${v.href ? ` <a href="${v.href}" target="_blank" rel="noopener">Watch on ${esc(v.source || 'source')} ${ico('i-ne')}</a>` : ''}</figcaption></figure>`).join('')}</div>` : '';
   const links = [
+    p.tech ? `<a class="tech" href="${p.tech}">Technical breakdown ${ico('i-ne')}</a>` : '',
     ...p.links.map((l) => `<a href="${l.href}" target="_blank" rel="noopener">${esc(l.label)} ${ico('i-ne')}</a>`),
     p.google ? `<a class="google" href="${p.google}" target="_blank" rel="noopener">More images on Google ${ico('i-ne')}</a>` : '',
   ].join('');
@@ -181,6 +184,7 @@ function selectShowcase(i, { instant = false, fromScene = false } = {}) {
       : `<button type="button" aria-label="Open image gallery: ${esc(project.title)}"><img src="${m.src}" alt="${esc(m.alt)}" loading="lazy" decoding="async"></button>`;
     const links = [
       `<button class="primary" type="button" data-open-project>Open the case study <span>${ico('i-ne')}</span></button>`,
+      project.tech ? `<a class="ghost tech" href="${project.tech}">Technical breakdown ${ico('i-ne')}</a>` : '',
       ...project.links.map((l) => `<a class="ghost" href="${l.href}" target="_blank" rel="noopener">${esc(l.label)} ${ico('i-ne')}</a>`),
     ].join('');
     $('#city-feature').innerHTML = `<div class="city-feature__media">${media}<span class="city-feature__badge">${String(i + 1).padStart(2, '0')} / ${String(cc.showcase.length).padStart(2, '0')}</span></div>

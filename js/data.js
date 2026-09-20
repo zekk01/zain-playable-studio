@@ -31,6 +31,7 @@ export const hero = {
     { id: 'ideas', number: '03', label: 'Behind the ideas', target: '#ideas' },
     { id: 'lalapoker', number: '04', label: 'The card table', target: '#lalapoker' },
     { id: 'citycrafters', number: '05', label: 'The studio floor', target: '#citycrafters' },
+    { id: 'tech', number: '06', label: 'Under the hood', target: 'technical.html' },
   ],
 };
 
@@ -46,7 +47,7 @@ export const companies = [
     site: 'https://citycrafters.ae/',
     projects: [
       {
-        id: 'pit-protocol', title: 'Pit Protocol', tag: 'VR / LIVE EXPERIENCE', hook: 'A pit stop becomes a team sport.',
+        id: 'pit-protocol', tech: 'technical.html#pit-protocol', title: 'Pit Protocol', tag: 'VR / LIVE EXPERIENCE', hook: 'A pit stop becomes a team sport.',
         contribution: 'Led the design and delivery of a distributed VR pit-stop simulator for Yas Marina / Abu Dhabi GP activations with Emaar and Address Hospitality, run live at Address Beach Resort in December 2025.',
         challenge: 'Turn a precise, coordinated task into an accessible shared challenge. Players have to understand their role, react to clear feedback, and work together under time pressure, and a leaderboard keeps the crowd coming back.',
         outcome: 'Delivered a demo-ready prototype in five months: six synchronized stations, sub-20 ms state sync, and 98% uptime across live event days.',
@@ -80,7 +81,7 @@ export const companies = [
         links: [{ label: 'City Crafters HXR', href: 'https://www.citycrafters.ae/hxr' }],
       },
       {
-        id: 'unseen-blade', title: 'Unseen Blade', tag: 'MOBILE / STEALTH ACTION · GOOGLE PLAY', hook: 'See the world through sound.',
+        id: 'unseen-blade', tech: 'technical.html#unseen-blade', title: 'Unseen Blade', tag: 'MOBILE / STEALTH ACTION · GOOGLE PLAY', hook: 'See the world through sound.',
         contribution: 'Directed the core loop, combat rules, feedback, difficulty progression, and player-facing UX, from concept to the first playable release on Google Play.',
         challenge: 'You play a fallen warrior left blind after a betrayal. Echo-location turns sound into spatial information: enemy movement, incoming danger and hidden paths all emerge through your senses, so stealth, movement and the rhythm of encounters have to stay readable without sight.',
         outcome: 'First playable version live on Google Play (April 2026), set in a stylized feudal Japan with a dark, futuristic edge. Three campaign chapters, story mode, shadow trials and training grounds.',
@@ -96,7 +97,7 @@ export const companies = [
         links: [{ label: 'Google Play', href: PLAY('com.citycrafters.unseenblade') }],
       },
       {
-        id: 'target-destroyed', title: 'Target Destroyed', tag: 'ARCADE / MOBILE · GOOGLE PLAY', hook: 'Thirty seconds. Make every shot count.',
+        id: 'target-destroyed', tech: 'technical.html#target-destroyed', title: 'Target Destroyed', tag: 'ARCADE / MOBILE · GOOGLE PLAY', hook: 'Thirty seconds. Make every shot count.',
         contribution: 'Directed combat rules, enemy structure, session pacing, difficulty, and HUD feedback, then shipped it on Google Play.',
         challenge: 'You command an F-16 patrolling the Gulf while hostile drones swarm the sector. Every sortie is 30 seconds of arcade combat extended by every kill: smart lock-on, gold high-value targets worth 3x, a combo multiplier that resets when you lose your rhythm. Each resource changes the next decision.',
         outcome: 'Live on Google Play with hangar upgrades, cosmetic loadouts, three global leaderboards, daily challenges, pilot ranks from Cadet to Ace Commander, and a FLIR-style military HUD. Plays in portrait or landscape at 60 fps.',
@@ -120,7 +121,7 @@ export const companies = [
     site: 'https://lalapoker.com/',
     projects: [
       {
-        id: 'lalapoker', title: 'Lala Poker', tag: 'MOBILE / WEBGL · LIVE GAME', hook: 'Real players. Real pressure. Every hand counts.',
+        id: 'lalapoker', tech: 'technical.html#lala-poker', title: 'Lala Poker', tag: 'MOBILE / WEBGL · LIVE GAME', hook: 'Real players. Real pressure. Every hand counts.',
         contribution: 'Designed and built the multiplayer poker experience: table flow, betting UX, tournament structure, progression, quests, and the economy around chips, jackpots, and VIP tiers.',
         challenge: 'Poker has to feel fair, fast, and readable at a glance. Every decision (check, call, raise, fold) needs clear feedback under a timer, while the meta-game gives players reasons to come back every day.',
         outcome: 'Live on the App Store, Google Play, and lalapoker.com (Unity WebGL). Modes: Hold’em, Omaha, Sit & Go, multi-table tournaments, Blackjack, Roulette, Lottery, daily quests, and an avatar marketplace.',
@@ -218,7 +219,7 @@ export const companies = [
     site: 'https://swave.io/',
     projects: [
       {
-        id: 'holo-pipeline', title: 'Holographic pipeline', tag: 'C++ / SPATIAL DISPLAY', hook: 'Real-time worlds. A different display.',
+        id: 'holo-pipeline', tech: 'technical.html#holographic-pipeline', title: 'Holographic pipeline', tag: 'C++ / SPATIAL DISPLAY', hook: 'Real-time worlds. A different display.',
         contribution: 'Built a C++ pipeline bridging Unity render output and Swave’s proprietary HXR holographic display hardware, optimising meshes and shaders for true-colour, glasses-free holograms.',
         challenge: 'Rendering, data formats, and throughput have to work as one system to make an interactive demonstration possible.',
         outcome: 'A working holographic demonstration presented at CES.',
@@ -247,7 +248,7 @@ export const companies = [
     site: PLAY('com.hyphonics.abjadpolis'),
     projects: [
       {
-        id: 'abjadpolis', title: 'AbjadPolis', tag: 'MOBILE / EDUCATIONAL RPG · GOOGLE PLAY', hook: 'Learn Arabic by building a city.',
+        id: 'abjadpolis', tech: 'technical.html#abjadpolis', title: 'AbjadPolis', tag: 'MOBILE / EDUCATIONAL RPG · GOOGLE PLAY', hook: 'Learn Arabic by building a city.',
         contribution: 'Solo-built the Unity/C# game end-to-end: gameplay loops, UI, audio, level and content spawning, resource systems, and engagement mechanics. Gamified language drills into bite-sized quests with a level-gated loop.',
         challenge: 'Turn reading, writing, listening, and speaking exercises into play that a complete beginner enjoys and a fluent speaker still finds challenging, with daily reminders that feel like an invitation rather than a nag.',
         outcome: 'Live on Google Play with 100K+ downloads. Demos supported national TV coverage and $31K+ in grants and investment.',

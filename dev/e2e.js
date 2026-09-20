@@ -19,14 +19,16 @@ const check = (name, ok, extra = '') => { results.push({ name, ok, extra }); con
     await page.goto('http://localhost:3000/', { waitUntil: 'networkidle', timeout: 90000 });
     await page.waitForTimeout(3500);
 
-    // hero scene
+    // hero scene (brought into view first: on phones the studio sits below the intro copy)
+    await page.evaluate(() => document.querySelector('.scene-stage').scrollIntoView({ block: 'center' })); await page.waitForTimeout(600);
     const hero = await page.evaluate(() => {
       const c = document.getElementById('scene'); const fb = document.getElementById('scene-fallback');
       const labels = [...document.querySelectorAll('#scene-labels .hotspot')].map((b) => { const r = b.getBoundingClientRect(); return { t: b.dataset.target, x: r.x, y: r.y, w: r.width, vis: getComputedStyle(b).opacity !== '0' }; });
       return { canvasHidden: c.hidden, fallbackShown: !fb.hidden, labels, sceneCtrl: !!(window.__portfolio && window.__portfolio.scene) };
     });
     check(`${name}: 3D studio scene initialised (not fallback)`, hero.sceneCtrl && !hero.fallbackShown, JSON.stringify({ fallback: hero.fallbackShown }));
-    check(`${name}: 5 hotspot labels rendered`, hero.labels.length === 5, JSON.stringify(hero.labels.map((l) => l.t)));
+    check(`${name}: 6 hotspot labels rendered`, hero.labels.length === 6, JSON.stringify(hero.labels.map((l) => l.t)));
+    check(`${name}: studio page links to Under the hood (nav + hero)`, await page.evaluate(() => !!document.querySelector('.site-nav a[href="technical.html"]') && !!document.querySelector('.intro-actions a[href="technical.html"]')));
     const inView = hero.labels.filter((l) => l.x >= 0 && l.x + l.w <= vp.width && l.y >= 0 && l.y <= vp.height).length;
     check(`${name}: hotspot labels inside viewport`, inView === hero.labels.length, `${inView}/${hero.labels.length}`);
     await page.screenshot({ path: `dev/shots/e2e-${name}-hero.png` });
@@ -54,6 +56,8 @@ const check = (name, ok, extra = '') => { results.push({ name, ok, extra }); con
     check(`${name}: project dialog opens`, await page.evaluate(() => document.getElementById('detail').open));
     const hasGoogle = await page.evaluate(() => !!document.querySelector('#detail .google'));
     check(`${name}: dialog has a Google Images link`, hasGoogle);
+    const techHref = await page.evaluate(() => document.querySelector('#detail .detail-links a.tech')?.getAttribute('href') || '');
+    check(`${name}: dialog links to the technical breakdown`, techHref === 'technical.html#lala-poker', techHref);
     await page.click('#detail .detail-hero'); await page.waitForTimeout(600);
     const lb = await page.evaluate(() => { const d = document.getElementById('lightbox'); return { open: !!(d && d.open), counter: d ? (d.textContent.match(/\d+\s*\/\s*\d+/) || [''])[0] : '' }; });
     check(`${name}: lightbox opens from the dialog hero`, lb.open, lb.counter);

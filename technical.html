@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Under the hood: technical breakdowns of six systems Zain Kassem designed and built. Pit Protocol (UE5 VR), Unseen Blade, Target Destroyed, Lala Poker, a holographic pipeline for Swave Photonics, and AbjadPolis, with diagrams and code.">
+<meta name="theme-color" content="#151616">
+<title>Under the hood — Zain Kassem</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23151616'/%3E%3Ctext x='32' y='44' font-family='Arial' font-size='34' font-weight='700' text-anchor='middle' fill='%23f3a65a'%3EZK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Tajawal:wght@500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/technical.css">
+</head>
+<body>
+<svg hidden aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-ne" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" stroke-width="2.6"/></symbol>
+</svg>
+<a class="skip" href="#contents">Skip to contents</a>
+
+<header class="site-header" id="top">
+  <a class="brand" href="index.html" aria-label="Zain Kassem, back to the studio">
+    <span class="brand-mark">ZK<svg class="ico ico--star" aria-hidden="true" focusable="false"><use href="#i-star"/></svg></span>
+    <span class="brand-name">ZAIN KASSEM<small>GAME DESIGNER &amp; DEVELOPER</small></span>
+  </a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="index.html">The studio</a>
+    <a href="index.html#work">Selected work</a>
+    <a href="index.html#citycrafters">City Crafters</a>
+    <a href="technical.html" class="active" aria-current="page">Under the hood</a>
+  </nav>
+  <a class="contact" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto title="zainkassem7@gmail.com">Let’s talk <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
+</header>
+
+<main class="doc">
+  <aside class="rail" id="rail" aria-label="Contents">
+    <div class="rail__label">SIX DOSSIERS</div>
+    <ol>
+      <li><a href="#pit-protocol"><span>01</span>Pit Protocol</a></li>
+      <li><a href="#unseen-blade"><span>02</span>Unseen Blade</a></li>
+      <li><a href="#target-destroyed"><span>03</span>Target Destroyed</a></li>
+      <li><a href="#lala-poker"><span>04</span>Lala Poker</a></li>
+      <li><a href="#holographic-pipeline"><span>05</span>Holographic pipeline</a></li>
+      <li><a href="#abjadpolis"><span>06</span>AbjadPolis</a></li>
+    </ol>
+    <div class="rail__foot">
+      <a href="index.html"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-left"/></svg> Back to the studio</a>
+      <a href="assets/cv/Zain_Kassem.pdf" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-down"/></svg> Technical CV</a>
+    </div>
+  </aside>
+
+  <div class="doc__body">
+    <!-- ============================================================ cover -->
+    <section class="cover" aria-labelledby="cover-title">
+      <div class="eyebrow"><span class="tiny-square"></span> UNDER THE HOOD · TECHNICAL BREAKDOWNS</div>
+      <h1 id="cover-title">Building what’s underneath.</h1>
+      <p class="dek">Six systems I designed and wrote myself, explained the way I’d explain them to another engineer: the constraint, the approach, a drawing of the mechanism, and the code reduced to the rule that matters.</p>
+      <dl class="plate">
+        <div><dt>AUTHOR</dt><dd><b>Zain Kassem</b><br>Game designer &amp; developer, Dubai</dd></div>
+        <div><dt>REVISION</dt><dd><b>September 2026</b><br>Kept current with the studio page</dd></div>
+        <div><dt>SCOPE</dt><dd><b>Systems where I wrote the code.</b><br>Each dossier ends with a ledger of who did what.</dd></div>
+        <div><dt>READS IN</dt><dd><b>About 15 minutes</b><br>Or one dossier at a time</dd></div>
+      </dl>
+      <p class="cover__note">The drawings are mine, made for this page. The code blocks are reduced from the real thing to the idea, since most of the source belongs to the studios it was built for. I’ll gladly walk through any of it live, code on screen.</p>
+    </section>
+
+    <!-- ============================================================ contents, drawn -->
+    <section class="contents-block" id="contents" aria-labelledby="contents-title">
+      <div class="eyebrow" id="contents-title">CONTENTS</div>
+      <ol class="contents">
+        <li><a href="#pit-protocol">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle class="g" cx="38" cy="32" r="19"/><circle class="g ga" cx="38" cy="32" r="7"/><path class="g" d="M38 13v6M38 45v6M19 32h6M51 32h6"/><path class="g ga" d="M4 22h9M4 32h7M4 42h9"/><path class="g ga" d="M10 19l3 3-3 3M8 29l3 3-3 3M10 39l3 3-3 3"/></svg>
+          <span><span class="num">01 · UNREAL ENGINE 5 · META QUEST</span><b>Pit Protocol</b><small>A PC-class pit lane on a standalone headset, live at the Abu Dhabi Grand Prix weekend. Streaming, a 30 fps floor, cinematics that aren’t video, and a crew that works around a human.</small></span>
+        </a></li>
+        <li><a href="#unseen-blade">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle class="gf" cx="18" cy="46" r="3"/><path class="g ga" d="M18 32a14 14 0 0 1 14 14"/><path class="g" d="M18 20a26 26 0 0 1 26 26"/><path class="g gd" d="M18 8a38 38 0 0 1 38 38"/></svg>
+          <span><span class="num">02 · UNITY · ANDROID</span><b>Unseen Blade</b><small>A shader that turns sound into sight on any mesh, and an AI that hears the same sound. One event, two listeners.</small></span>
+        </a></li>
+        <li><a href="#target-destroyed">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle class="g" cx="30" cy="34" r="18"/><path class="g" d="M30 8v10M30 50v10M4 34h10M46 34h10"/><path class="g ga" d="M46 12l6 6-6 6-6-6z"/><circle class="gf" cx="30" cy="34" r="2.5"/></svg>
+          <span><span class="num">03 · UNITY · ANDROID</span><b>Target Destroyed</b><small>A complete arcade shooter with online leaderboards, from a news cycle to the store in two weeks. One clock is the whole economy.</small></span>
+        </a></li>
+        <li><a href="#lala-poker">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect class="g" x="10" y="10" width="24" height="34" rx="3" transform="rotate(-10 22 27)"/><rect class="g" x="24" y="14" width="24" height="34" rx="3" transform="rotate(8 36 31)"/><circle class="g ga" cx="48" cy="50" r="10"/><circle class="g ga gd" cx="48" cy="50" r="5"/></svg>
+          <span><span class="num">04 · UNITY · C++ · iOS, ANDROID, WEB</span><b>Lala Poker</b><small>An authoritative C++ card engine for six games, with the security model and the payout math that keep them fair and the house solvent.</small></span>
+        </a></li>
+        <li><a href="#holographic-pipeline">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="g" d="M6 24h20v20H6zM6 24l8-8h20l-8 8M26 24l8-8v20l-8 8"/><g class="gf"><circle cx="40" cy="26" r="1.7"/><circle cx="49" cy="26" r="1.7"/><circle cx="58" cy="26" r="1.7"/><circle cx="40" cy="36" r="1.7"/><circle cx="58" cy="36" r="1.7"/><circle cx="40" cy="46" r="1.7"/><circle cx="49" cy="46" r="1.7"/><circle cx="58" cy="46" r="1.7"/><circle cx="46" cy="19" r="1.7"/><circle cx="55" cy="19" r="1.7"/><circle cx="62" cy="22" r="1.7"/><circle cx="62" cy="40" r="1.7"/></g></svg>
+          <span><span class="num">05 · UNITY · C++ · SWAVE PHOTONICS</span><b>Holographic pipeline</b><small>Meshes into randomized point clouds for the first real holographic displays. Slice, keep the shell, sample, jitter, stream.</small></span>
+        </a></li>
+        <li><a href="#abjadpolis">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="g" d="M6 56V34h14v22M26 56V22h16v34M48 56V40h10v16M2 56h60"/><path class="g gd" d="M30 30h8M30 38h8M30 46h8"/><text class="ar" x="34" y="17" text-anchor="middle">أ</text></svg>
+          <span><span class="num">06 · UNITY · ANDROID</span><b>AbjadPolis</b><small>A whole game, solo: the AI, the shaders, and an economy that teaches Arabic by building a city.</small></span>
+        </a></li>
+      </ol>
+    </section>
+
+    <!-- ============================================================ 01 Pit Protocol -->
+    <section class="dossier" id="pit-protocol" aria-labelledby="pit-title">
+      <div class="dossier__head">
+        <div class="dossier__num">01</div>
+        <div>
+          <h2 id="pit-title">Pit Protocol <span class="chip">UNREAL ENGINE 5 · META QUEST</span></h2>
+          <p class="thesis">The headset is a phone with lenses. The client wanted a Formula 1 pit lane. The job was making both of those true at the same time.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unreal Engine 5, C++ and Blueprint</dd></div>
+        <div><dt>Runs on</dt><dd>Meta Quest headsets, <b>six synchronized stations</b>, one PC host</dd></div>
+        <div><dt>Where</dt><dd>Yas Marina / Abu Dhabi GP weekend activations for Emaar and Address Hospitality; Address Beach Resort, December 2025</dd></div>
+        <div><dt>Timeline</dt><dd>Five months to a demo-ready build</dd></div>
+        <div><dt>My role</dt><dd>Head of game design, and the engineer on the core: <b>streaming, optimization, cinematics, crew AI</b></dd></div>
+        <div><dt>Result</dt><dd>Six stations in sync under 20 ms, a 30 fps floor on the headset, 98% uptime across event days</dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>The problem</h3>
+        <p>Everything the brief asked for is expensive on a mobile chip: a full F1 car, a garage with a crowd behind the glass, a pit crew that moves like a pit crew, six players at once, and a live leaderboard the crowd can read from the bar. Standalone Quest content is normally built small to fit. That would have looked like a mobile game at a Grand Prix.</p>
+
+        <h3>Stream assets, not frames</h3>
+        <p>There were three ways to go, and the obvious two were both wrong for a live venue.</p>
+        <dl class="log">
+          <div><dt>CHOSE</dt><dd>The PC keeps the content and the clock; each headset receives the level ahead of time and renders it locally.</dd></div>
+          <div><dt>OVER</dt><dd>Cutting the content down to what a Quest can hold, or rendering on the PC and streaming video to every headset.</dd></div>
+          <div><dt>BECAUSE</dt><dd>Video streaming puts every frame through venue wifi, the least reliable thing in the building, and adds latency you feel in your stomach. Cutting content loses the thing the activation was paid for.</dd></div>
+        </dl>
+        <p>Asset streaming moves the heavy traffic to the gaps between sessions. During a run, the only thing on the network is state: the clock, positions, who has done what. That is a few bytes, and it is why six stations could stay within 20 ms of each other on a network I did not control. <a class="figref" href="#fig-1-1">Fig 1.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-1-1">
+        <div class="fig__frame" data-n="FIG 1.1">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Diagram: a PC host connected to six Quest stations through two lanes, an asset lane used before sessions and a state lane used during play, plus a leaderboard display fed by the host.">
+            <path class="s" d="M280 87H635M280 217H635M280 70V234"/>
+            <rect class="box-a" x="40" y="96" width="170" height="92" rx="4"/>
+            <text class="k lg" x="58" y="124">PC host</text>
+            <text class="sm" x="58" y="146">content library</text>
+            <text class="sm" x="58" y="162">session clock · authority</text>
+            <text class="sm" x="58" y="178">leaderboard feed</text>
+            <path class="a w2" d="M210 118H280"/>
+            <path class="s d" d="M210 166H280"/>
+            <path class="a w2" d="M330 140h28"/>
+            <text class="sm" x="368" y="144">assets: the whole level, cached before each session</text>
+            <path class="s d" d="M330 166h28"/>
+            <text class="sm" x="368" y="170">state: clock, positions, progress, under 20 ms</text>
+            <g>
+              <rect class="box" x="320" y="60" width="110" height="54" rx="4"/><text class="k" x="334" y="84">Quest 1</text><text class="sm" x="334" y="102">renders locally</text>
+              <rect class="box" x="450" y="60" width="110" height="54" rx="4"/><text class="k" x="464" y="84">Quest 2</text><text class="sm" x="464" y="102">renders locally</text>
+              <rect class="box" x="580" y="60" width="110" height="54" rx="4"/><text class="k" x="594" y="84">Quest 3</text><text class="sm" x="594" y="102">renders locally</text>
+              <rect class="box" x="320" y="190" width="110" height="54" rx="4"/><text class="k" x="334" y="214">Quest 4</text><text class="sm" x="334" y="232">renders locally</text>
+              <rect class="box" x="450" y="190" width="110" height="54" rx="4"/><text class="k" x="464" y="214">Quest 5</text><text class="sm" x="464" y="232">renders locally</text>
+              <rect class="box" x="580" y="190" width="110" height="54" rx="4"/><text class="k" x="594" y="214">Quest 6</text><text class="sm" x="594" y="232">renders locally</text>
+            </g>
+            <path class="s" d="M125 188V214"/><path class="s" d="M121 208l4 6 4-6"/>
+            <rect class="box" x="40" y="222" width="170" height="48" rx="4"/>
+            <text class="k" x="58" y="251">Leaderboard display</text>
+            <text class="sm" x="40" y="292">the crowd reads it; the host writes it</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 1.1</b> The shape of a station set. The PC holds the content and the clock; each headset renders its own view from a preloaded copy. During a run, only small state crosses the network, which is what makes the sync budget possible.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Preload, then play</h3>
+        <p>The level is fully resident before a group puts on headsets. The PC pushes the content set to each station, each station warms its caches, and the host confirms all six are ready before the clock can start. Nothing loads mid-run, so nothing hitches mid-run. It is also why the stations could be brought up in the morning and stay up all day: the expensive path runs once, in a window nobody is watching.</p>
+
+        <h3>Holding the floor</h3>
+        <p>The frame budget at 30 fps is 33.3 milliseconds, and a headset that misses it makes people feel sick, which is a worse failure than a crash. I set 30 as the <strong>floor</strong>, not the target: the typical frame ran well under budget, and the headroom is what kept the floor a floor when six headsets were warm and a station had been running for hours. The optimization pass was the mobile-VR discipline done in the order that pays: lighting baked, LODs tuned by where players actually stand, draw calls batched, a texture budget enforced, particle counts capped, and the crew animations kept on a fixed cost. <a class="figref" href="#fig-1-2">Fig 1.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-1-2">
+        <div class="fig__frame" data-n="FIG 1.2">
+          <svg viewBox="0 0 720 246" role="img" aria-label="Diagram: a 33.3 millisecond frame budget bar split into scene render, gameplay and crew AI, sync, and headroom, with a 72 hertz reference tick and the optimization levers listed beneath.">
+            <text class="h" x="60" y="66">30 fps floor = 33.3 ms per frame</text>
+            <rect class="box-a" x="60" y="90" width="320" height="40" rx="3"/>
+            <rect class="box" x="380" y="90" width="120" height="40" rx="3"/>
+            <rect class="box" x="500" y="90" width="60" height="40" rx="3"/>
+            <rect class="s d" x="560" y="90" width="100" height="40" rx="3"/>
+            <text class="k" x="72" y="115">scene render</text>
+            <text class="sm" x="388" y="115">gameplay + crew AI</text>
+            <text class="sm" x="508" y="115">sync</text>
+            <text class="sm" x="572" y="115">headroom</text>
+            <path class="s" d="M60 150H660M60 146v8M150 146v8M240 146v8M330 146v8M420 146v8M510 146v8M600 146v8M660 146v8"/>
+            <text class="sm c" x="60" y="170">0</text><text class="sm c" x="150" y="170">5</text><text class="sm c" x="240" y="170">10</text><text class="sm c" x="330" y="170">15</text><text class="sm c" x="420" y="170">20</text><text class="sm c" x="510" y="170">25</text><text class="sm c" x="600" y="170">30</text><text class="sm c" x="660" y="170">33.3 ms</text>
+            <path class="t d" d="M310 78V150"/>
+            <text class="tt sm c" x="310" y="196">72 Hz native frame, 13.9 ms</text>
+            <text class="sm" x="60" y="222">levers, in the order that pays: baked lighting · LODs by where players stand · batched draw calls</text><text class="sm" x="60" y="238">texture budget · particle caps · crew animation on a fixed cost</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 1.2</b> How the 33 ms was carved up: render first, then gameplay and the crew AI, then sync, with headroom kept on purpose. The proportions are the shape of the budget, not a profiler capture. The floor was 30; typical frames ran well under it.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Cinematics that are actually there</h3>
+        <p>The briefing and the pit-stop moment could have been a video on a screen in the world. I staged them in-engine instead: the camera moves on rails, the crew animations are timed to the beat of the car stopping, and the player keeps full head tracking throughout. A video is a flat rectangle in a room that is otherwise real; the moment you turn your head it stops being a pit lane. Timing the crew to the car’s stop also means the sequence adapts when a group is slow to settle. The sync point is an <strong>event</strong>, not a timestamp. <a class="figref" href="#fig-1-3">Fig 1.3</a></p>
+      </div>
+
+      <figure class="fig" id="fig-1-3">
+        <div class="fig__frame" data-n="FIG 1.3">
+          <svg viewBox="0 0 720 270" role="img" aria-label="Timeline diagram: a camera rail track, crew animation blocks that start when the car stops, the car arriving and leaving, and a player track that stays free the whole time.">
+            <text class="r" x="108" y="58">camera</text>
+            <text class="r" x="108" y="112">crew</text>
+            <text class="r" x="108" y="162">car</text>
+            <text class="r" x="108" y="212">player</text>
+            <path class="s d" d="M300 32V240"/>
+            <text class="h sm" x="306" y="24">car stops = t0, the sync event</text>
+            <path class="a" d="M120 54C200 30 250 78 300 54S420 30 480 54 600 74 680 50"/>
+            <circle class="fa" cx="120" cy="54" r="3"/><circle class="fa" cx="300" cy="54" r="3"/><circle class="fa" cx="480" cy="54" r="3"/><circle class="fa" cx="680" cy="50" r="3"/>
+            <text class="sm" x="126" y="82">camera on a rail; the player’s head stays free</text>
+            <rect class="box-a" x="300" y="96" width="58" height="24" rx="3"/><text class="sm c" x="329" y="112">approach</text>
+            <rect class="box-a" x="358" y="96" width="48" height="24" rx="3"/><text class="sm c" x="382" y="112">gun off</text>
+            <rect class="box-a" x="406" y="96" width="86" height="24" rx="3"/><text class="sm c" x="449" y="112">wheel off · on</text>
+            <rect class="box-a" x="492" y="96" width="48" height="24" rx="3"/><text class="sm c" x="516" y="112">gun on</text>
+            <rect class="box-a" x="540" y="96" width="44" height="24" rx="3"/><text class="sm c" x="562" y="112">clear</text>
+            <path class="s" d="M120 158H300"/><path class="s" d="M293 154l7 4-7 4"/>
+            <text class="sm" x="126" y="150">arrives</text>
+            <path class="m d" d="M300 158H584"/>
+            <text class="sm c" x="430" y="150">stopped: the crew works</text>
+            <path class="s" d="M584 158H680"/><path class="s" d="M673 154l7 4-7 4"/>
+            <text class="sm" x="590" y="150">leaves</text>
+            <rect class="zone" x="120" y="196" width="560" height="24" rx="3"/>
+            <text class="tt sm c" x="480" y="212">free look, free hands: no video, no black bars</text>
+            <path class="s" d="M120 240H680M120 236v8M200 236v8M280 236v8M360 236v8M440 236v8M520 236v8M600 236v8M680 236v8"/>
+            <text class="sm c" x="120" y="258">0</text><text class="sm c" x="200" y="258">2</text><text class="sm c" x="280" y="258">4</text><text class="sm c" x="360" y="258">6</text><text class="sm c" x="440" y="258">8</text><text class="sm c" x="520" y="258">10</text><text class="sm c" x="600" y="258">12</text><text class="sm c" x="680" y="258">14 s</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 1.3</b> The pit-stop moment as staged in-engine. The camera rail and the crew’s animation blocks hang off one event, the car stopping, so the choreography holds even when a group is slow. The player track never goes dark.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Crew that works around a human</h3>
+        <p>The AI crew changes the wheels the player is not changing. The hard part is not the wheel. It is that a real person is standing in the box with their arms out, and they never stand where you planned. Each crew member owns a slot (a wheel, the jack, the gun) with an approach path, a work volume, and an exit. The player’s station is a <strong>reserved zone</strong> the crew treats as solid. If a path crosses it, the crew member waits rather than pushes through, and the sequence resumes on its next beat. Crew never collide with the player, never collide with each other, and never break the timing of the stop. <a class="figref" href="#fig-1-4">Fig 1.4</a></p>
+      </div>
+
+      <figure class="fig" id="fig-1-4">
+        <div class="fig__frame" data-n="FIG 1.4">
+          <svg viewBox="0 0 720 340" role="img" aria-label="Top-down diagram of a pit box: the car with four wheel slots, a reserved zone around the player at the front-left wheel, approach paths from a crew rack to the other three wheels, avoidance radii around crew members, and a path that yields at the zone edge.">
+            <rect class="m d" x="200" y="40" width="320" height="270" rx="4"/>
+            <text class="sm" x="208" y="58">pit box, from above</text>
+            <text class="h sm" x="330" y="28">yields at the zone edge, never pushes through</text>
+            <rect class="box" x="315" y="90" width="110" height="180" rx="16"/>
+            <text class="sm c" x="370" y="185">car</text>
+            <rect class="box-t" x="300" y="100" width="18" height="32" rx="2"/>
+            <rect class="box-a" x="422" y="100" width="18" height="32" rx="2"/>
+            <rect class="box-a" x="300" y="228" width="18" height="32" rx="2"/>
+            <rect class="box-a" x="422" y="228" width="18" height="32" rx="2"/>
+            <text class="sm c" x="431" y="94">FR</text><text class="sm c" x="431" y="274">RR</text><text class="sm r" x="292" y="248">RL</text>
+            <circle class="zone" cx="270" cy="116" r="52"/>
+            <text class="tt sm c" x="270" y="112">player</text><text class="tt sm c" x="270" y="126">FL · reserved</text>
+            <rect class="box" x="600" y="150" width="90" height="44" rx="4"/><text class="sm c" x="645" y="176">crew rack</text>
+            <path class="a" d="M600 160C540 160 480 130 448 118"/><path class="a" d="M456 112l-8 6 8 5"/>
+            <path class="a" d="M600 184C540 184 480 230 448 244"/><path class="a" d="M456 238l-8 6 8 5"/>
+            <path class="a" d="M645 194V296H330C315 296 312 280 312 262"/><path class="a" d="M307 269l5-8 5 8"/>
+            <path class="a" d="M600 150C540 120 420 60 330 70"/>
+            <path class="a w2" d="M334 62v14M340 62v14"/>
+            <circle class="m d" cx="520" cy="146" r="22"/><circle class="fi" cx="520" cy="146" r="4"/>
+            <circle class="m d" cx="520" cy="236" r="22"/><circle class="fi" cx="520" cy="236" r="4"/>
+            <circle class="m d" cx="470" cy="296" r="22"/><circle class="fi" cx="470" cy="296" r="4"/>
+            <text class="sm c" x="520" y="276">avoidance radius</text>
+            <path class="s" d="M370 40V78"/><path class="s" d="M365 71l5 8 5-8"/><text class="sm" x="378" y="62">front jack</text>
+            <path class="s" d="M370 310V282"/><path class="s" d="M365 289l5-8 5 8"/><text class="sm" x="378" y="304">rear jack</text>
+            <path class="a" d="M24 272h26"/><text class="sm" x="58" y="276">approach path</text>
+            <path class="t d" d="M24 294h26"/><text class="sm" x="58" y="298">reserved zone: solid to the crew</text>
+            <path class="m d" d="M24 316h26"/><text class="sm" x="58" y="320">avoidance radius: solid to each other</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 1.4</b> The pit box from above. Three crew paths reach their wheels; the fourth stops at the edge of the player’s reserved zone and waits for its beat. Avoidance radii keep crew off each other without physics against the player.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C++ · CREW MEMBER</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// One crew member, one job. The rule: do the job, never through the player.</i>
+<b>void</b> ACrewMember::Advance(<em>float</em> Dt)
+{
+    <b>switch</b> (Step)
+    {
+    <b>case</b> EStep::Approach:
+        <b>if</b> (PlayerZone.Overlaps(NextWaypoint())) { Wait(Dt); <b>break</b>; }   <i>// yield; resume on the next beat</i>
+        MoveAlong(Path, Dt);
+        <b>if</b> (AtSlot()) Step = EStep::GunOff;
+        <b>break</b>;
+    <b>case</b> EStep::GunOff:   PlayTimed(Anim.GunOff,   [&amp;]{ Step = EStep::WheelOff; }); <b>break</b>;
+    <b>case</b> EStep::WheelOff: PlayTimed(Anim.WheelOff, [&amp;]{ Step = EStep::WheelOn;  }); <b>break</b>;
+    <b>case</b> EStep::WheelOn:  PlayTimed(Anim.WheelOn,  [&amp;]{ Step = EStep::GunOn;    }); <b>break</b>;
+    <b>case</b> EStep::GunOn:    PlayTimed(Anim.GunOn,    [&amp;]{ Step = EStep::Clear;    }); <b>break</b>;
+    <b>case</b> EStep::Clear:    MoveAlong(ExitPath, Dt);                                 <b>break</b>;
+    }
+}
+<i>// Crew never collide with the player: the zone is solid to them. Crew never collide with each other:</i>
+<i>// each slot owns its work volume, and approach paths are planned around the volumes already claimed.</i></code></pre>
+      </div>
+
+      <dl class="results">
+        <div><dt>6</dt><dd>headsets in sync, one host</dd></div>
+        <div><dt>&lt; 20 ms</dt><dd>state sync between stations</dd></div>
+        <div><dt>98%</dt><dd>uptime across event days</dd></div>
+        <div><dt>5 mo</dt><dd>from brief to demo-ready</dd></div>
+      </dl>
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>The PC-to-headset asset streaming and the preload path</li>
+          <li>The optimization pass and the 30 fps floor</li>
+          <li>The in-engine cinematic system: camera rails, animation timing, the sync event</li>
+          <li>The pit-crew AI, its slots, paths and avoidance rules</li>
+          <li>The six-station state sync and the leaderboard feed</li>
+          <li>The game and role design, so six strangers read their job in seconds</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>Environment, car and character art, and UI, from the City Crafters team</li>
+          <li>QA, and running the stations on event days</li>
+          <li>The event itself: Emaar and Address Hospitality</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 02 Unseen Blade -->
+    <section class="dossier" id="unseen-blade" aria-labelledby="blade-title" style="--fx:#e0483d">
+      <div class="dossier__head">
+        <div class="dossier__num">02</div>
+        <div>
+          <h2 id="blade-title">Unseen Blade <span class="chip">UNITY · ANDROID</span></h2>
+          <p class="thesis">You are blind, and sound is the map. That is one rule, so it had to be one shader.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unity, C# and HLSL</dd></div>
+        <div><dt>Runs on</dt><dd>Android, Google Play; first playable April 2026</dd></div>
+        <div><dt>Content</dt><dd>Three campaign chapters, story mode, shadow trials, training grounds</dd></div>
+        <div><dt>Studio</dt><dd>City Crafters</dd></div>
+        <div><dt>My role</dt><dd>Concept and design, <b>the echo-location rendering, the stealth and detection AI</b>, combat</dd></div>
+        <div><dt>Result</dt><dd>Shipped. A stealth game you can read without seeing it</dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>The rule</h3>
+        <p>The world is dark. Every sound sends a wave outward from where it happened, and surfaces light up where the wave passes, then fade. Your own footsteps show you the room. An enemy’s footsteps show you the enemy. A thrown tile shows you the corridor behind them. And every one of those sounds is also something the enemies hear.</p>
+
+        <h3>One shader for every object</h3>
+        <p>The obvious way to build this is per object: a script on each mesh that reacts to sounds. It does not scale, and it looks wrong at the seams where two objects meet. I wrote the echo as a single material that works on <strong>any mesh</strong>, because it needs only one thing every mesh already has: the world-space position of each pixel. For each active sound the shader knows the origin and the start time. The wavefront’s radius is speed times elapsed time. A pixel lights up when its distance from the origin is within the wave’s thickness of that radius, and the light fades as the wave spreads. No per-object setup, no UVs, no baked data. Drop the material on a wall, a blade, a guard, a floor tile, and it obeys. <a class="figref" href="#fig-2-1">Fig 2.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-2-1">
+        <div class="fig__frame" data-n="FIG 2.1">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Diagram: on the left, expanding rings from a sound source light up the parts of nearby pillars they cross; on the right, a graph of brightness against distance shows a moving bump that gets lower as the wave spreads.">
+            <rect class="box" x="60" y="70" width="24" height="50" rx="2"/>
+            <rect class="box" x="200" y="110" width="34" height="34" rx="2"/>
+            <rect class="box" x="250" y="200" width="44" height="26" rx="2"/>
+            <rect class="box" x="95" y="232" width="30" height="22" rx="2"/>
+            <circle class="a o1" cx="150" cy="170" r="120"/>
+            <circle class="a o2" cx="150" cy="170" r="80"/>
+            <circle class="a w2" cx="150" cy="170" r="40"/>
+            <path class="a w3" d="M201.4 108.7A80 80 0 0 1 222.5 136.2"/>
+            <path class="a w3 o2" d="M265.9 201.1A120 120 0 0 1 258.8 220.7"/>
+            <path class="a w3 o2" d="M60.8 89.7A120 120 0 0 1 76.1 75.4"/>
+            <path class="a w3" d="M129.3 247.3A80 80 0 0 1 98.6 231.3"/>
+            <circle class="fa" cx="150" cy="170" r="4"/>
+            <text class="h sm c" x="150" y="192">sound</text>
+            <path class="m" d="M222 104L196 44"/>
+            <text class="h sm" x="30" y="40">lit where the wave crosses a surface</text>
+            <text class="sm" x="30" y="292">the rings are one material on every mesh</text>
+            <path class="s" d="M420 240H700M420 240V60"/>
+            <text class="sm" x="426" y="52">brightness</text>
+            <text class="sm c" x="560" y="288">distance from the sound</text>
+            <path class="a" d="M452 240Q470 -60 488 240"/>
+            <path class="a o2" d="M532 240Q550 40 568 240"/>
+            <path class="a o1" d="M622 240Q640 120 658 240"/>
+            <text class="h sm c" x="470" y="80">t = 0.2 s</text>
+            <text class="sm c" x="550" y="130">0.5 s</text>
+            <text class="sm c" x="640" y="170">0.8 s</text>
+            <path class="s" d="M452 250V256H488V250"/>
+            <text class="sm c" x="470" y="270">width w</text>
+            <text class="mono h r" x="700" y="100">|d − speed·t| &lt; w</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 2.1</b> Left: a pulse from one sound, three moments in. Only the surfaces the wavefront is crossing are lit, on any mesh, because the test is a world-space distance. Right: the brightness profile. The bump moves outward at the speed of sound and sinks as it goes.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · HLSL · ECHO MATERIAL</span><span>fragment stage, reduced to the idea</span></div>
+<pre class="code"><code><i>// _Pulse[i] = (origin.xyz, startTime). _Speed, _Width and _Range are in world units.</i>
+<em>float</em> echo = 0;
+<b>for</b> (<em>int</em> i = 0; i &lt; _PulseCount; i++)
+{
+    <em>float3</em> o    = _Pulse[i].xyz;
+    <em>float</em>  r    = (_Time.y - _Pulse[i].w) * _Speed;      <i>// how far this wavefront has travelled</i>
+    <em>float</em>  d    = distance(IN.worldPos, o);              <i>// how far this pixel is from the sound</i>
+    <em>float</em>  ring = 1 - saturate(abs(d - r) / _Width);     <i>// 1 on the wavefront, 0 away from it</i>
+    echo += ring * saturate(1 - r / _Range);              <i>// fades as the pulse spreads</i>
+}
+<b>return</b> <em>float4</em>(_EchoColor.rgb * saturate(echo), 1);
+<i>// Nothing here depends on the mesh: no UVs, no vertex colours, no per-object setup. Any surface obeys.</i></code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>One event, two listeners</h3>
+        <p>Sounds go through a small bus. The renderer reads it to fill the shader’s pulse array (a handful of active pulses is plenty; old ones expire). The AI reads the same bus to decide what the guards heard: loudness times distance falloff against a hearing threshold. Because both systems consume the same record, the game is honest by construction. If you saw the room light up, the guard heard it too. There is no separate noise stat to keep in sync with what the player sees. <a class="figref" href="#fig-2-2">Fig 2.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-2-2">
+        <div class="fig__frame" data-n="FIG 2.2">
+          <svg viewBox="0 0 720 260" role="img" aria-label="Diagram: footsteps, strikes, thrown tiles, enemy steps and doors feed one sound event, which is read by two consumers: the echo material, so you see, and the guard hearing model, so they hear.">
+            <text class="sm" x="30" y="68">your footstep</text>
+            <text class="sm" x="30" y="96">a strike</text>
+            <text class="sm" x="30" y="124">a thrown tile</text>
+            <text class="sm" x="30" y="152">an enemy’s step</text>
+            <text class="sm" x="30" y="180">a door</text>
+            <path class="m" d="M150 64L200 112M150 92L200 116M150 120L200 120M150 148L200 124M150 176L200 128"/>
+            <rect class="box-a" x="200" y="90" width="150" height="60" rx="4"/>
+            <text class="k c" x="275" y="112">Sound event</text>
+            <text class="sm c" x="275" y="132">origin · loudness · time</text>
+            <path class="a" d="M350 112C400 112 400 70 430 70"/><path class="a" d="M423 66l7 4-7 4"/>
+            <path class="a" d="M350 128C400 128 400 190 430 190"/><path class="a" d="M423 186l7 4-7 4"/>
+            <rect class="box" x="430" y="44" width="180" height="54" rx="4"/>
+            <text class="k" x="446" y="66">Echo material</text>
+            <text class="sm" x="446" y="86">pulse array → any mesh</text>
+            <rect class="box" x="430" y="164" width="180" height="54" rx="4"/>
+            <text class="k" x="446" y="186">Guard hearing</text>
+            <text class="sm" x="446" y="206">hears if L · falloff(d) &gt; T</text>
+            <path class="s" d="M610 70h14"/><path class="s" d="M618 66l6 4-6 4"/><text class="k" x="632" y="74">you see</text>
+            <path class="s" d="M610 190h14"/><path class="s" d="M618 186l6 4-6 4"/><text class="k" x="632" y="194">they hear</text>
+            <text class="h sm" x="200" y="245">one event, both consumers read the same record: what you saw, they heard</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 2.2</b> The sound bus. Everything that makes noise writes one record; the renderer and the guard AI both read it. The two never disagree, which is what makes stealth feel fair.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>The tension that makes it a game</h3>
+        <p>To see, you must make sound. To make sound is to be found. Sneaking is quiet, so it shows you less; sprinting shows you everything and everyone. Combat is loud on purpose, so a fight anywhere is a fight everyone comes to. The guard AI runs a short awareness ladder driven by what it heard and how recently, with timeouts that bring it back down, so a careful player can make one mistake and recover from it. <a class="figref" href="#fig-2-3">Fig 2.3</a></p>
+      </div>
+
+      <figure class="fig" id="fig-2-3">
+        <div class="fig__frame" data-n="FIG 2.3">
+          <svg viewBox="0 0 720 214" role="img" aria-label="State diagram: guard awareness moves from patrol to suspicious to search to chase on sounds, and falls back down after quiet, losing the trail, or losing sight.">
+            <rect class="box" x="30" y="60" width="120" height="44" rx="4"/><text class="k c" x="90" y="87">Patrol</text>
+            <rect class="box" x="200" y="60" width="120" height="44" rx="4"/><text class="k c" x="260" y="87">Suspicious</text>
+            <rect class="box" x="370" y="60" width="120" height="44" rx="4"/><text class="k c" x="430" y="87">Search</text>
+            <rect class="box-a" x="540" y="60" width="120" height="44" rx="4"/><text class="k c" x="600" y="87">Chase</text>
+            <path class="a" d="M150 82H200"/><path class="a" d="M193 78l7 4-7 4"/><text class="sm c" x="175" y="50">heard something</text>
+            <path class="a" d="M320 82H370"/><path class="a" d="M363 78l7 4-7 4"/><text class="sm c" x="345" y="50">heard it again</text>
+            <path class="a" d="M490 82H540"/><path class="a" d="M533 78l7 4-7 4"/><text class="sm c" x="515" y="50">found you</text>
+            <path class="m d" d="M260 104V130H90V104"/><path class="m" d="M86 111l4-7 4 7"/><text class="sm c" x="175" y="146">quiet for a while</text>
+            <path class="m d" d="M430 104V156H120V104"/><path class="m" d="M116 111l4-7 4 7"/><text class="sm c" x="275" y="172">lost the trail</text>
+            <path class="m d" d="M600 104V130H460V104"/><path class="m" d="M456 111l4-7 4 7"/><text class="sm c" x="530" y="146">lost sight</text>
+            <path class="m" d="M90 192H600"/><path class="a" d="M90 192H340"/>
+            <text class="sm c" x="90" y="208">0</text><text class="sm c" x="260" y="208">30</text><text class="sm c" x="430" y="208">60</text><text class="sm c" x="600" y="208">100</text>
+            <text class="sm" x="612" y="196">awareness</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 2.3</b> The guard’s awareness ladder. Sounds push it up; time pulls it down. Every rung has a way back, so a careful player is never punished for a single noise.</figcaption>
+      </figure>
+
+      <dl class="results">
+        <div><dt>1</dt><dd>material for every surface in the game</dd></div>
+        <div><dt>3</dt><dd>campaign chapters at first playable</dd></div>
+        <div><dt>Apr 2026</dt><dd>on Google Play</dd></div>
+        <div><dt>1 hit</dt><dd>can decide a fight, so noise matters</dd></div>
+      </dl>
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>The echo-location shader and the pulse bus behind it</li>
+          <li>The stealth and detection AI: hearing, the awareness ladder, search behaviour</li>
+          <li>Combat rules, feedback and difficulty progression</li>
+          <li>The core loop and player-facing UX</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>Character and environment art, animation, and QA from the City Crafters team</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 03 Target Destroyed -->
+    <section class="dossier" id="target-destroyed" aria-labelledby="td-title" style="--fx:#4cff8a">
+      <div class="dossier__head">
+        <div class="dossier__num">03</div>
+        <div>
+          <h2 id="td-title">Target Destroyed <span class="chip">UNITY · ANDROID</span></h2>
+          <p class="thesis">Drone interceptions were the news in the UAE. Two weeks later the game was on Google Play. Speed is a design constraint like any other.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unity, C#</dd></div>
+        <div><dt>Runs on</dt><dd>Android, Google Play; portrait and landscape; 60 fps on modern phones</dd></div>
+        <div><dt>Timeline</dt><dd><b>Two weeks</b> from idea to store submission</dd></div>
+        <div><dt>Meta</dt><dd>Hangar upgrades, pilot ranks, daily challenges, three global leaderboards</dd></div>
+        <div><dt>My role</dt><dd>The whole build: loop, enemy structure, HUD, economy, leaderboards</dd></div>
+        <div><dt>Studio</dt><dd>City Crafters</dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>The constraint</h3>
+        <p>The idea only worked if it shipped while people were still talking about drones. That gave me fourteen days and a rule: anything that is not the loop or a reason to come back gets cut. No cutscenes, no story, no menu deeper than two taps. The first week bought the loop; the second bought the reasons to come back. <a class="figref" href="#fig-3-1">Fig 3.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-3-1">
+        <div class="fig__frame" data-n="FIG 3.1">
+          <svg viewBox="0 0 720 250" role="img" aria-label="Gantt-style diagram of a fourteen-day build: the loop first, then enemies and the spawn director, the FLIR HUD, then meta systems, online leaderboards, and finally performance and the store build.">
+            <path class="s d" d="M470 34V210"/>
+            <text class="h sm c" x="360" y="26">week one: the loop</text>
+            <text class="h sm c" x="580" y="26">week two: reasons to come back</text>
+            <rect class="box-a" x="250" y="31" width="126" height="18" rx="2"/><text class="r" x="238" y="44">the loop: lock, fire, kill, clock</text>
+            <rect class="box-a" x="313" y="59" width="126" height="18" rx="2"/><text class="r" x="238" y="72">enemies + spawn director</text>
+            <rect class="box-a" x="376" y="87" width="126" height="18" rx="2"/><text class="r" x="238" y="100">FLIR HUD, feel, both orientations</text>
+            <rect class="box" x="470" y="115" width="94" height="18" rx="2"/><text class="r" x="238" y="128">meta: upgrades, ranks, dailies</text>
+            <rect class="box" x="501" y="143" width="126" height="18" rx="2"/><text class="r" x="238" y="156">online leaderboards</text>
+            <rect class="box" x="596" y="171" width="94" height="18" rx="2"/><text class="r" x="238" y="184">perf, store build, submission</text>
+            <path class="s" d="M250 214H690M250 210v8M344 210v8M438 210v8M533 210v8M627 210v8M690 210v8"/>
+            <text class="sm c" x="266" y="234">day 1</text><text class="sm c" x="360" y="234">4</text><text class="sm c" x="454" y="234">7</text><text class="sm c" x="549" y="234">10</text><text class="sm c" x="674" y="234">14</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 3.1</b> The order things landed over fourteen days. Everything in week two depends on week one being finished, not polished. Polish came last, with the store build.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>One clock is the whole economy</h3>
+        <p>A sortie is thirty seconds. Every kill adds time; nothing else does. Gold high-value targets add three times as much; combos multiply. That one mechanic gives you difficulty, pacing and scoring from <strong>three numbers</strong>: time per kill, spawn rate, and the gold multiplier. Tuning the game was tuning those, watching sessions, and tuning again. It also means the game ends by itself, which is exactly what a session on a phone needs. <a class="figref" href="#fig-3-2">Fig 3.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-3-2">
+        <div class="fig__frame" data-n="FIG 3.2">
+          <svg viewBox="0 0 720 262" role="img" aria-label="Graph of time left against elapsed time in one sortie: the clock drains at one second per second and jumps up at each kill, more for a gold target and for a combo, until it reaches zero and the sortie ends.">
+            <path class="s" d="M100 220H680M100 220V40"/>
+            <path class="s" d="M96 175h8M96 130h8M96 85h8M96 40h8"/>
+            <text class="sm r" x="90" y="179">10</text><text class="sm r" x="90" y="134">20</text><text class="sm r" x="90" y="89">30</text><text class="sm r" x="90" y="44">40 s</text>
+            <path class="s" d="M180 216v8M260 216v8M340 216v8M420 216v8M500 216v8M580 216v8M660 216v8"/>
+            <text class="sm c" x="100" y="238">0</text><text class="sm c" x="180" y="238">10</text><text class="sm c" x="260" y="238">20</text><text class="sm c" x="340" y="238">30</text><text class="sm c" x="420" y="238">40</text><text class="sm c" x="500" y="238">50</text><text class="sm c" x="580" y="238">60</text><text class="sm c" x="660" y="238">70 s</text>
+            <text class="sm" x="100" y="30">time left</text>
+            <text class="sm r" x="680" y="256">elapsed</text>
+            <path class="m d" d="M100 85L340 220"/>
+            <text class="sm" x="300" y="178">no kills: over at 30 s</text>
+            <path class="s" d="M100 85L164 121M164 98.5L212 125.5M212 58L308 112M308 89.5L388 134.5M388 98.5L500 161.5M500 139L644 220"/>
+            <path class="a w2" d="M164 121V98.5M212 125.5V58M308 112V89.5M388 134.5V98.5M500 161.5V139"/>
+            <path class="a" d="M160 105.5l4-7 4 7M208 65l4-7 4 7M304 96.5l4-7 4 7M384 105.5l4-7 4 7M496 146l4-7 4 7"/>
+            <circle class="fa" cx="164" cy="121" r="3.5"/><circle class="fa" cx="212" cy="125.5" r="3.5"/><circle class="fa" cx="308" cy="112" r="3.5"/><circle class="fa" cx="388" cy="134.5" r="3.5"/><circle class="fa" cx="500" cy="161.5" r="3.5"/>
+            <text class="h sm" x="170" y="96">+5 s</text>
+            <text class="h sm" x="218" y="56">+15 s · gold ×3</text>
+            <text class="h sm" x="314" y="87">+5 s</text>
+            <text class="h sm" x="394" y="96">+8 s · combo</text>
+            <text class="h sm" x="506" y="137">+5 s</text>
+            <text class="sm" x="108" y="78">start: 30 s</text>
+            <text class="k sm" x="652" y="216">sortie over</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 3.2</b> One sortie. The clock drains at one second per second and kills are the only way to buy more, so the shape of a run is the shape of the player’s aim. The dashed line is a run with no kills: over in thirty seconds, by design.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C# · THE CLOCK</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// The whole game is one clock. Kills buy time; nothing else does.</i>
+<b>void</b> OnKill(Target t)
+{
+    <em>float</em> bonus = t.IsGold ? baseBonus * <em>3f</em> : baseBonus;      <i>// gold targets: three times the time</i>
+    clock  = Mathf.Min(clock + bonus * ComboMultiplier(), clockCap);
+    combo  = Mathf.Min(combo + 1, comboMax);
+    score += t.Value * ComboMultiplier();
+    hud.Flash(t);                                                <i>// loud feedback: a kill has to feel like time</i>
+}
+
+<b>void</b> Update()
+{
+    clock -= Time.deltaTime;                                     <i>// one second per second, no mercy</i>
+    <b>if</b> (clock &lt;= <em>0f</em>) EndSortie();                                 <i>// the game ends by itself</i>
+}</code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>Enemy structure and the HUD</h3>
+        <p>Targets are a small set of behaviours (straight runners, weavers, high-value gold) spawned by a director that keeps the screen busy but readable. The HUD is a FLIR-style military display: smart lock-on picks the target you meant, missile lock reads at a glance, and the feedback for a kill is loud. Portrait and landscape both work because the loop is aim-and-fire; the layout adapts, the rules do not.</p>
+
+        <h3>Reasons to come back</h3>
+        <p>Kills earn Intel Points; Intel Points buy hangar upgrades; upgrades move you up the pilot ranks. Daily challenges reset the goal every morning. Three global leaderboards, held on the server, so a thirty-second sortie can still put you on a board. <a class="figref" href="#fig-3-3">Fig 3.3</a></p>
+      </div>
+
+      <figure class="fig" id="fig-3-3">
+        <div class="fig__frame" data-n="FIG 3.3">
+          <svg viewBox="0 0 720 184" role="img" aria-label="Diagram: a phone sends a run result to the server, which validates and stores it and feeds three global leaderboards; the rank comes back to the phone.">
+            <rect class="box" x="40" y="40" width="110" height="100" rx="8"/><path class="m" d="M60 56h70M60 124h70"/>
+            <text class="k sm c" x="95" y="94">phone</text>
+            <path class="a" d="M150 80H250"/><path class="a" d="M243 76l7 4-7 4"/>
+            <text class="sm c" x="200" y="68">run result</text>
+            <text class="sm c" x="200" y="98">score, kills</text>
+            <rect class="box-a" x="250" y="50" width="150" height="60" rx="4"/>
+            <text class="k c" x="325" y="74">server</text>
+            <text class="sm c" x="325" y="94">validates · stores</text>
+            <rect class="box" x="470" y="24" width="200" height="36" rx="4"/><text class="sm" x="486" y="46">global leaderboard · 1</text>
+            <rect class="box" x="470" y="72" width="200" height="36" rx="4"/><text class="sm" x="486" y="94">global leaderboard · 2</text>
+            <rect class="box" x="470" y="120" width="200" height="36" rx="4"/><text class="sm" x="486" y="142">global leaderboard · 3</text>
+            <path class="a" d="M400 74C440 74 440 42 470 42"/><path class="a" d="M463 38l7 4-7 4"/>
+            <path class="a" d="M400 80H470"/><path class="a" d="M463 86l7-6-7-6"/>
+            <path class="a" d="M400 86C440 86 440 138 470 138"/><path class="a" d="M463 134l7 4-7 4"/>
+            <path class="m d" d="M325 110V158H95V140"/><path class="m" d="M91 147l4-7 4 7"/>
+            <text class="sm c" x="210" y="174">your rank comes back</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 3.3</b> Scores live on the server, not the phone. Three boards means a short session still has one you can climb.</figcaption>
+      </figure>
+
+      <dl class="results">
+        <div><dt>14 days</dt><dd>idea to store submission</dd></div>
+        <div><dt>30 s</dt><dd>sorties, extended by kills</dd></div>
+        <div><dt>3</dt><dd>global leaderboards</dd></div>
+        <div><dt>60 fps</dt><dd>on modern phones, both orientations</dd></div>
+      </dl>
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>The loop and the clock</li>
+          <li>Enemy behaviours and the spawn director</li>
+          <li>The FLIR HUD, lock-on and kill feedback</li>
+          <li>The economy: Intel Points, upgrades, ranks, daily challenges</li>
+          <li>Online leaderboards and the store build</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>Art and audio assets, and QA, from the City Crafters team</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 04 Lala Poker -->
+    <section class="dossier" id="lala-poker" aria-labelledby="lala-title">
+      <div class="dossier__head">
+        <div class="dossier__num">04</div>
+        <div>
+          <h2 id="lala-title">Lala Poker <span class="chip">UNITY · C++ · iOS, ANDROID, WEB</span></h2>
+          <p class="thesis">Six games, one engine. The client draws the cards. It never decides them.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unity clients on iOS, Android and WebGL; <b>the game core in C++</b></dd></div>
+        <div><dt>Games</dt><dd>Texas Hold’em, Omaha, multi-table tournaments, Blackjack, Roulette, lottery</dd></div>
+        <div><dt>Period</dt><dd>2023 to 2025, live throughout</dd></div>
+        <div><dt>Studio</dt><dd>Lala Gaming</dd></div>
+        <div><dt>My role</dt><dd>The game logic, <b>the security model</b>, and the payout and balance math</dd></div>
+        <div><dt>Result</dt><dd>4.6 on the App Store; live on three platforms</dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>Authority</h3>
+        <p>Games with money-shaped stakes have one rule above all: the client is not trusted. Every table runs in a C++ core that owns the deck, the shuffle, the turn order, the pot and the payouts. Clients send <strong>intents</strong> (call, raise, fold, hit, spin), the core validates each one against the state machine, and every player receives only the view they are entitled to. Your hole cards exist on the server; your opponent’s never reach your device in any form. <a class="figref" href="#fig-4-1">Fig 4.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-4-1">
+        <div class="fig__frame" data-n="FIG 4.1">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Architecture diagram: iOS, Android and Web clients send intents through a gateway to a C++ table engine that holds the random number generator and shuffle, the betting state machine, the hand evaluator, pots and side pots, and payout tables; views come back to each client.">
+            <rect class="box" x="30" y="50" width="130" height="46" rx="4"/><text class="k" x="44" y="78">iOS</text>
+            <rect class="box" x="30" y="120" width="130" height="46" rx="4"/><text class="k" x="44" y="148">Android</text>
+            <rect class="box" x="30" y="190" width="130" height="46" rx="4"/><text class="k" x="44" y="218">Web (WebGL)</text>
+            <text class="h sm" x="30" y="266">clients render and send intents.</text>
+            <text class="h sm" x="30" y="282">they never hold a deck.</text>
+            <path class="a" d="M160 73C200 73 200 143 240 143M160 143H240M160 213C200 213 200 143 240 143"/><path class="a" d="M233 139l7 4-7 4"/>
+            <rect class="box" x="240" y="110" width="140" height="66" rx="4"/>
+            <text class="k c" x="310" y="138">gateway</text>
+            <text class="sm c" x="310" y="158">auth · sessions</text>
+            <path class="a" d="M380 136H450"/><path class="a" d="M443 132l7 4-7 4"/><text class="sm c" x="415" y="126">intents</text>
+            <path class="m d" d="M450 158H380"/><path class="m" d="M387 154l-7 4 7 4"/><text class="sm c" x="415" y="176">views</text>
+            <rect class="box-a" x="450" y="30" width="240" height="240" rx="4"/>
+            <text class="k lg" x="470" y="58">C++ table engine</text>
+            <rect class="box" x="470" y="76" width="200" height="30" rx="3"/><text class="sm" x="480" y="95">cryptographic RNG + shuffle</text>
+            <rect class="box" x="470" y="112" width="200" height="30" rx="3"/><text class="sm" x="480" y="131">betting state machine, per game</text>
+            <rect class="box" x="470" y="148" width="200" height="30" rx="3"/><text class="sm" x="480" y="167">hand evaluator, 7-card</text>
+            <rect class="box" x="470" y="184" width="200" height="30" rx="3"/><text class="sm" x="480" y="203">pot + side pots</text>
+            <rect class="box" x="470" y="220" width="200" height="30" rx="3"/><text class="sm" x="480" y="239">payout tables · rake · jackpot</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 4.1</b> Where things live. Everything that decides an outcome sits inside the engine; everything outside it draws pictures and asks. A view is cut per seat, so a client cannot leak what it never received.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C++ · TABLE ENGINE</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// Every client message is an intent. The table decides whether it is legal. Nothing else does.</i>
+Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
+{
+    <b>if</b> (who != seats[turn].id)                    <b>return</b> Reject(<em>"not your turn"</em>);
+    <b>if</b> (!a.IsLegalFor(street, minRaise, toCall))  <b>return</b> Reject(<em>"illegal action"</em>);
+    <b>if</b> (a.amount &gt; seats[turn].stack)             <b>return</b> Reject(<em>"insufficient chips"</em>);
+
+    ApplyToPot(who, a);            <i>// side pots fall out of the same step when someone is all-in short</i>
+    AdvanceTurn();                 <i>// may close the street, deal the next card, or trigger showdown</i>
+    <b>return</b> Commit(ViewFor(who));  <i>// each seat gets its own view: only what that player may see</i>
+}
+<i>// The deck lives here, shuffled from a cryptographic source. Hole cards never leave the core except</i>
+<i>// to their owner, and every hand is replayable from its log, so any dispute has exactly one answer.</i></code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>One state machine per game, one shape for all of them</h3>
+        <p>Poker is a sequence of streets, each of which is a loop of act, validate, next seat, until every live player has matched or one is left. Side pots fall out of the same loop when someone goes all-in short. Omaha changes the hand evaluator, not the loop. Tournaments wrap tables in blind levels and rebalance seats between hands. Blackjack and Roulette are shorter machines with the same discipline: intent in, validation, resolution, view out. <a class="figref" href="#fig-4-2">Fig 4.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-4-2">
+        <div class="fig__frame" data-n="FIG 4.2">
+          <svg viewBox="0 0 720 240" role="img" aria-label="State diagram of a poker hand: blinds, pre-flop, flop, turn, river, showdown, with an act-validate-next loop under each street and an early exit to award the pot when one player is left.">
+            <rect class="box" x="20" y="40" width="96" height="40" rx="4"/><text class="k c" x="68" y="65">Blinds</text>
+            <rect class="box" x="132" y="40" width="96" height="40" rx="4"/><text class="k c" x="180" y="65">Pre-flop</text>
+            <rect class="box" x="244" y="40" width="96" height="40" rx="4"/><text class="k c" x="292" y="65">Flop</text>
+            <rect class="box" x="356" y="40" width="96" height="40" rx="4"/><text class="k c" x="404" y="65">Turn</text>
+            <rect class="box" x="468" y="40" width="96" height="40" rx="4"/><text class="k c" x="516" y="65">River</text>
+            <rect class="box-a" x="580" y="40" width="96" height="40" rx="4"/><text class="k c" x="628" y="65">Showdown</text>
+            <path class="a" d="M116 60h16M228 60h16M340 60h16M452 60h16M564 60h16"/>
+            <path class="a" d="M125 56l7 4-7 4M237 56l7 4-7 4M349 56l7 4-7 4M461 56l7 4-7 4M573 56l7 4-7 4"/>
+            <path class="a" d="M152 80C152 110 208 110 208 80M264 80C264 110 320 110 320 80M376 80C376 110 432 110 432 80M488 80C488 110 544 110 544 80"/>
+            <path class="a" d="M204 87l4-7 4 7M316 87l4-7 4 7M428 87l4-7 4 7M540 87l4-7 4 7"/>
+            <text class="sm c" x="348" y="134">act → validate → next seat, until every live player has matched</text>
+            <text class="sm c" x="628" y="100">evaluate hands</text>
+            <text class="sm c" x="628" y="116">side pots in order</text>
+            <path class="m d" d="M404 112V180H560"/><path class="m" d="M553 176l7 4-7 4"/>
+            <rect class="box" x="560" y="160" width="140" height="40" rx="4"/><text class="k c" x="630" y="185">award the pot</text>
+            <text class="sm c" x="404" y="222">one player left, at any street: award the pot, skip the rest</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 4.2</b> A hand of Hold’em as the engine sees it. Every street runs the same small loop; the early exit is the same edge on every street. Omaha swaps the evaluator, tournaments wrap the whole thing in blind levels.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Where the edge lives</h3>
+        <p>I designed the balance model with one principle: <strong>the random number generator is never tuned; the payout table is.</strong> Poker’s fairness is a uniform shuffle from a cryptographic source; the house earns rake. In house games the edge is in arithmetic anyone can check: a wheel with more pockets than the payout implies, a dealer who acts last, a lottery prize pool that is a fixed share of ticket sales. Jackpots grow from a fixed contribution per pot, so the pool can always pay what it advertises. I verified the return-to-player targets by simulation before anything went live, and the economy stayed solvent as chips, jackpots and VIP tiers were layered on top. <a class="figref" href="#fig-4-3">Fig 4.3</a></p>
+
+        <h3>Security beyond the table</h3>
+        <p>Sessions are authenticated, every action is validated server-side against the current state, hidden state never leaves the core, and resolution is deterministic, so any hand can be replayed from its log to settle a dispute with one answer.</p>
+      </div>
+
+      <figure class="fig" id="fig-4-3">
+        <div class="fig__frame" data-n="FIG 4.3">
+          <svg viewBox="0 0 720 232" role="img" aria-label="Flow diagram: a bet resolves through a fair random outcome, then a payout table where the house edge lives, splitting into the player payout and a fixed jackpot contribution; below, one line each for how the edge works in Roulette, Blackjack and the lottery.">
+            <rect class="box" x="20" y="40" width="100" height="44" rx="4"/><text class="k c" x="70" y="67">bet</text>
+            <path class="a" d="M120 62H170"/><path class="a" d="M163 58l7 4-7 4"/>
+            <rect class="box" x="170" y="40" width="150" height="44" rx="4"/><text class="k c" x="245" y="58">outcome</text><text class="sm c" x="245" y="76">fair RNG, never tuned</text>
+            <path class="a" d="M320 62H370"/><path class="a" d="M363 58l7 4-7 4"/>
+            <rect class="box-a" x="370" y="40" width="150" height="44" rx="4"/><text class="k c" x="445" y="58">payout table</text><text class="sm c" x="445" y="76">the edge lives here</text>
+            <path class="a" d="M520 56C545 56 545 40 570 40"/><path class="a" d="M563 36l7 4-7 4"/>
+            <path class="a" d="M520 68C545 68 545 92 570 92"/><path class="a" d="M563 88l7 4-7 4"/>
+            <rect class="box" x="570" y="20" width="130" height="40" rx="4"/><text class="sm c" x="635" y="44">player payout</text>
+            <rect class="box" x="570" y="72" width="130" height="40" rx="4"/><text class="sm c" x="635" y="90">jackpot pool</text><text class="sm c" x="635" y="104">fixed contribution</text>
+            <text class="k" x="20" y="146">Roulette</text><text class="sm" x="120" y="146">37 pockets, pays 35 to 1: the edge is the gap, and everyone can count it</text>
+            <text class="k" x="20" y="176">Blackjack</text><text class="sm" x="120" y="176">the dealer acts last: player busts settle before the house risks anything</text>
+            <text class="k" x="20" y="206">Lottery</text><text class="sm" x="120" y="206">the prize pool is a fixed share of ticket sales; the rest is the margin</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 4.3</b> Balance without touching the dice. The outcome is fair; the edge is in the payout arithmetic, which is exactly where a regulator, or a suspicious player, would want to find it.</figcaption>
+      </figure>
+
+      <dl class="results">
+        <div><dt>6</dt><dd>games on one authoritative core</dd></div>
+        <div><dt>3</dt><dd>platforms: iOS, Android, Web</dd></div>
+        <div><dt>4.6</dt><dd>App Store rating</dd></div>
+        <div><dt>0</dt><dd>hidden cards ever sent to a client</dd></div>
+      </dl>
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>The C++ game core for all six games: RNG, shuffle, state machines, evaluator, pots</li>
+          <li>The security model: authority, per-seat views, validation, replayable logs</li>
+          <li>The payout tables, the return-to-player verification and the jackpot economy</li>
+          <li>Table flow, betting UX, tournament structure, progression, quests and the chip economy</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>Art and UI, and live operations, with the Lala Gaming team</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 05 Holographic pipeline -->
+    <section class="dossier" id="holographic-pipeline" aria-labelledby="holo-title" style="--fx:#3ec6c0">
+      <div class="dossier__head">
+        <div class="dossier__num">05</div>
+        <div>
+          <h2 id="holo-title">Holographic pipeline <span class="chip">UNITY · C++ · SWAVE HXR</span></h2>
+          <p class="thesis">A hologram can’t show a surface. It shows points of light. So I turned surfaces into clouds of points, on purpose.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unity (C#) with a C++ bridge to Swave’s holographic engine</dd></div>
+        <div><dt>Hardware</dt><dd><b>Swave HXR</b>, a spatial light modulator with sub-300 nm pixels: the first real-time true holographic displays</dd></div>
+        <div><dt>Timeline</dt><dd>September to December 2023</dd></div>
+        <div><dt>Company</dt><dd>Swave Photonics</dd></div>
+        <div><dt>My role</dt><dd>Sole engineer on the Unity side: the slicing and point-cloud algorithm, and the streaming bridge</dd></div>
+        <div><dt>Result</dt><dd>Live 3D content from a game engine on a display that had never shown any</dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>Why points</h3>
+        <p>A holographic display does not rasterize triangles. It reconstructs a light field, and the natural input for that computation is a set of point emitters in space, each contributing a wave. Feed it a mesh and you have nothing. Feed it the right points and you get an object hanging in the air. The job was turning what Unity has, shaded surfaces, into what the display wants, well-distributed points, fast enough to be live. <a class="figref" href="#fig-5-1">Fig 5.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-1">
+        <div class="fig__frame" data-n="FIG 5.1">
+          <svg viewBox="0 0 720 130" role="img" aria-label="Pipeline diagram: Unity mesh, slice, shell only, sample and jitter, C++ bridge, HXR display.">
+            <rect class="box" x="24" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="72" y="68">Unity mesh</text><text class="sm c" x="72" y="112">any model</text>
+            <rect class="box" x="136" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="184" y="68">slice</text><text class="sm c" x="184" y="112">planes at Δz</text>
+            <rect class="box" x="248" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="296" y="68">shell only</text><text class="sm c" x="296" y="112">drop the inside</text>
+            <rect class="box-a" x="360" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="408" y="68">sample + jitter</text><text class="sm c" x="408" y="112">area-weighted</text>
+            <rect class="box" x="472" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="520" y="68">C++ bridge</text><text class="sm c" x="520" y="112">stream</text>
+            <rect class="box-a" x="584" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="632" y="68">HXR display</text><text class="sm c" x="632" y="112">hologram engine</text>
+            <path class="a" d="M120 64h16M232 64h16M344 64h16M456 64h16M568 64h16"/>
+            <path class="a" d="M129 60l7 4-7 4M241 60l7 4-7 4M353 60l7 4-7 4M465 60l7 4-7 4M577 60l7 4-7 4"/>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.1</b> The pipeline, left to right. Everything up to the bridge runs in Unity; the bridge hands a point stream to Swave’s engine, which computes the interference pattern and drives the hardware.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Slice, keep the shell, sample</h3>
+        <p>The algorithm slices any mesh with a stack of planes, keeps only the outer shell of each slice, and discards the interior. Light inside an object is wasted computation and, worse, visible noise. Points are then sampled on the shell with density proportional to area, so a big flat face and a small detailed one both look solid. <a class="figref" href="#fig-5-2">Fig 5.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-2">
+        <div class="fig__frame" data-n="FIG 5.2">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Three-stage illustration: an egg-shaped mesh cut by horizontal planes, then only the shell contours kept with the interior empty, then the contours replaced by jittered sample points.">
+            <ellipse class="s" cx="130" cy="160" rx="70" ry="100"/>
+            <path class="a d" d="M50 80H210M50 110H210M50 140H210M50 170H210M50 200H210M50 230H210"/>
+            <text class="sm c" x="130" y="282">1 · slice with planes</text>
+            <path class="a" d="M215 160H290"/><path class="a" d="M283 156l7 4-7 4"/>
+            <ellipse class="a" cx="360" cy="80" rx="42.0" ry="10"/>
+<ellipse class="a" cx="360" cy="110" rx="60.6" ry="10"/>
+<ellipse class="a" cx="360" cy="140" rx="68.6" ry="10"/>
+<ellipse class="a" cx="360" cy="170" rx="69.6" ry="10"/>
+<ellipse class="a" cx="360" cy="200" rx="64.2" ry="10"/>
+<ellipse class="a" cx="360" cy="230" rx="50.0" ry="10"/>
+            <path class="m" d="M354 154l12 12M366 154l-12 12"/>
+            <text class="sm c" x="360" y="282">2 · keep the shell, drop the inside</text>
+            <path class="a" d="M445 160H520"/><path class="a" d="M513 156l7 4-7 4"/>
+            <circle class="fa" cx="629.8" cy="82.6" r="1.8"/><circle class="fa" cx="606.9" cy="89.4" r="1.8"/><circle class="fa" cx="577.8" cy="87.3" r="1.8"/><circle class="fa" cx="549.6" cy="82.2" r="1.8"/><circle class="fa" cx="549.1" cy="75.6" r="1.8"/><circle class="fa" cx="558.5" cy="73.7" r="1.8"/><circle class="fa" cx="606.7" cy="71.9" r="1.8"/><circle class="fa" cx="621.0" cy="73.1" r="1.8"/>
+<circle class="fa" cx="652.4" cy="108.7" r="1.8"/><circle class="fa" cx="628.5" cy="115.1" r="1.8"/><circle class="fa" cx="605.4" cy="121.5" r="1.8"/><circle class="fa" cx="572.2" cy="120.7" r="1.8"/><circle class="fa" cx="558.1" cy="116.8" r="1.8"/><circle class="fa" cx="530.8" cy="111.6" r="1.8"/><circle class="fa" cx="531.4" cy="108.8" r="1.8"/><circle class="fa" cx="544.0" cy="103.0" r="1.8"/><circle class="fa" cx="572.0" cy="99.4" r="1.8"/><circle class="fa" cx="610.5" cy="99.8" r="1.8"/><circle class="fa" cx="634.4" cy="102.6" r="1.8"/><circle class="fa" cx="646.7" cy="105.0" r="1.8"/>
+<circle class="fa" cx="656.8" cy="142.1" r="1.8"/><circle class="fa" cx="647.6" cy="143.3" r="1.8"/><circle class="fa" cx="613.0" cy="147.4" r="1.8"/><circle class="fa" cx="582.6" cy="150.5" r="1.8"/><circle class="fa" cx="550.2" cy="148.2" r="1.8"/><circle class="fa" cx="540.0" cy="147.6" r="1.8"/><circle class="fa" cx="524.2" cy="144.1" r="1.8"/><circle class="fa" cx="520.3" cy="141.4" r="1.8"/><circle class="fa" cx="539.7" cy="132.5" r="1.8"/><circle class="fa" cx="557.7" cy="130.0" r="1.8"/><circle class="fa" cx="596.6" cy="130.5" r="1.8"/><circle class="fa" cx="608.7" cy="131.2" r="1.8"/><circle class="fa" cx="640.0" cy="135.1" r="1.8"/><circle class="fa" cx="653.4" cy="136.5" r="1.8"/>
+<circle class="fa" cx="655.7" cy="170.6" r="1.8"/><circle class="fa" cx="644.8" cy="178.2" r="1.8"/><circle class="fa" cx="627.5" cy="178.9" r="1.8"/><circle class="fa" cx="581.7" cy="182.3" r="1.8"/><circle class="fa" cx="566.3" cy="179.4" r="1.8"/><circle class="fa" cx="540.0" cy="176.8" r="1.8"/><circle class="fa" cx="521.9" cy="170.7" r="1.8"/><circle class="fa" cx="524.4" cy="166.8" r="1.8"/><circle class="fa" cx="541.5" cy="162.0" r="1.8"/><circle class="fa" cx="566.4" cy="162.6" r="1.8"/><circle class="fa" cx="578.2" cy="159.3" r="1.8"/><circle class="fa" cx="605.0" cy="161.1" r="1.8"/><circle class="fa" cx="647.3" cy="164.9" r="1.8"/><circle class="fa" cx="654.2" cy="167.2" r="1.8"/>
+<circle class="fa" cx="654.1" cy="204.6" r="1.8"/><circle class="fa" cx="644.5" cy="203.6" r="1.8"/><circle class="fa" cx="606.6" cy="208.7" r="1.8"/><circle class="fa" cx="578.1" cy="211.6" r="1.8"/><circle class="fa" cx="557.9" cy="209.3" r="1.8"/><circle class="fa" cx="535.1" cy="207.3" r="1.8"/><circle class="fa" cx="528.4" cy="198.5" r="1.8"/><circle class="fa" cx="533.7" cy="193.7" r="1.8"/><circle class="fa" cx="555.0" cy="192.2" r="1.8"/><circle class="fa" cx="570.5" cy="190.5" r="1.8"/><circle class="fa" cx="610.2" cy="191.7" r="1.8"/><circle class="fa" cx="631.7" cy="191.3" r="1.8"/><circle class="fa" cx="646.5" cy="193.5" r="1.8"/>
+<circle class="fa" cx="639.0" cy="233.4" r="1.8"/><circle class="fa" cx="629.8" cy="237.5" r="1.8"/><circle class="fa" cx="595.2" cy="238.5" r="1.8"/><circle class="fa" cx="572.0" cy="239.7" r="1.8"/><circle class="fa" cx="547.0" cy="232.9" r="1.8"/><circle class="fa" cx="540.9" cy="229.1" r="1.8"/><circle class="fa" cx="550.1" cy="221.6" r="1.8"/><circle class="fa" cx="587.8" cy="220.9" r="1.8"/><circle class="fa" cx="603.9" cy="218.0" r="1.8"/><circle class="fa" cx="631.8" cy="222.3" r="1.8"/>
+            <text class="sm c" x="590" y="282">3 · sample, then jitter</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.2</b> From a mesh to a cloud. Slicing gives clean contours at a known spacing; keeping the shell throws away everything the display would render as mud; sampling turns the contours into emitters the engine understands.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Randomize on purpose</h3>
+        <p>The samples are jittered. A regular sampling grid lines up with the display’s own pixel structure and produces moiré and ghost patterns in the reconstruction. Randomized positions have no repeating structure to interfere with, and re-randomizing per frame turns any residual artifact into a soft shimmer instead of a fixed pattern. This was the difference between a demo and an object. <a class="figref" href="#fig-5-3">Fig 5.3</a></p>
+
+        <h3>The bridge</h3>
+        <p>The point stream leaves Unity through a C++ pipeline into Swave’s hologram engine, which computes the interference pattern and drives the HXR hardware. Meshes and shaders on the Unity side were optimized for that budget: fewer, better points beat more.</p>
+      </div>
+
+      <figure class="fig" id="fig-5-3">
+        <div class="fig__frame" data-n="FIG 5.3">
+          <svg viewBox="0 0 720 180" role="img" aria-label="Two panels with the same number of points: a regular grid with faint diagonal interference bands, and a randomized scatter with none.">
+            <text class="k sm c" x="180" y="22">regular sampling</text>
+            <text class="k sm c" x="542" y="22">randomized sampling</text>
+            <rect class="m" x="40" y="30" width="280" height="130" rx="3"/>
+            <rect class="m" x="400" y="30" width="280" height="130" rx="3"/>
+            <path class="m o1 d" d="M40 60L320 100M40 90L320 130M40 120L320 160"/>
+            <circle class="fi" cx="70" cy="50" r="2"/><circle class="fi" cx="70" cy="74" r="2"/><circle class="fi" cx="70" cy="98" r="2"/><circle class="fi" cx="70" cy="122" r="2"/><circle class="fi" cx="70" cy="146" r="2"/><circle class="fi" cx="98" cy="50" r="2"/><circle class="fi" cx="98" cy="74" r="2"/><circle class="fi" cx="98" cy="98" r="2"/><circle class="fi" cx="98" cy="122" r="2"/><circle class="fi" cx="98" cy="146" r="2"/><circle class="fi" cx="126" cy="50" r="2"/><circle class="fi" cx="126" cy="74" r="2"/><circle class="fi" cx="126" cy="98" r="2"/><circle class="fi" cx="126" cy="122" r="2"/><circle class="fi" cx="126" cy="146" r="2"/><circle class="fi" cx="154" cy="50" r="2"/><circle class="fi" cx="154" cy="74" r="2"/><circle class="fi" cx="154" cy="98" r="2"/><circle class="fi" cx="154" cy="122" r="2"/><circle class="fi" cx="154" cy="146" r="2"/><circle class="fi" cx="182" cy="50" r="2"/><circle class="fi" cx="182" cy="74" r="2"/><circle class="fi" cx="182" cy="98" r="2"/><circle class="fi" cx="182" cy="122" r="2"/><circle class="fi" cx="182" cy="146" r="2"/><circle class="fi" cx="210" cy="50" r="2"/><circle class="fi" cx="210" cy="74" r="2"/><circle class="fi" cx="210" cy="98" r="2"/><circle class="fi" cx="210" cy="122" r="2"/><circle class="fi" cx="210" cy="146" r="2"/><circle class="fi" cx="238" cy="50" r="2"/><circle class="fi" cx="238" cy="74" r="2"/><circle class="fi" cx="238" cy="98" r="2"/><circle class="fi" cx="238" cy="122" r="2"/><circle class="fi" cx="238" cy="146" r="2"/><circle class="fi" cx="266" cy="50" r="2"/><circle class="fi" cx="266" cy="74" r="2"/><circle class="fi" cx="266" cy="98" r="2"/><circle class="fi" cx="266" cy="122" r="2"/><circle class="fi" cx="266" cy="146" r="2"/><circle class="fi" cx="294" cy="50" r="2"/><circle class="fi" cx="294" cy="74" r="2"/><circle class="fi" cx="294" cy="98" r="2"/><circle class="fi" cx="294" cy="122" r="2"/><circle class="fi" cx="294" cy="146" r="2"/>
+<circle class="fa" cx="437.8" cy="47.4" r="2"/><circle class="fa" cx="424.4" cy="70.0" r="2"/><circle class="fa" cx="427.2" cy="97.5" r="2"/><circle class="fa" cx="430.2" cy="128.7" r="2"/><circle class="fa" cx="433.4" cy="147.4" r="2"/><circle class="fa" cx="452.5" cy="47.0" r="2"/><circle class="fa" cx="462.7" cy="77.5" r="2"/><circle class="fa" cx="458.0" cy="92.2" r="2"/><circle class="fa" cx="461.6" cy="125.4" r="2"/><circle class="fa" cx="450.9" cy="140.6" r="2"/><circle class="fa" cx="483.1" cy="46.1" r="2"/><circle class="fa" cx="482.2" cy="75.9" r="2"/><circle class="fa" cx="486.9" cy="103.0" r="2"/><circle class="fa" cx="486.7" cy="127.0" r="2"/><circle class="fa" cx="486.1" cy="140.8" r="2"/><circle class="fa" cx="516.3" cy="50.2" r="2"/><circle class="fa" cx="514.5" cy="77.9" r="2"/><circle class="fa" cx="521.8" cy="99.7" r="2"/><circle class="fa" cx="517.0" cy="127.3" r="2"/><circle class="fa" cx="511.2" cy="151.8" r="2"/><circle class="fa" cx="542.0" cy="55.3" r="2"/><circle class="fa" cx="549.3" cy="80.1" r="2"/><circle class="fa" cx="547.9" cy="98.7" r="2"/><circle class="fa" cx="534.6" cy="124.9" r="2"/><circle class="fa" cx="535.3" cy="147.5" r="2"/><circle class="fa" cx="562.6" cy="56.4" r="2"/><circle class="fa" cx="562.2" cy="78.9" r="2"/><circle class="fa" cx="575.5" cy="91.6" r="2"/><circle class="fa" cx="569.0" cy="116.5" r="2"/><circle class="fa" cx="570.3" cy="139.7" r="2"/><circle class="fa" cx="595.5" cy="45.9" r="2"/><circle class="fa" cx="596.8" cy="78.0" r="2"/><circle class="fa" cx="602.5" cy="104.0" r="2"/><circle class="fa" cx="595.8" cy="126.5" r="2"/><circle class="fa" cx="598.7" cy="146.2" r="2"/><circle class="fa" cx="620.0" cy="51.0" r="2"/><circle class="fa" cx="626.4" cy="68.3" r="2"/><circle class="fa" cx="622.3" cy="91.1" r="2"/><circle class="fa" cx="620.7" cy="119.4" r="2"/><circle class="fa" cx="622.9" cy="146.4" r="2"/><circle class="fa" cx="661.8" cy="50.4" r="2"/><circle class="fa" cx="655.3" cy="79.7" r="2"/><circle class="fa" cx="660.9" cy="104.1" r="2"/><circle class="fa" cx="655.0" cy="125.4" r="2"/><circle class="fa" cx="647.4" cy="141.1" r="2"/>
+            <text class="h sm r" x="314" y="152">moiré</text>
+            <text class="sm c" x="542" y="176">no repeating structure to interfere with</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.3</b> Same point count, different placement. The grid lines up with the display’s own periodic structure and beats against it; the jittered set has nothing for the display to lock onto.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C# · SHELL TO POINTS</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// Shell → points. Area-weighted so big faces stay solid; jittered so no two frames line up.</i>
+<b>foreach</b> (<b>var</b> tri <b>in</b> shell.Triangles)
+{
+    <em>int</em> n = Mathf.CeilToInt(tri.Area * pointsPerUnitArea);
+    <b>for</b> (<em>int</em> k = 0; k &lt; n; k++)
+    {
+        <em>float</em> u = Random.value, v = Random.value;               <i>// uniform on the triangle</i>
+        <b>if</b> (u + v &gt; <em>1f</em>) { u = <em>1f</em> - u; v = <em>1f</em> - v; }
+        Vector3 p = tri.A + u * (tri.B - tri.A) + v * (tri.C - tri.A);
+        p += tri.Normal * Random.Range(-jitter, jitter);           <i>// break the grid, on purpose</i>
+        stream.Write(p, tri.Colour);                               <i>// off to the C++ bridge, then the hologram engine</i>
+    }
+}</code></pre>
+      </div>
+
+      <dl class="results">
+        <div><dt>4 mo</dt><dd>from first contact to live content</dd></div>
+        <div><dt>&lt; 300 nm</dt><dd>pixels on the HXR modulator</dd></div>
+        <div><dt>1</dt><dd>pipeline from game engine to hologram</dd></div>
+        <div><dt>0</dt><dd>interior points wasted</dd></div>
+      </dl>
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>The slicing, shell-extraction and area-weighted sampling algorithm</li>
+          <li>The randomization and its per-frame re-seeding</li>
+          <li>The Unity-to-engine C++ bridge and the point stream</li>
+          <li>Mesh and shader optimization for the display’s budget</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>The HXR hardware and the hologram computation engine: Swave Photonics</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 06 AbjadPolis -->
+    <section class="dossier" id="abjadpolis" aria-labelledby="abjad-title" style="--fx:#3ec6c0">
+      <div class="dossier__head">
+        <div class="dossier__num">06</div>
+        <div>
+          <h2 id="abjad-title">AbjadPolis <span class="chip">UNITY · ANDROID</span></h2>
+          <p class="thesis">Learn Arabic by building a city. One person built the city, the citizens, the shaders, and the money.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unity, C#</dd></div>
+        <div><dt>Runs on</dt><dd>Android, Google Play</dd></div>
+        <div><dt>Studio</dt><dd>Hyphonics / X on Board, 2018 to 2021</dd></div>
+        <div><dt>My role</dt><dd><b>The entire beta build, solo</b></dd></div>
+        <div><dt>Systems</dt><dd>Gameplay loops, AI, shaders, economy, UI, audio, level and content spawning, resource systems</dd></div>
+        <div><dt>Result</dt><dd>A shipped educational game with a level-gated progression loop</dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>The loop</h3>
+        <p>A lesson is a short drill: tap the matching pairs, say the word, pick the right image. Drills pay in coins. Coins build the city. New districts open new vocabulary, which means new drills. The whole game is that loop, gated so you cannot buy your way past words you have not learned. <a class="figref" href="#fig-6-1">Fig 6.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-6-1">
+        <div class="fig__frame" data-n="FIG 6.1">
+          <svg viewBox="0 0 720 250" role="img" aria-label="Cycle diagram: learn through a drill, earn coins, build the city, unlock a district with new words, back to learn; the unlock step carries a gate.">
+            <rect class="box" x="60" y="40" width="150" height="52" rx="4"/><text class="k" x="76" y="62">Learn</text><text class="sm" x="76" y="80">a drill: match, say, pick</text>
+            <rect class="box" x="510" y="40" width="150" height="52" rx="4"/><text class="k" x="526" y="62">Earn</text><text class="sm" x="526" y="80">coins for correct answers</text>
+            <rect class="box" x="510" y="158" width="150" height="52" rx="4"/><text class="k" x="526" y="180">Build</text><text class="sm" x="526" y="198">buildings in your city</text>
+            <rect class="box-a" x="60" y="158" width="150" height="52" rx="4"/><text class="k" x="76" y="180">Unlock</text><text class="sm" x="76" y="198">a district = new words</text>
+            <path class="a" d="M210 66H510"/><path class="a" d="M503 62l7 4-7 4"/>
+            <path class="a" d="M585 92V158"/><path class="a" d="M581 151l4 7 4-7"/>
+            <path class="a" d="M510 184H210"/><path class="a" d="M217 180l-7 4 7 4"/>
+            <path class="a" d="M135 158V92"/><path class="a" d="M131 99l4-7 4 7"/>
+            <path class="a w2" d="M356 176v16M364 176v16"/>
+            <text class="sm c" x="360" y="212">the gate</text>
+            <text class="sm c" x="360" y="118">level-gated:</text>
+            <text class="h sm c" x="360" y="136">you can’t buy past words you haven’t learned</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 6.1</b> The one loop. Building is the fun; drilling is the point; the gate on the way to a new district is what keeps them honest with each other.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>An economy that teaches</h3>
+        <p>The design problem with a learning game is that the fun part (building) and the useful part (drilling) pull in opposite directions. The economy is the bridge. Lessons are the only reliable source of coins, buildings are the sink, and the gate to each new district checks <strong>level, wallet and mastery</strong> of the current words. Streaks and challenges add a little income so a bad day does not stall the city, but they never replace lessons. <a class="figref" href="#fig-6-2">Fig 6.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-6-2">
+        <div class="fig__frame" data-n="FIG 6.2">
+          <svg viewBox="0 0 720 240" role="img" aria-label="Sources and sinks diagram: lesson rewards, streaks and challenges flow into a coin wallet; buildings, upgrades and district unlocks flow out, with a gate on the unlock line that checks level, wallet and mastery.">
+            <text class="k r" x="210" y="84">lesson rewards</text>
+            <text class="sm r" x="210" y="124">streaks</text>
+            <text class="sm r" x="210" y="164">challenges</text>
+            <path class="a w2" d="M220 80H300"/><path class="a" d="M293 76l7 4-7 4"/>
+            <path class="a" d="M220 120H300"/><path class="a" d="M293 116l7 4-7 4"/>
+            <path class="a" d="M220 160H300"/><path class="a" d="M293 156l7 4-7 4"/>
+            <rect class="box-a" x="300" y="60" width="120" height="120" rx="6"/>
+            <rect class="band" x="301" y="130" width="118" height="49" rx="4"/>
+            <text class="k c" x="360" y="92">wallet</text>
+            <text class="sm c" x="360" y="110">coins</text>
+            <path class="a w2" d="M420 80H500"/><path class="a" d="M493 76l7 4-7 4"/>
+            <path class="a" d="M420 120H500"/><path class="a" d="M493 116l7 4-7 4"/>
+            <path class="a" d="M420 160H500"/><path class="a" d="M493 156l7 4-7 4"/>
+            <text class="k" x="510" y="84">buildings</text>
+            <text class="sm" x="510" y="124">upgrades</text>
+            <text class="sm" x="510" y="164">district unlocks</text>
+            <path class="t w2" d="M456 152v16M464 152v16"/>
+            <text class="tt sm c" x="460" y="190">level · wallet · mastery</text>
+            <text class="sm c" x="360" y="224">lessons are the only reliable source; buildings are the sink</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 6.2</b> Sources on the left, sinks on the right, one gate. The thick lines are the ones that matter: lessons in, buildings out. Everything else is seasoning.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C# · THE GATE</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// A district opens when the city has earned it: level, wallet, and mastery of the current words.</i>
+<b>bool</b> CanUnlock(District d) =&gt;
+    city.Level      &gt;= d.MinLevel
+ &amp;&amp; wallet.Coins    &gt;= d.Cost
+ &amp;&amp; lessons.Mastery(d.Vocabulary) &gt;= d.MasteryToOpen;   <i>// coins alone never open a door</i>
+
+<i>// The drill selector: words you miss come back sooner. Mastery is what the gate reads.</i>
+Word NextDrill(Vocabulary v) =&gt;
+    v.Words.OrderByDescending(w =&gt; w.Misses * <em>2</em> - w.Hits + w.DaysSinceSeen).First();</code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>AI and shaders, solo</h3>
+        <p>The city’s inhabitants go about their day on their own paths and schedules, so the place feels alive between lessons, and the drill selector weighs the words you have been missing so repetition lands where it is needed. The look is custom shaders: the build-up when a new building rises, and a stylized city that reads on a small screen. Every system in the beta, from content spawning to audio, came from the same keyboard. <a class="figref" href="#fig-6-3">Fig 6.3</a></p>
+      </div>
+
+      <figure class="fig" id="fig-6-3">
+        <div class="fig__frame" data-n="FIG 6.3">
+          <svg viewBox="0 0 720 246" role="img" aria-label="A three-by-three map of the game's systems, each marked as written by the author: gameplay loop, drill AI, city AI, shaders, economy, UI, audio, content spawning, resource systems.">
+            <rect class="box" x="20" y="20" width="220" height="60" rx="4"/><rect class="fa" x="218" y="32" width="8" height="8"/><text class="k" x="34" y="46">Gameplay loop</text><text class="sm" x="34" y="66">drills, city, progression</text>
+            <rect class="box" x="250" y="20" width="220" height="60" rx="4"/><rect class="fa" x="448" y="32" width="8" height="8"/><text class="k" x="264" y="46">Drill AI</text><text class="sm" x="264" y="66">weighs the words you miss</text>
+            <rect class="box" x="480" y="20" width="220" height="60" rx="4"/><rect class="fa" x="678" y="32" width="8" height="8"/><text class="k" x="494" y="46">City AI</text><text class="sm" x="494" y="66">citizens with paths and schedules</text>
+            <rect class="box" x="20" y="90" width="220" height="60" rx="4"/><rect class="fa" x="218" y="102" width="8" height="8"/><text class="k" x="34" y="116">Shaders</text><text class="sm" x="34" y="136">build-up reveal, stylized city</text>
+            <rect class="box" x="250" y="90" width="220" height="60" rx="4"/><rect class="fa" x="448" y="102" width="8" height="8"/><text class="k" x="264" y="116">Economy</text><text class="sm" x="264" y="136">sources, sinks, gates</text>
+            <rect class="box" x="480" y="90" width="220" height="60" rx="4"/><rect class="fa" x="678" y="102" width="8" height="8"/><text class="k" x="494" y="116">UI</text><text class="sm" x="494" y="136">menus, HUD, feedback</text>
+            <rect class="box" x="20" y="160" width="220" height="60" rx="4"/><rect class="fa" x="218" y="172" width="8" height="8"/><text class="k" x="34" y="186">Audio</text><text class="sm" x="34" y="206">music and cues</text>
+            <rect class="box" x="250" y="160" width="220" height="60" rx="4"/><rect class="fa" x="448" y="172" width="8" height="8"/><text class="k" x="264" y="186">Content spawning</text><text class="sm" x="264" y="206">levels, exercises, districts</text>
+            <rect class="box" x="480" y="160" width="220" height="60" rx="4"/><rect class="fa" x="678" y="172" width="8" height="8"/><text class="k" x="494" y="186">Resource systems</text><text class="sm" x="494" y="206">coins, materials, unlocks</text>
+            <rect class="fa" x="20" y="232" width="8" height="8"/><text class="sm" x="36" y="240">written by me: all nine</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 6.3</b> The systems map of the beta build. Every cell has the same mark, because every cell had the same author.</figcaption>
+      </figure>
+
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>Everything in the beta build: gameplay loops, AI, shaders, economy, UI, audio, level and content spawning, resource systems, engagement mechanics</li>
+          <li>The drill selector and the level-gated progression</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>Curriculum content and art assets from Hyphonics</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ outro -->
+    <section class="outro" aria-labelledby="outro-title">
+      <h2 id="outro-title">Want to see the real thing?</h2>
+      <p>Every drawing above has source behind it. Some of that source belongs to the studios it was built for, so it isn’t on a public page. I’ll walk through any of these systems live, code on screen, and answer the questions a diagram can’t.</p>
+      <div class="actions">
+        <a class="primary" href="mailto:zainkassem7@gmail.com?subject=Let%E2%80%99s%20build%20something" data-mailto>Email me <span><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></span></a>
+        <a class="ghost" href="index.html">Back to the studio</a>
+        <a class="ghost" href="assets/cv/Zain_Kassem.pdf" target="_blank" rel="noopener">Technical CV</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    <span>© 2026 ZAIN KASSEM</span>
+    <div>
+      <a href="mailto:zainkassem7@gmail.com" data-mailto data-email-text>zainkassem7@gmail.com</a>
+      <a href="https://www.linkedin.com/in/zain-kassem-a60176183/" target="_blank" rel="noopener">LinkedIn <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></a>
+      <a href="https://www.instagram.com/zainkassem000/" target="_blank" rel="noopener">Instagram <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-ne"/></svg></a>
+      <a href="assets/cv/Zain_Kassem_GameDesigner.pdf" target="_blank">Design CV <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-down"/></svg></a>
+      <a href="assets/cv/Zain_Kassem.pdf" target="_blank">Technical CV <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-down"/></svg></a>
+    </div>
+    <a href="#top">BACK TO TOP <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-up"/></svg></a>
+  </div>
+</footer>
+
+<script type="module" src="js/technical.js"></script>
+</body>
+</html>
