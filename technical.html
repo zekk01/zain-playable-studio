@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Under the hood: technical breakdowns of six systems Zain Kassem designed and built. Pit Protocol (UE5 VR), Unseen Blade, Target Destroyed, Lala Poker, a holographic pipeline for Swave Photonics, and AbjadPolis, with diagrams and code.">
+<meta name="description" content="Under the hood: technical breakdowns of seven systems Zain Kassem designed and built. Pit Protocol (UE5 VR), Unseen Blade, Target Destroyed, Lala Poker, the creature AI, traversal and inventory of Primal Echo (Feral Flame Studios), a holographic pipeline for Swave Photonics, and AbjadPolis, with diagrams and code.">
 <meta name="theme-color" content="#151616">
 <title>Under the hood — Zain Kassem</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23151616'/%3E%3Ctext x='32' y='44' font-family='Arial' font-size='34' font-weight='700' text-anchor='middle' fill='%23f3a65a'%3EZK%3C/text%3E%3C/svg%3E">
@@ -39,14 +39,15 @@
 
 <main class="doc">
   <aside class="rail" id="rail" aria-label="Contents">
-    <div class="rail__label">SIX DOSSIERS</div>
+    <div class="rail__label">SEVEN DOSSIERS</div>
     <ol>
       <li><a href="#pit-protocol"><span>01</span>Pit Protocol</a></li>
       <li><a href="#unseen-blade"><span>02</span>Unseen Blade</a></li>
       <li><a href="#target-destroyed"><span>03</span>Target Destroyed</a></li>
       <li><a href="#lala-poker"><span>04</span>Lala Poker</a></li>
-      <li><a href="#holographic-pipeline"><span>05</span>Holographic pipeline</a></li>
-      <li><a href="#abjadpolis"><span>06</span>AbjadPolis</a></li>
+      <li><a href="#primal-echo"><span>05</span>Primal Echo</a></li>
+      <li><a href="#holographic-pipeline"><span>06</span>Holographic pipeline</a></li>
+      <li><a href="#abjadpolis"><span>07</span>AbjadPolis</a></li>
     </ol>
     <div class="rail__foot">
       <a href="index.html"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-left"/></svg> Back to the studio</a>
@@ -59,12 +60,12 @@
     <section class="cover" aria-labelledby="cover-title">
       <div class="eyebrow"><span class="tiny-square"></span> UNDER THE HOOD · TECHNICAL BREAKDOWNS</div>
       <h1 id="cover-title">Building what’s underneath.</h1>
-      <p class="dek">Six systems I designed and wrote myself, explained the way I’d explain them to another engineer: the constraint, the approach, a drawing of the mechanism, and the code reduced to the rule that matters.</p>
+      <p class="dek">Seven systems I designed and wrote myself, explained the way I’d explain them to another engineer: the constraint, the approach, a drawing of the mechanism, and the code reduced to the rule that matters.</p>
       <dl class="plate">
         <div><dt>AUTHOR</dt><dd><b>Zain Kassem</b><br>Game designer &amp; developer, Dubai</dd></div>
         <div><dt>REVISION</dt><dd><b>September 2026</b><br>Kept current with the studio page</dd></div>
         <div><dt>SCOPE</dt><dd><b>Systems where I wrote the code.</b><br>Each dossier ends with a ledger of who did what.</dd></div>
-        <div><dt>READS IN</dt><dd><b>About 15 minutes</b><br>Or one dossier at a time</dd></div>
+        <div><dt>READS IN</dt><dd><b>About 20 minutes</b><br>Or one dossier at a time</dd></div>
       </dl>
       <p class="cover__note">The drawings are mine, made for this page. The code blocks are reduced from the real thing to the idea, since most of the source belongs to the studios it was built for. I’ll gladly walk through any of it live, code on screen.</p>
     </section>
@@ -89,13 +90,17 @@
           <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect class="g" x="10" y="10" width="24" height="34" rx="3" transform="rotate(-10 22 27)"/><rect class="g" x="24" y="14" width="24" height="34" rx="3" transform="rotate(8 36 31)"/><circle class="g ga" cx="48" cy="50" r="10"/><circle class="g ga gd" cx="48" cy="50" r="5"/></svg>
           <span><span class="num">04 · UNITY · C++ · iOS, ANDROID, WEB</span><b>Lala Poker</b><small>An authoritative C++ card engine for six games, with the security model and the payout math that keep them fair and the house solvent.</small></span>
         </a></li>
+        <li><a href="#primal-echo">
+          <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle class="g gd" cx="34" cy="32" r="19"/><path class="g ga" d="M34 32l6-5"/><circle class="gf" cx="34" cy="32" r="4"/><circle class="g" cx="12" cy="32" r="4.5"/><path class="g ga" d="M17 32h6"/><circle class="g" cx="48" cy="14" r="4.5"/><path class="g ga" d="M45 18l-4 5"/><circle class="g" cx="48" cy="50" r="4.5"/><path class="g ga" d="M45 46l-4-5"/><path class="g ga" d="M49 26a10 10 0 0 0-4-8M49 38a10 10 0 0 1-4 8"/></svg>
+          <span><span class="num">05 · UNREAL ENGINE · C++ · BLUEPRINT</span><b>Primal Echo</b><small>An ecosystem, not an enemy list: creatures that hunt in packs, move in herds, starve, flee and fight each other, plus the climbing and the inventory underneath the player.</small></span>
+        </a></li>
         <li><a href="#holographic-pipeline">
           <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="g" d="M6 24h20v20H6zM6 24l8-8h20l-8 8M26 24l8-8v20l-8 8"/><g class="gf"><circle cx="40" cy="26" r="1.7"/><circle cx="49" cy="26" r="1.7"/><circle cx="58" cy="26" r="1.7"/><circle cx="40" cy="36" r="1.7"/><circle cx="58" cy="36" r="1.7"/><circle cx="40" cy="46" r="1.7"/><circle cx="49" cy="46" r="1.7"/><circle cx="58" cy="46" r="1.7"/><circle cx="46" cy="19" r="1.7"/><circle cx="55" cy="19" r="1.7"/><circle cx="62" cy="22" r="1.7"/><circle cx="62" cy="40" r="1.7"/></g></svg>
-          <span><span class="num">05 · UNITY · C++ · SWAVE PHOTONICS</span><b>Holographic pipeline</b><small>Meshes into randomized point clouds for the first real holographic displays. Slice, keep the shell, sample, jitter, stream.</small></span>
+          <span><span class="num">06 · UNITY · C++ · SWAVE PHOTONICS</span><b>Holographic pipeline</b><small>Meshes into randomized point clouds for the first real holographic displays. Slice, keep the shell, sample, jitter, stream.</small></span>
         </a></li>
         <li><a href="#abjadpolis">
           <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="g" d="M6 56V34h14v22M26 56V22h16v34M48 56V40h10v16M2 56h60"/><path class="g gd" d="M30 30h8M30 38h8M30 46h8"/><text class="ar" x="34" y="17" text-anchor="middle">أ</text></svg>
-          <span><span class="num">06 · UNITY · ANDROID</span><b>AbjadPolis</b><small>A whole game, solo: the AI, the shaders, and an economy that teaches Arabic by building a city.</small></span>
+          <span><span class="num">07 · UNITY · ANDROID</span><b>AbjadPolis</b><small>A whole game, solo: the AI, the shaders, and an economy that teaches Arabic by building a city.</small></span>
         </a></li>
       </ol>
     </section>
@@ -761,10 +766,520 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
       </div>
     </section>
 
-    <!-- ============================================================ 05 Holographic pipeline -->
-    <section class="dossier" id="holographic-pipeline" aria-labelledby="holo-title" style="--fx:#3ec6c0">
+    <!-- ============================================================ 05 Primal Echo -->
+    <section class="dossier" id="primal-echo" aria-labelledby="primal-title" style="--fx:#a3d63c">
       <div class="dossier__head">
         <div class="dossier__num">05</div>
+        <div>
+          <h2 id="primal-title">Primal Echo <span class="chip">UNREAL ENGINE · C++ · BLUEPRINT</span></h2>
+          <p class="thesis">An ecosystem is not a list of enemies. Every creature had to want something, and the player had to be able to read what it wanted.</p>
+        </div>
+      </div>
+      <dl class="spec">
+        <div><dt>Engine</dt><dd>Unreal Engine, <b>C++ and Blueprint</b>: Behavior Trees, the Environment Query System, navigation, physics</dd></div>
+        <div><dt>Game</dt><dd>Primal Echo, a retro-inspired Metroidvania that fuses survival with 3D action-platforming inside an alien megastructure that harbors an ancient ecosystem</dd></div>
+        <div><dt>Studio</dt><dd>Feral Flame Studios, formerly Nirah Studios AB, Sweden; August 2021 to August 2023</dd></div>
+        <div><dt>My role</dt><dd>Senior game developer and lead game designer: <b>the whole creature behaviour system, the traversal, and the entire inventory</b></dd></div>
+        <div><dt>Team</dt><dd>Internal and external contributors I coordinated, on an average $250K quarterly budget</dd></div>
+        <div><dt>Result</dt><dd>Prototyping and iteration helped secure <b>$600K+ in investment</b></dd></div>
+      </dl>
+
+      <div class="prose">
+        <h3>The problem</h3>
+        <p>A survival Metroidvania lives or dies on its animals. In Primal Echo you are one more creature in an ecosystem that was there before you arrived: grazers move in herds, stalkers hunt in packs, everything gets hungry, and everything runs when it should. Nothing spawns to fight you. The brief was a simulation deep enough that the food web keeps working with the player nowhere near it, and readable enough that a player can tell from a creature’s posture whether they are about to be ignored, stalked, or charged. Those two goals pull against each other, and holding both is why this dossier is the longest on the page. All of it is Unreal C++ with Blueprint on top for tuning.</p>
+
+        <h3>One brain for every animal</h3>
+        <p>The first decision was that there would be one behaviour tree, not one per species. A grazer and a stalker are the same machine with different data: what they sense, what they need, what they eat, and what moves they own. The tree has five branches in strict priority (flee, fight, hunt or forage, herd or pack duties, idle), and a <strong>drive selector</strong> in front of it scores every need against the blackboard each beat and picks the branch. The tree never asks <em>where</em>; that question always goes to EQS, which scores candidate points for food, flanks, escape and cover, and hands one to locomotion. Keeping the three questions apart (what do I want, where do I do it, how do I get there) is what let the same code run a timid herbivore and an apex predator without a special case for either. <a class="figref" href="#fig-5-1">Fig 5.1</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-1">
+        <div class="fig__frame" data-n="FIG 5.1">
+          <svg viewBox="0 0 720 340" role="img" aria-label="Architecture diagram: senses and needs feed a blackboard and a drive selector; the drive selector picks a branch of one shared behavior tree ordered flee, fight, hunt or forage, herd or pack, idle; the tree asks EQS where to go and locomotion gets there over nav mesh, terrain and physics.">
+            <rect class="box" x="30" y="40" width="170" height="92" rx="4"/>
+            <text class="k" x="46" y="64">Senses</text>
+            <text class="sm" x="46" y="84">sight: two cones</text>
+            <text class="sm" x="46" y="100">hearing: noise events</text>
+            <text class="sm" x="46" y="116">scent: carried on the wind</text>
+            <rect class="box" x="30" y="160" width="170" height="92" rx="4"/>
+            <text class="k" x="46" y="184">Needs</text>
+            <text class="sm" x="46" y="204">hunger · fear · stamina</text>
+            <text class="sm" x="46" y="220">aggression · company</text>
+            <text class="sm" x="46" y="236">rise with time, fall on acting</text>
+            <path class="a" d="M200 86H250"/><path class="a" d="M243 82l7 4-7 4"/>
+            <path class="a" d="M200 206H250"/><path class="a" d="M243 202l7 4-7 4"/>
+            <rect class="box" x="250" y="40" width="180" height="92" rx="4"/>
+            <text class="k" x="266" y="64">Blackboard</text>
+            <text class="sm" x="266" y="84">threat · target · food</text>
+            <text class="sm" x="266" y="100">herd centre · alarm</text>
+            <text class="sm" x="266" y="116">awareness, 0 to 100</text>
+            <rect class="box-a" x="250" y="160" width="180" height="92" rx="4"/>
+            <text class="k" x="266" y="184">Drive selector</text>
+            <text class="sm" x="266" y="204">scores every need</text>
+            <text class="sm" x="266" y="220">against the blackboard</text>
+            <text class="sm" x="266" y="236">the winner picks the branch</text>
+            <path class="a" d="M340 132V160"/><path class="a" d="M336 153l4 7 4-7"/>
+            <path class="a w2" d="M430 206H480"/><path class="a" d="M473 202l7 4-7 4"/>
+            <rect class="box" x="480" y="40" width="210" height="212" rx="4"/>
+            <text class="k" x="496" y="64">One behavior tree</text>
+            <text class="sm" x="496" y="80">branches in priority order</text>
+            <rect class="band" x="494" y="92" width="182" height="22" rx="2"/><text class="sm" x="502" y="107">1 · flee</text>
+            <rect class="band" x="494" y="118" width="182" height="22" rx="2"/><text class="sm" x="502" y="133">2 · fight: an attack pattern</text>
+            <rect class="band" x="494" y="144" width="182" height="22" rx="2"/><text class="sm" x="502" y="159">3 · hunt, or forage</text>
+            <rect class="band" x="494" y="170" width="182" height="22" rx="2"/><text class="sm" x="502" y="185">4 · herd or pack duties</text>
+            <rect class="band" x="494" y="196" width="182" height="22" rx="2"/><text class="sm" x="502" y="211">5 · idle: rest, roam</text>
+            <text class="h sm" x="496" y="240">the same tree for every species</text>
+            <path class="a" d="M585 252V280"/><path class="a" d="M581 273l4 7 4-7"/>
+            <rect class="box" x="250" y="280" width="440" height="46" rx="4"/>
+            <text class="k sm" x="266" y="299">EQS answers “where”, locomotion gets there</text>
+            <text class="sm" x="266" y="315">food · flank · escape · cover, then nav mesh, terrain and physics</text>
+            <text class="sm" x="30" y="300">species differ by data only:</text>
+            <text class="sm" x="30" y="316">senses, needs, diet, moves</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.1</b> The creature stack. Senses fill the blackboard, needs feed the drive selector, and the selector picks one branch of a tree every species shares. “Where” is always an EQS question; “how” is always locomotion’s. A species is a data asset, not a class.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Detection</h3>
+        <p>Sight is two cones, not one. The far cone is narrow and builds awareness slowly; the near cone is wide and builds it fast, so a creature that walks past you close will notice you even if it never looked straight at you. Hearing is a radius fed by the same noise events the rest of the game emits, so a rock you throw is heard by everything in range, not just the thing you aimed at. Scent rides the wind direction, which is why approaching from downwind is a real tactic. All three feed one <strong>awareness accumulator</strong> on the blackboard that decays when nothing feeds it. The thresholds are where readability lives: at thirty the ears go up and the head turns, at sixty the animal stops and stares, at ninety it commits, to a hunt or to a flight depending on what it is. A player who watches learns the ladder in minutes, and after that every encounter is fair. <a class="figref" href="#fig-5-2">Fig 5.2</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-2">
+        <div class="fig__frame" data-n="FIG 5.2">
+          <svg viewBox="0 0 720 320" role="img" aria-label="Diagram: left, a creature from above with a narrow far sight cone, a wide near sight cone and a dashed hearing radius; the player stands in the far cone and a thrown rock lands behind the creature inside hearing. Right, a graph of awareness over time climbing slowly in the far cone, then jumping when the rock lands, crossing notice, alert and commit thresholds before decaying.">
+            <circle class="m d" cx="200" cy="170" r="130"/>
+            <path class="band o2" d="M200 170L420.7 52.6A250 250 0 0 1 420.7 287.4Z"/>
+            <path class="a d" d="M200 170L420.7 52.6A250 250 0 0 1 420.7 287.4Z"/>
+            <path class="band" d="M200 170L228.5 63.8A110 110 0 0 1 228.5 276.2Z"/>
+            <path class="a" d="M200 170L228.5 63.8A110 110 0 0 1 228.5 276.2Z"/>
+            <ellipse class="box-a" cx="194" cy="170" rx="16" ry="9"/>
+            <circle class="fa" cx="214" cy="170" r="4"/>
+            <text class="sm" x="60" y="52">hearing radius</text>
+            <text class="h sm" x="236" y="36">far cone: awareness climbs slowly</text>
+            <text class="h sm" x="242" y="66">near cone: fast</text>
+            <circle class="fi" cx="360" cy="120" r="5"/>
+            <text class="k sm" x="372" y="116">you</text>
+            <text class="sm" x="372" y="132">in the far cone</text>
+            <path class="t" d="M110 240v20M100 250h20M103 243l14 14M117 243l-14 14"/>
+            <text class="tt sm" x="30" y="296">a rock lands behind it: heard, instant jump</text>
+            <path class="s" d="M460 250H690M460 250V60"/>
+            <text class="sm" x="460" y="52">awareness</text>
+            <text class="sm r" x="690" y="284">time</text>
+            <path class="m d" d="M460 196H690M460 142H690M460 88H690"/>
+            <text class="sm" x="466" y="192">30 · notice: ears up, head turns</text>
+            <text class="sm" x="466" y="138">60 · alert: stops, stares</text>
+            <text class="sm" x="466" y="84">90 · commits: hunt, or run</text>
+            <path class="a w2" d="M460 250H480C520 248 545 214 570 196C580 190 592 206 606 210V128C636 140 664 176 690 198"/>
+            <text class="sm" x="470" y="268">you enter the far cone</text>
+            <text class="tt sm c" x="606" y="284">the rock</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.2</b> Left: the senses, from above. Right: what they do to one number. Standing in the far cone is a slow climb; a noise inside the hearing radius is a jump. Each threshold changes the animal’s posture, so the player can read the number without ever seeing it.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Hunger, and looking for food</h3>
+        <p>Needs are numbers that rise on their own and fall when the creature acts on them. Hunger is the one that runs the ecosystem, because it is the one that makes a creature take risks. Below the first threshold, foraging is not even in the tree. Past it, foraging competes with everything else. Past the second, it outranks fear: a starving grazer will graze next to a stalker, and the stalker will eat. That is not a bug I tuned out; it is the reason the world has carcasses in it, and carcasses are what the scavengers, and a hungry player, are looking for. Finding food is an EQS query: every known food spot is scored by distance, by how safe it is (the scent and sight of anything that eats you counts against it), and by how many others are already eating there. <a class="figref" href="#fig-5-3">Fig 5.3</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-3">
+        <div class="fig__frame" data-n="FIG 5.3">
+          <svg viewBox="0 0 720 290" role="img" aria-label="Left: a graph of one creature's hunger over a day, a sawtooth that climbs and drops at each meal, with a hungry threshold where foraging joins the tree and a starving threshold where foraging outranks fear. Right: a creature choosing between three food spots scored by nearness, safety and crowding, one of them tainted by a stalker's scent.">
+            <path class="s" d="M60 240H400M60 240V50"/>
+            <text class="sm" x="60" y="42">hunger</text>
+            <text class="sm r" x="400" y="256">one day</text>
+            <path class="m d" d="M60 159H400M60 96H400"/>
+            <text class="sm" x="66" y="155">45 · hungry</text>
+            <text class="h sm" x="66" y="92">80 · starving</text>
+            <path class="a" d="M60 230L200 120"/>
+            <path class="a w2" d="M200 120V225"/><path class="a" d="M196 218l4 7 4-7"/>
+            <path class="a" d="M200 225L380 80"/>
+            <path class="a w2" d="M380 80V220"/><path class="a" d="M376 213l4 7 4-7"/>
+            <path class="a" d="M380 220L400 204"/>
+            <circle class="fa" cx="200" cy="120" r="3.5"/><circle class="fa" cx="380" cy="80" r="3.5"/>
+            <text class="sm r" x="194" y="116">eats: a safe patch, nearby</text>
+            <text class="sm" x="60" y="276">hungry: forage joins the tree · starving: forage outranks fear</text>
+            <text class="h sm r" x="374" y="72">eats beside a stalker</text>
+            <text class="sm" x="440" y="30">forage: EQS scores every food spot</text>
+            <ellipse class="box-a" cx="470" cy="170" rx="16" ry="9"/>
+            <path class="a" d="M486 170L534 124"/>
+            <path class="m d" d="M486 170L614 214M486 170L612 90"/>
+            <circle class="fa" cx="540" cy="120" r="6"/>
+            <text class="k sm" x="552" y="116">0.9</text>
+            <circle class="fi" cx="620" cy="216" r="5"/>
+            <text class="k sm" x="632" y="212">0.5</text>
+            <circle class="fm" cx="618" cy="86" r="5"/>
+            <text class="k sm" x="626" y="106">0.2</text>
+            <ellipse class="box" cx="660" cy="60" rx="14" ry="8"/>
+            <circle class="m d" cx="660" cy="60" r="50"/>
+            <text class="sm c" x="660" y="126">stalker</text>
+            <text class="sm" x="440" y="244">0.9 · near and safe · 0.5 · far</text>
+            <text class="sm" x="440" y="260">0.2 · inside a stalker’s scent</text>
+            <text class="mono h" x="440" y="284">score = near × safe × uncrowded</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.3</b> Left: hunger over a day for one grazer. The second meal is the interesting one: it is eaten next to a predator because starving outranks fear, and the ecosystem needs that to happen. Right: the food query. The best spot is not the nearest one; it is the nearest one nothing is hunting at.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C++ · DRIVE SELECTOR</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// Every need is scored against the world, every beat. The winner picks the branch. The stick bonus stops flip-flopping.</i>
+EDrive UCreatureBrain::SelectDrive(<b>const</b> FBlackboardView&amp; bb)
+{
+    <em>float</em> best = -1.f; EDrive pick = EDrive::Idle;
+    <b>for</b> (<b>const</b> FNeed&amp; n : Needs)
+    {
+        <em>float</em> score = n.Level * n.Weight;                            <i>// hunger rises with time; fear rises with awareness</i>
+        <b>if</b> (n.Drive == EDrive::Flee)   score *= bb.ThreatNearby ? 1.f : 0.f;
+        <b>if</b> (n.Drive == EDrive::Forage) score *= bb.KnowsFood    ? 1.f : .4f;   <i>// still worth roaming for</i>
+        <b>if</b> (n.Drive == Current)        score += StickBonus;          <i>// stay the course unless clearly beaten</i>
+        <b>if</b> (score &gt; best) { best = score; pick = n.Drive; }
+    }
+    <b>return</b> pick;   <i>// a starving grazer ends up grazing next to a stalker: fear lost, on purpose</i>
+}</code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>Prey and predator, from one table</h3>
+        <p>Who hunts whom is not written into any creature. There is one diet table: each species lists what it eats, and that is all anyone authors. What a species <strong>fears</strong> is derived at load by reversing every arrow, so a grazer is afraid of stalkers because stalkers eat grazers, never because someone remembered to say so. The player is a row in the same table. Adding a species to the world is adding one row, and the whole web, hunts, flights and alarms included, rearranges itself around it. <a class="figref" href="#fig-5-4">Fig 5.4</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-4">
+        <div class="fig__frame" data-n="FIG 5.4">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Left: a food web with flora, grazer, burrower, stalker pack, apex and the player, arrows pointing from eater to eaten. Right: the diet table those arrows come from, one row per species, with a note that fear is every arrow reversed, derived at load.">
+            <rect class="box" x="65" y="230" width="110" height="40" rx="4"/><text class="k c" x="120" y="255">flora</text>
+            <rect class="box" x="65" y="130" width="110" height="40" rx="4"/><text class="k c" x="120" y="155">grazer, herd</text>
+            <rect class="box" x="225" y="230" width="110" height="40" rx="4"/><text class="k c" x="280" y="255">burrower</text>
+            <rect class="box-a" x="225" y="70" width="110" height="40" rx="4"/><text class="k c" x="280" y="95">stalker, pack</text>
+            <rect class="box-a" x="405" y="130" width="110" height="40" rx="4"/><text class="k c" x="460" y="155">apex</text>
+            <rect class="box-t" x="405" y="40" width="110" height="40" rx="4"/><text class="k c" x="460" y="65">you</text>
+            <path class="a" d="M120 170V230"/><path class="a" d="M116 223l4 7 4-7"/>
+            <path class="a" d="M225 250H175"/><path class="a" d="M182 246l-7 4 7 4"/>
+            <path class="a" d="M225 95L150 132"/><path class="a" d="M154.5 125.3L150 132L158.1 132.5"/>
+            <path class="a" d="M280 110V230"/><path class="a" d="M276 223l4 7 4-7"/>
+            <path class="a" d="M405 150H175"/><path class="a" d="M182 146l-7 4 7 4"/>
+            <path class="a" d="M405 140L335 105"/><path class="a" d="M343.1 104.5L335 105L339.5 111.7"/>
+            <path class="a" d="M460 130V80"/><path class="a" d="M456 87l4-7 4 7"/>
+            <path class="a" d="M405 62L335 82"/><path class="a" d="M340.6 76.3L335 82L342.8 83.9"/>
+            <path class="a" d="M405 48C300 10 160 20 135 130"/><path class="a" d="M132.7 122.3L135 130L140.5 124.1"/>
+            <path class="a" d="M40 292h24"/><text class="sm" x="70" y="296">eats, the only arrow anyone writes</text>
+            <text class="k sm" x="540" y="60">the diet table</text>
+            <path class="s" d="M540 68H700"/>
+            <text class="sm" x="540" y="90">grazer</text><text class="sm r" x="700" y="90">flora</text>
+            <text class="sm" x="540" y="110">burrower</text><text class="sm r" x="700" y="110">flora</text>
+            <text class="sm" x="540" y="130">stalker</text><text class="sm r" x="700" y="130">grazer · burrower</text>
+            <text class="sm" x="540" y="150">apex</text><text class="sm r" x="700" y="150">grazer · stalker · you</text>
+            <text class="sm" x="540" y="170">you</text><text class="sm r" x="700" y="170">grazer · stalker</text>
+            <path class="s" d="M540 180H700"/>
+            <text class="h sm" x="540" y="206">fears = every arrow, reversed</text>
+            <text class="sm" x="540" y="222">derived at load, never authored</text>
+            <text class="sm" x="540" y="252">a new species is one new row;</text>
+            <text class="sm" x="540" y="268">the web rearranges itself</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.4</b> The web on the left is drawn entirely from the table on the right. Only “eats” is ever written down. Fear, alarm and who a pack will bother chasing all fall out of the reverse edges, which means they can never disagree with the hunts.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>The herd</h3>
+        <p>Grazers move as a herd, and the herd is three rules per member per tick: keep your spacing, match the herd’s heading, drift toward its centre. That is enough for a crowd to walk like animals instead of a formation, and it costs almost nothing. What makes it a <strong>herd</strong> rather than a flock is the shared blackboard. One member that sees a stalker writes the alarm for all of them, so the whole group turns and runs as a unit, away from the threat, before most of them have seen anything. The spacing rule keeps them from piling up on the way; the cohesion rule keeps the group together; and the ones that fall behind are exactly the ones a pack, or a player, ends up picking off. I never wrote a “straggler” system. It emerged. <a class="figref" href="#fig-5-5">Fig 5.5</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-5">
+        <div class="fig__frame" data-n="FIG 5.5">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Left: a herd of eight grazers from above with a leader marked, and on one member the three steering vectors, separation, alignment and cohesion. Right: the same herd with a stalker approaching; the one member that sees it broadcasts an alarm, rings spread from it, and every member's heading has flipped away from the threat.">
+            <text class="sm" x="30" y="40">three rules per member, every tick</text>
+            <circle class="box" cx="100" cy="120" r="7"/><path class="s" d="M107 120h8"/>
+            <circle class="box" cx="140" cy="90" r="7"/><path class="s" d="M147 90h8"/>
+            <circle class="box" cx="170" cy="150" r="7"/><path class="s" d="M177 150h8"/>
+            <circle class="box" cx="200" cy="110" r="7"/><path class="s" d="M207 110h8"/>
+            <circle class="box" cx="230" cy="170" r="7"/><path class="s" d="M237 170h8"/>
+            <circle class="box-a" cx="260" cy="120" r="7"/><path class="s" d="M267 120h8"/><circle class="fa" cx="260" cy="120" r="2.5"/>
+            <circle class="box" cx="180" cy="220" r="7"/><path class="s" d="M187 220h8"/>
+            <circle class="box-a" cx="120" cy="190" r="7"/>
+            <text class="sm" x="270" y="108">leader</text>
+            <path class="t w2" d="M120 190L98 207"/><path class="t" d="M101 200l-3 7 7-1"/>
+            <path class="a w2" d="M120 190L150 190"/><path class="a" d="M143 186l7 4-7 4"/>
+            <path class="s w2" d="M120 190L143 171"/><path class="s" d="M136 171l7 0-1 7"/>
+            <path class="t w2" d="M30 250h20"/><text class="sm" x="58" y="254">separation: keep your spacing</text>
+            <path class="a w2" d="M30 270h20"/><text class="sm" x="58" y="274">alignment: match the herd’s heading</text>
+            <path class="s w2" d="M30 290h20"/><text class="sm" x="58" y="294">cohesion: drift toward the centre</text>
+            <text class="sm" x="380" y="40">one sees it, all of them know: the alarm is shared</text>
+            <ellipse class="box-a" cx="660" cy="150" rx="16" ry="9"/><text class="sm c" x="660" y="176">stalker</text>
+            <path class="m d" d="M644 150L568 150"/>
+            <circle class="a o1" cx="560" cy="150" r="80"/><circle class="a o2" cx="560" cy="150" r="55"/><circle class="a" cx="560" cy="150" r="30"/>
+            <circle class="box-a" cx="560" cy="150" r="7"/><circle class="fa" cx="560" cy="150" r="2.5"/><path class="s" d="M553 150h-8"/>
+            <circle class="box" cx="520" cy="110" r="7"/><path class="s" d="M513 110h-8"/>
+            <circle class="box" cx="510" cy="190" r="7"/><path class="s" d="M503 190h-8"/>
+            <circle class="box" cx="470" cy="140" r="7"/><path class="s" d="M463 140h-8"/>
+            <circle class="box" cx="440" cy="100" r="7"/><path class="s" d="M433 100h-8"/>
+            <circle class="box" cx="430" cy="200" r="7"/><path class="s" d="M423 200h-8"/>
+            <circle class="box" cx="400" cy="150" r="7"/><path class="s" d="M393 150h-8"/>
+            <circle class="box" cx="470" cy="230" r="7"/><path class="s" d="M463 230h-8"/>
+            <path class="a w2" d="M470 66H400"/><path class="a" d="M407 62l-7 4 7 4"/>
+            <text class="h sm" x="478" y="70">the herd turns as one</text>
+            <text class="sm" x="560" y="250">the seer</text>
+            <text class="h sm c" x="540" y="286">stragglers are the ones that get eaten: emergent, not scripted</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.5</b> Left: the three steering rules on one member. Right: a stalker approaches, one grazer sees it, the alarm goes on the shared blackboard, and every heading flips. Nothing tells the herd to flee; each member is fleeing on its own, from a fact it did not have to see.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>The pack</h3>
+        <p>Stalkers hunt together, and a pack that just runs at the prey in a clump is a herd with teeth. The pack has a leader, and the leader assigns roles. It takes the <strong>driver</strong> role itself: stay behind the prey and keep it running. Everyone else gets a point on a ring around the prey, chosen by EQS. A ring point scores well if a member can reach it, if it is outside the prey’s sight cone, and if nobody has already claimed that sector of the ring. Once a sector is claimed it is removed from the query, so the second flanker is pushed to the other side without anyone writing “go to the other side”. When the prey turns into a flank, the nearest member commits to the attack and the rest re-run the same query from where they are. It is one question, asked again, and it produces encirclement, cut-offs and relays that look planned. <a class="figref" href="#fig-5-6">Fig 5.6</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-6">
+        <div class="fig__frame" data-n="FIG 5.6">
+          <svg viewBox="0 0 720 330" role="img" aria-label="Top-down diagram of a pack hunt: the prey in the centre heading right with its sight cone shaded ahead of it, a ring of twelve EQS candidate points around it, three chosen and highlighted: the driver behind and two flankers ahead just outside the sight cone. Claimed sectors are marked on the ring, and candidates inside the sight cone are crossed out.">
+            <text class="sm" x="30" y="40">1 · the leader takes driver</text>
+            <text class="sm" x="30" y="56">2 · each member takes the best free point</text>
+            <text class="sm" x="30" y="72">3 · a claimed sector leaves the query</text>
+            <path class="band o2" d="M400 160L476.6 95.7A100 100 0 0 1 476.6 224.3Z"/>
+            <path class="m d" d="M400 160L476.6 95.7A100 100 0 0 1 476.6 224.3Z"/>
+            <circle class="m d" cx="400" cy="160" r="110"/>
+            <ellipse class="box" cx="396" cy="160" rx="16" ry="9"/><circle class="fi" cx="416" cy="160" r="4"/><path class="s" d="M420 160h12"/>
+            <text class="k sm c" x="400" y="188">prey</text>
+            <circle class="fm" cx="510" cy="160" r="2.5"/><path class="m" d="M506 156l8 8M514 156l-8 8"/>
+            <circle class="fm" cx="495.3" cy="105" r="2.5"/><path class="m" d="M491.3 101l8 8M499.3 101l-8 8"/>
+            <circle class="fm" cx="495.3" cy="215" r="2.5"/><path class="m" d="M491.3 211l8 8M499.3 211l-8 8"/>
+            <circle class="fm" cx="400" cy="50" r="2.5"/>
+            <circle class="fm" cx="345" cy="64.7" r="2.5"/>
+            <circle class="fm" cx="304.7" cy="105" r="2.5"/>
+            <circle class="fm" cx="304.7" cy="215" r="2.5"/>
+            <circle class="fm" cx="345" cy="255.3" r="2.5"/>
+            <circle class="fm" cx="400" cy="270" r="2.5"/>
+            <path class="a w3 o2" d="M304.7 105A110 110 0 0 0 304.7 215"/>
+            <path class="a w3 o2" d="M495.3 105A110 110 0 0 0 400 50"/>
+            <path class="a w3 o2" d="M400 270A110 110 0 0 0 495.3 215"/>
+            <circle class="fa" cx="290" cy="160" r="5"/>
+            <circle class="fa" cx="455" cy="64.7" r="5"/>
+            <circle class="fa" cx="455" cy="255.3" r="5"/>
+            <ellipse class="box-a" cx="230" cy="160" rx="16" ry="9"/><path class="a" d="M246 160H282"/><path class="a" d="M275 156l7 4-7 4"/>
+            <text class="k sm r" x="206" y="156">driver</text><text class="sm r" x="206" y="172">pressure from behind</text>
+            <ellipse class="box-a" cx="520" cy="40" rx="16" ry="9"/><path class="a" d="M504 44L462 62"/><path class="a" d="M470 56l-8 6 8 2"/>
+            <text class="k sm" x="544" y="36">flank</text><text class="sm" x="544" y="52">cuts off the turn</text>
+            <ellipse class="box-a" cx="540" cy="290" rx="16" ry="9"/><path class="a" d="M524 286L462 258"/><path class="a" d="M470 264l-8-6 8-2"/>
+            <text class="k sm" x="562" y="286">flank</text><text class="sm" x="562" y="302">the other side, unasked</text>
+            <text class="sm" x="520" y="128">prey’s sight cone:</text><text class="sm" x="520" y="144">points in it score zero</text>
+            <text class="mono h" x="30" y="300">score = reach × (1 − seen) × sector free</text>
+            <text class="sm c" x="400" y="320">the ring of EQS candidates around the prey</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.6</b> A hunt from above. The ring is the EQS query; the three highlighted points are what it returned for three members. The crossed-out candidates are in the prey’s sight and score zero; the shaded arcs are claimed sectors, gone from the query for the next member. Encirclement is the only answer left.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C++ · PACK ROLES</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// The leader takes the pressure. Everyone else takes the best free point on the ring, in order of who can reach it.</i>
+<b>void</b> APackLeader::AssignRoles(<b>const</b> TArray&lt;ACreature*&gt;&amp; pack, <b>const</b> ACreature* prey)
+{
+    Roles.Reset();
+    Roles.Add(<b>this</b>, ERole::Driver);                                        <i>// behind the prey; keeps it running</i>
+    TArray&lt;FRingPoint&gt; ring = RunEQS(FlankQuery, prey);                    <i>// scored: reachable, out of its sight, sector free</i>
+    <b>for</b> (ACreature* m : SortedByReach(pack, ring))
+    {
+        <b>if</b> (m == <b>this</b> || ring.IsEmpty()) <b>continue</b>;
+        FRingPoint p = ring.Pop();                                         <i>// the best free point</i>
+        ring.RemoveAll([&amp;](<b>const</b> FRingPoint&amp; q){ <b>return</b> SameSector(q, p); });  <i>// a claimed sector is gone</i>
+        Roles.Add(m, ERole::Flank);
+        m-&gt;Blackboard-&gt;SetVector(TEXT(<em>"FlankPoint"</em>), p.Location);
+    }
+}
+<i>// When the prey turns into a flank, the nearest member commits and the rest re-run this from where they stand.</i>
+<i>// It is one query, re-asked. The encirclement is what is left after the claimed sectors are removed.</i></code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>Fight, and knowing when to run</h3>
+        <p>Combat is where the simulation has to become legible, because this is where the player gets hurt. An <strong>attack pattern</strong> is data: an ordered list of moves, each with a range it is valid at and a telegraph the player can read before it lands. A stalker circles, telegraphs, lunges, bites, backs off, and repeats; an apex has a longer list with a swipe in it. The engage branch walks the list, picking the next move whose range matches where the prey is now, so the same pattern reads differently against a target that stands its ground and one that keeps backing away. The hunt itself is physical: a pounce is a real launch with momentum, a bite is an overlap test during the animation’s active window, and a creature that gets hit is knocked by the force that hit it. Every beat, the creature runs a fight-or-flight check, its health and aggression and the pack advantage against the threat in front of it, and if courage goes below zero the engage branch ends and flee takes over. Flee is an EQS query too: away from the threat, toward cover, the herd, or the den, whichever the species values. Lone stalkers give up fights that packs would win, and it is the same code. <a class="figref" href="#fig-5-7">Fig 5.7</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-7">
+        <div class="fig__frame" data-n="FIG 5.7">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Top: a state diagram from stalk to chase to engage, with exits to feed when the prey is down and to flee when the fight-or-flight check fails, and dashed returns for losing the prey and for regrouping. Middle: the courage formula. Bottom: an attack pattern as a timeline, circle, telegraph, lunge, bite, back off, telegraph, swipe, recover, repeat, with the telegraph blocks marked as the readable part.">
+            <rect class="box" x="30" y="40" width="100" height="40" rx="4"/><text class="k c" x="80" y="65">Stalk</text>
+            <rect class="box" x="160" y="40" width="100" height="40" rx="4"/><text class="k c" x="210" y="65">Chase</text>
+            <rect class="box-a" x="290" y="40" width="130" height="40" rx="4"/><text class="k c" x="355" y="65">Engage</text>
+            <rect class="box" x="450" y="40" width="100" height="40" rx="4"/><text class="k c" x="500" y="65">Feed</text>
+            <rect class="box-t" x="450" y="120" width="100" height="40" rx="4"/><text class="k c" x="500" y="145">Flee</text>
+            <path class="a" d="M130 60H160"/><path class="a" d="M153 56l7 4-7 4"/><text class="sm c" x="145" y="32">in range</text>
+            <path class="a" d="M260 60H290"/><path class="a" d="M283 56l7 4-7 4"/><text class="sm c" x="275" y="32">caught up</text>
+            <path class="a" d="M420 60H450"/><path class="a" d="M443 56l7 4-7 4"/><text class="sm c" x="435" y="32">prey down</text>
+            <path class="t" d="M355 80V140H450"/><path class="t" d="M443 136l7 4-7 4"/>
+            <text class="tt sm" x="362" y="104">fight-or-flight,</text><text class="tt sm" x="362" y="120">every beat</text>
+            <path class="m d" d="M210 80V110H100V80"/><path class="m" d="M96 87l4-7 4 7"/><text class="sm c" x="155" y="124">lost it</text>
+            <path class="m d" d="M550 140H600V206H60V80"/><path class="m" d="M56 87l4-7 4 7"/><text class="sm c" x="330" y="220">regroup, recover, stalk again</text>
+            <text class="mono h" x="30" y="156">courage = health × aggression × pack edge − threat</text>
+            <text class="sm" x="30" y="174">below zero, engage ends and flee runs its own EQS query: away, toward cover, the herd, or the den</text>
+            <text class="k sm" x="30" y="244">an attack pattern is data: moves in order, each with a range and a telegraph the player can read</text>
+            <rect class="box" x="30" y="254" width="110" height="26" rx="2"/><text class="sm c" x="85" y="271">circle</text>
+            <rect class="band" x="140" y="254" width="66" height="26" rx="2"/><text class="tt sm c" x="173" y="271">telegraph</text>
+            <rect class="box-a" x="206" y="254" width="52" height="26" rx="2"/><text class="sm c" x="232" y="271">lunge</text>
+            <rect class="box-a" x="258" y="254" width="44" height="26" rx="2"/><text class="sm c" x="280" y="271">bite</text>
+            <rect class="box" x="302" y="254" width="96" height="26" rx="2"/><text class="sm c" x="350" y="271">back off</text>
+            <rect class="band" x="398" y="254" width="66" height="26" rx="2"/><text class="tt sm c" x="431" y="271">telegraph</text>
+            <rect class="box-a" x="464" y="254" width="52" height="26" rx="2"/><text class="sm c" x="490" y="271">swipe</text>
+            <rect class="box" x="516" y="254" width="90" height="26" rx="2"/><text class="sm c" x="561" y="271">recover</text>
+            <path class="a d" d="M612 267H690"/><path class="a" d="M683 263l7 4-7 4"/>
+            <text class="tt sm" x="140" y="296">the telegraph is the readable part; the range decides which move is next</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.7</b> Top: the hunt as states. The only way out of Engage is the prey going down or courage going below zero. Bottom: one attack pattern. The shaded blocks are telegraphs; a player who learns them can fight a creature they cannot outrun.</figcaption>
+      </figure>
+
+      <div class="prose">
+        <h3>Traversal</h3>
+        <p>The megastructure is vertical, so the player climbs, wall-jumps, grabs ledges and mantles over them, and none of that geometry is hand-tagged. A mantle is <strong>three traces</strong> in a fixed order: forward from the chest to find a wall, down from a point above and ahead of it to find the top, and up from the top to make sure there is room to stand. Any geometry that passes all three is climbable; a flag on the surface can say no, which is how the level designers keep you off things you are not meant to reach yet. The height between the wall hit and the top picks the animation: a step, a vault, or a full pull-up. Wall jumps use the contact normal: the launch is the normal plus lift, with a short input window after contact so a late press still jumps. Climbing and wall-jumping share the same probe code, which is what made the parkour feel consistent across rooms built by different people. <a class="figref" href="#fig-5-8">Fig 5.8</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-8">
+        <div class="fig__frame" data-n="FIG 5.8">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Left: side view of a player capsule at a ledge with three numbered traces: forward into the wall, down from above and ahead onto the ledge top, and up from the top to check clearance; a dashed ghost capsule shows the mantle target. Right: a wall jump, the wall normal and the lift vector combining into a launch vector and a dashed arc away from the wall.">
+            <path class="s" d="M30 270H690"/>
+            <rect class="box" x="300" y="130" width="150" height="140" rx="2"/>
+            <rect class="box-a" x="200" y="170" width="40" height="100" rx="20"/>
+            <path class="a" d="M240 210H300"/><circle class="fa" cx="300" cy="210" r="4"/>
+            <text class="sm" x="30" y="206">1 · forward: a wall?</text>
+            <path class="a" d="M330 80V130"/><circle class="fa" cx="330" cy="130" r="4"/>
+            <path class="t d" d="M330 128V50"/><circle class="ft" cx="330" cy="50" r="3"/>
+            <rect class="m d" x="330" y="30" width="40" height="100" rx="20"/>
+            <text class="sm" x="385" y="50">mantle target</text>
+            <text class="sm r" x="322" y="84">2 · down from ahead: the top</text>
+            <text class="tt sm r" x="322" y="108">3 · up: room to stand?</text>
+            <text class="sm" x="30" y="292">no tagged geometry: three traces decide, a surface flag can only say no</text>
+            <text class="k sm" x="470" y="60">wall jump</text>
+            <text class="mono sm" x="470" y="80">v = n·push + up·lift</text>
+            <rect class="box" x="640" y="40" width="20" height="230" rx="2"/>
+            <rect class="box-a" x="590" y="130" width="40" height="100" rx="20"/>
+            <path class="m" d="M640 180H590"/><path class="m" d="M597 176l-7 4 7 4"/><text class="sm c" x="614" y="199">n</text>
+            <path class="m" d="M610 180V130"/><path class="m" d="M606 137l4-7 4 7"/><text class="sm" x="616" y="128">up</text>
+            <path class="a w2" d="M610 180L556 116"/><path class="a" d="M556 126l0-10 10 0"/>
+            <path class="a d" d="M610 180Q540 60 480 150"/>
+            <text class="sm" x="470" y="252">a short input window after contact,</text>
+            <text class="sm" x="470" y="268">so a late press still jumps</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.8</b> Left: the mantle probes, in the order they run. If any one fails, the move is not offered, and the height between the first two hits picks the animation. Right: the wall jump is the contact normal plus lift, with a forgiving window, so the player never has to be frame-perfect on a wall.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C++ · MANTLE PROBES</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// Three traces, in order. Any geometry that passes is climbable; a surface flag can only say no.</i>
+<b>bool</b> UTraversal::TryMantle(FMantleHit&amp; out)
+{
+    FHitResult wall, top;
+    <b>if</b> (!Trace(Chest(), Chest() + Forward() * Reach, wall))       <b>return</b> <b>false</b>;  <i>// 1 · is there a wall?</i>
+    <b>if</b> (!wall.Surface-&gt;bClimbable)                                 <b>return</b> <b>false</b>;  <i>//     permission is data</i>
+    FVector above = wall.ImpactPoint + Forward() * StepIn + FVector::UpVector * MaxLedge;
+    <b>if</b> (!Trace(above, above - FVector::UpVector * MaxLedge, top))  <b>return</b> <b>false</b>;  <i>// 2 · where is the top?</i>
+    <b>if</b> (!Clear(top.ImpactPoint, CapsuleHeight))                    <b>return</b> <b>false</b>;  <i>// 3 · room to stand?</i>
+    out = { top.ImpactPoint, wall.ImpactNormal, top.ImpactPoint.Z - wall.ImpactPoint.Z };
+    <b>return</b> <b>true</b>;   <i>// the height picks the animation: a step, a vault, or a full pull-up</i>
+}</code></pre>
+      </div>
+
+      <div class="prose">
+        <h3>The inventory, all of it</h3>
+        <p>The inventory is the one system in the game that everything else touches: pickups, crafting, equipment, the corpse you just made, the door that wants a key. So it had to be boring in the right way. An <strong>item definition</strong> is a data asset (icon, stack size, weight, tags, what “use” does). An item instance is a pointer to one plus a count and a durability, cheap enough to have thousands. A container is a list of slots with rules about capacity and which tags it accepts; the player’s pack, a chest, a corpse and the creature’s own stomach are all containers. Equipment is a container whose slots are named sockets. Adding to a container is one call with a strict order: top up stacks you already carry, fill empty slots, and hand back whatever did not fit so the caller can drop it into the world as a physics item. Nothing is ever silently lost. On the world side there is one interaction interface (focus, prompt, interact) shared by items, doors, levers and carcasses, and the UI reads containers through change events; it never polls. <a class="figref" href="#fig-5-9">Fig 5.9</a></p>
+      </div>
+
+      <figure class="fig" id="fig-5-9">
+        <div class="fig__frame" data-n="FIG 5.9">
+          <svg viewBox="0 0 720 300" role="img" aria-label="Top row: item definition data asset, item instance, container, equipment, connected left to right. Bottom row: the interaction interface leads to pick up, into container try-add with its merge, fill, overflow order, and out to a UI that listens for change events.">
+            <rect class="box" x="30" y="40" width="150" height="96" rx="4"/>
+            <text class="k sm" x="44" y="62">Item definition</text>
+            <text class="sm" x="44" y="80">a data asset, shared</text>
+            <text class="sm" x="44" y="96">icon · stack · weight</text>
+            <text class="sm" x="44" y="112">tags · use action</text>
+            <path class="a" d="M180 88H200"/><path class="a" d="M193 84l7 4-7 4"/>
+            <rect class="box" x="200" y="40" width="150" height="96" rx="4"/>
+            <text class="k sm" x="214" y="62">Item instance</text>
+            <text class="sm" x="214" y="80">definition + count</text>
+            <text class="sm" x="214" y="96">+ durability</text>
+            <text class="sm" x="214" y="112">small, so make many</text>
+            <path class="a" d="M350 88H370"/><path class="a" d="M363 84l7 4-7 4"/>
+            <rect class="box-a" x="370" y="40" width="150" height="96" rx="4"/>
+            <text class="k sm" x="384" y="62">Container</text>
+            <text class="sm" x="384" y="80">slots[] · capacity</text>
+            <text class="sm" x="384" y="96">allowed tags</text>
+            <text class="sm" x="384" y="112">pack · chest · corpse</text>
+            <path class="a" d="M520 88H540"/><path class="a" d="M533 84l7 4-7 4"/>
+            <rect class="box" x="540" y="40" width="150" height="96" rx="4"/>
+            <text class="k sm" x="554" y="62">Equipment</text>
+            <text class="sm" x="554" y="80">a container whose</text>
+            <text class="sm" x="554" y="96">slots are sockets</text>
+            <text class="sm" x="554" y="112">hand · back · head</text>
+            <rect class="box" x="30" y="190" width="150" height="60" rx="4"/>
+            <text class="k sm" x="44" y="212">Interactable</text>
+            <text class="sm" x="44" y="230">focus · prompt · interact</text>
+            <path class="a" d="M180 220H200"/><path class="a" d="M193 216l7 4-7 4"/>
+            <rect class="box" x="200" y="190" width="150" height="60" rx="4"/>
+            <text class="k sm" x="214" y="212">pick up</text>
+            <text class="sm" x="214" y="230">an item in the world</text>
+            <path class="a" d="M350 220H370"/><path class="a" d="M363 216l7 4-7 4"/>
+            <rect class="box-a" x="370" y="190" width="150" height="60" rx="4"/>
+            <text class="k sm" x="384" y="212">TryAdd</text>
+            <text class="sm" x="384" y="230">merge, fill, overflow</text>
+            <path class="a" d="M520 220H540"/><path class="a" d="M533 216l7 4-7 4"/>
+            <rect class="box" x="540" y="190" width="150" height="60" rx="4"/>
+            <text class="k sm" x="554" y="212">UI</text>
+            <text class="sm" x="554" y="230">listens for changes</text>
+            <path class="m d" d="M445 136V190"/><path class="m" d="M441 183l4 7 4-7"/>
+            <text class="h sm" x="30" y="278">one interface for everything you can touch: items, doors, levers, carcasses</text>
+            <text class="sm" x="30" y="294">what doesn’t fit goes back to the caller and lands on the floor as a physics item; nothing is silently lost</text>
+          </svg>
+        </div>
+        <figcaption><b>Fig 5.9</b> The inventory’s four nouns and the one verb everything uses. Definitions are shared assets, instances are small, containers own the rules, and equipment is a container with names. The UI is downstream of events, so it can never show a slot the data does not have.</figcaption>
+      </figure>
+
+      <div class="sketch">
+        <div class="sketch__bar"><span>SKETCH · C++ · CONTAINER</span><span>reduced to the rule that matters</span></div>
+<pre class="code"><code><i>// Merge into stacks you already have, then fill empty slots, then hand back what did not fit. Never lose an item.</i>
+<em>int32</em> UContainer::TryAdd(<b>const</b> UItemDef* def, <em>int32</em> count)
+{
+    <b>if</b> (!Allows(def)) <b>return</b> count;                                     <i>// wrong container for this tag</i>
+    <b>for</b> (FSlot&amp; s : Slots)                                              <i>// 1 · top up matching stacks</i>
+        <b>if</b> (s.Def == def &amp;&amp; s.Count &lt; def-&gt;StackMax)
+        { <em>int32</em> n = FMath::Min(count, def-&gt;StackMax - s.Count); s.Count += n; count -= n; <b>if</b> (!count) <b>break</b>; }
+    <b>for</b> (FSlot&amp; s : Slots)                                              <i>// 2 · then empty slots</i>
+        <b>if</b> (!s.Def &amp;&amp; count) { s.Def = def; s.Count = FMath::Min(count, def-&gt;StackMax); count -= s.Count; }
+    OnChanged.Broadcast();                                              <i>// the UI listens; it never polls</i>
+    <b>return</b> count;                                                       <i>// 3 · the remainder: the caller drops it as a physics item</i>
+}</code></pre>
+      </div>
+
+      <dl class="results">
+        <div><dt>1 tree</dt><dd>for every species; the differences are data</dd></div>
+        <div><dt>1 table</dt><dd>drives every hunt, every flight, every alarm</dd></div>
+        <div><dt>$600K+</dt><dd>investment the prototype helped secure</dd></div>
+        <div><dt>2 yrs</dt><dd>August 2021 to August 2023</dd></div>
+      </dl>
+      <div class="ledger">
+        <div><h4>I WROTE</h4><ul>
+          <li>The creature behaviour system: the shared behavior tree, the drive selector, the blackboard model</li>
+          <li>Detection: the two sight cones, hearing, scent, and the awareness ladder</li>
+          <li>Needs: hunger and the foraging query</li>
+          <li>The prey and predator model, derived from one diet table</li>
+          <li>The herd system: steering rules and the shared alarm</li>
+          <li>The pack system: roles, the flank query, and coordinated hunts</li>
+          <li>Combat: attack patterns, the fight-or-flight check, and flee</li>
+          <li>Traversal: climbing, wall-jumping, ledge grabs and mantling</li>
+          <li>The entire inventory and interaction system</li>
+          <li>Encounter flow, and the design docs and prototypes behind all of it</li>
+        </ul></div>
+        <div class="others"><h4>WITH OTHERS</h4><ul>
+          <li>Creature models, animation, environment art and audio from the Feral Flame team and the external contributors I coordinated</li>
+          <li>The world and direction of Primal Echo, with the studio’s founders</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ 06 Holographic pipeline -->
+    <section class="dossier" id="holographic-pipeline" aria-labelledby="holo-title" style="--fx:#3ec6c0">
+      <div class="dossier__head">
+        <div class="dossier__num">06</div>
         <div>
           <h2 id="holo-title">Holographic pipeline <span class="chip">UNITY · C++ · SWAVE HXR</span></h2>
           <p class="thesis">A hologram can’t show a surface. It shows points of light. So I turned surfaces into clouds of points, on purpose.</p>
@@ -781,11 +1296,11 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
 
       <div class="prose">
         <h3>Why points</h3>
-        <p>A holographic display does not rasterize triangles. It reconstructs a light field, and the natural input for that computation is a set of point emitters in space, each contributing a wave. Feed it a mesh and you have nothing. Feed it the right points and you get an object hanging in the air. The job was turning what Unity has, shaded surfaces, into what the display wants, well-distributed points, fast enough to be live. <a class="figref" href="#fig-5-1">Fig 5.1</a></p>
+        <p>A holographic display does not rasterize triangles. It reconstructs a light field, and the natural input for that computation is a set of point emitters in space, each contributing a wave. Feed it a mesh and you have nothing. Feed it the right points and you get an object hanging in the air. The job was turning what Unity has, shaded surfaces, into what the display wants, well-distributed points, fast enough to be live. <a class="figref" href="#fig-6-1">Fig 6.1</a></p>
       </div>
 
-      <figure class="fig" id="fig-5-1">
-        <div class="fig__frame" data-n="FIG 5.1">
+      <figure class="fig" id="fig-6-1">
+        <div class="fig__frame" data-n="FIG 6.1">
           <svg viewBox="0 0 720 130" role="img" aria-label="Pipeline diagram: Unity mesh, slice, shell only, sample and jitter, C++ bridge, HXR display.">
             <rect class="box" x="24" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="72" y="68">Unity mesh</text><text class="sm c" x="72" y="112">any model</text>
             <rect class="box" x="136" y="40" width="96" height="48" rx="4"/><text class="k sm c" x="184" y="68">slice</text><text class="sm c" x="184" y="112">planes at Δz</text>
@@ -797,16 +1312,16 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
             <path class="a" d="M129 60l7 4-7 4M241 60l7 4-7 4M353 60l7 4-7 4M465 60l7 4-7 4M577 60l7 4-7 4"/>
           </svg>
         </div>
-        <figcaption><b>Fig 5.1</b> The pipeline, left to right. Everything up to the bridge runs in Unity; the bridge hands a point stream to Swave’s engine, which computes the interference pattern and drives the hardware.</figcaption>
+        <figcaption><b>Fig 6.1</b> The pipeline, left to right. Everything up to the bridge runs in Unity; the bridge hands a point stream to Swave’s engine, which computes the interference pattern and drives the hardware.</figcaption>
       </figure>
 
       <div class="prose">
         <h3>Slice, keep the shell, sample</h3>
-        <p>The algorithm slices any mesh with a stack of planes, keeps only the outer shell of each slice, and discards the interior. Light inside an object is wasted computation and, worse, visible noise. Points are then sampled on the shell with density proportional to area, so a big flat face and a small detailed one both look solid. <a class="figref" href="#fig-5-2">Fig 5.2</a></p>
+        <p>The algorithm slices any mesh with a stack of planes, keeps only the outer shell of each slice, and discards the interior. Light inside an object is wasted computation and, worse, visible noise. Points are then sampled on the shell with density proportional to area, so a big flat face and a small detailed one both look solid. <a class="figref" href="#fig-6-2">Fig 6.2</a></p>
       </div>
 
-      <figure class="fig" id="fig-5-2">
-        <div class="fig__frame" data-n="FIG 5.2">
+      <figure class="fig" id="fig-6-2">
+        <div class="fig__frame" data-n="FIG 6.2">
           <svg viewBox="0 0 720 300" role="img" aria-label="Three-stage illustration: an egg-shaped mesh cut by horizontal planes, then only the shell contours kept with the interior empty, then the contours replaced by jittered sample points.">
             <ellipse class="s" cx="130" cy="160" rx="70" ry="100"/>
             <path class="a d" d="M50 80H210M50 110H210M50 140H210M50 170H210M50 200H210M50 230H210"/>
@@ -830,19 +1345,19 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
             <text class="sm c" x="590" y="282">3 · sample, then jitter</text>
           </svg>
         </div>
-        <figcaption><b>Fig 5.2</b> From a mesh to a cloud. Slicing gives clean contours at a known spacing; keeping the shell throws away everything the display would render as mud; sampling turns the contours into emitters the engine understands.</figcaption>
+        <figcaption><b>Fig 6.2</b> From a mesh to a cloud. Slicing gives clean contours at a known spacing; keeping the shell throws away everything the display would render as mud; sampling turns the contours into emitters the engine understands.</figcaption>
       </figure>
 
       <div class="prose">
         <h3>Randomize on purpose</h3>
-        <p>The samples are jittered. A regular sampling grid lines up with the display’s own pixel structure and produces moiré and ghost patterns in the reconstruction. Randomized positions have no repeating structure to interfere with, and re-randomizing per frame turns any residual artifact into a soft shimmer instead of a fixed pattern. This was the difference between a demo and an object. <a class="figref" href="#fig-5-3">Fig 5.3</a></p>
+        <p>The samples are jittered. A regular sampling grid lines up with the display’s own pixel structure and produces moiré and ghost patterns in the reconstruction. Randomized positions have no repeating structure to interfere with, and re-randomizing per frame turns any residual artifact into a soft shimmer instead of a fixed pattern. This was the difference between a demo and an object. <a class="figref" href="#fig-6-3">Fig 6.3</a></p>
 
         <h3>The bridge</h3>
         <p>The point stream leaves Unity through a C++ pipeline into Swave’s hologram engine, which computes the interference pattern and drives the HXR hardware. Meshes and shaders on the Unity side were optimized for that budget: fewer, better points beat more.</p>
       </div>
 
-      <figure class="fig" id="fig-5-3">
-        <div class="fig__frame" data-n="FIG 5.3">
+      <figure class="fig" id="fig-6-3">
+        <div class="fig__frame" data-n="FIG 6.3">
           <svg viewBox="0 0 720 180" role="img" aria-label="Two panels with the same number of points: a regular grid with faint diagonal interference bands, and a randomized scatter with none.">
             <text class="k sm c" x="180" y="22">regular sampling</text>
             <text class="k sm c" x="542" y="22">randomized sampling</text>
@@ -855,7 +1370,7 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
             <text class="sm c" x="542" y="176">no repeating structure to interfere with</text>
           </svg>
         </div>
-        <figcaption><b>Fig 5.3</b> Same point count, different placement. The grid lines up with the display’s own periodic structure and beats against it; the jittered set has nothing for the display to lock onto.</figcaption>
+        <figcaption><b>Fig 6.3</b> Same point count, different placement. The grid lines up with the display’s own periodic structure and beats against it; the jittered set has nothing for the display to lock onto.</figcaption>
       </figure>
 
       <div class="sketch">
@@ -894,10 +1409,10 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
       </div>
     </section>
 
-    <!-- ============================================================ 06 AbjadPolis -->
+    <!-- ============================================================ 07 AbjadPolis -->
     <section class="dossier" id="abjadpolis" aria-labelledby="abjad-title" style="--fx:#3ec6c0">
       <div class="dossier__head">
-        <div class="dossier__num">06</div>
+        <div class="dossier__num">07</div>
         <div>
           <h2 id="abjad-title">AbjadPolis <span class="chip">UNITY · ANDROID</span></h2>
           <p class="thesis">Learn Arabic by building a city. One person built the city, the citizens, the shaders, and the money.</p>
@@ -914,11 +1429,11 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
 
       <div class="prose">
         <h3>The loop</h3>
-        <p>A lesson is a short drill: tap the matching pairs, say the word, pick the right image. Drills pay in coins. Coins build the city. New districts open new vocabulary, which means new drills. The whole game is that loop, gated so you cannot buy your way past words you have not learned. <a class="figref" href="#fig-6-1">Fig 6.1</a></p>
+        <p>A lesson is a short drill: tap the matching pairs, say the word, pick the right image. Drills pay in coins. Coins build the city. New districts open new vocabulary, which means new drills. The whole game is that loop, gated so you cannot buy your way past words you have not learned. <a class="figref" href="#fig-7-1">Fig 7.1</a></p>
       </div>
 
-      <figure class="fig" id="fig-6-1">
-        <div class="fig__frame" data-n="FIG 6.1">
+      <figure class="fig" id="fig-7-1">
+        <div class="fig__frame" data-n="FIG 7.1">
           <svg viewBox="0 0 720 250" role="img" aria-label="Cycle diagram: learn through a drill, earn coins, build the city, unlock a district with new words, back to learn; the unlock step carries a gate.">
             <rect class="box" x="60" y="40" width="150" height="52" rx="4"/><text class="k" x="76" y="62">Learn</text><text class="sm" x="76" y="80">a drill: match, say, pick</text>
             <rect class="box" x="510" y="40" width="150" height="52" rx="4"/><text class="k" x="526" y="62">Earn</text><text class="sm" x="526" y="80">coins for correct answers</text>
@@ -934,16 +1449,16 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
             <text class="h sm c" x="360" y="136">you can’t buy past words you haven’t learned</text>
           </svg>
         </div>
-        <figcaption><b>Fig 6.1</b> The one loop. Building is the fun; drilling is the point; the gate on the way to a new district is what keeps them honest with each other.</figcaption>
+        <figcaption><b>Fig 7.1</b> The one loop. Building is the fun; drilling is the point; the gate on the way to a new district is what keeps them honest with each other.</figcaption>
       </figure>
 
       <div class="prose">
         <h3>An economy that teaches</h3>
-        <p>The design problem with a learning game is that the fun part (building) and the useful part (drilling) pull in opposite directions. The economy is the bridge. Lessons are the only reliable source of coins, buildings are the sink, and the gate to each new district checks <strong>level, wallet and mastery</strong> of the current words. Streaks and challenges add a little income so a bad day does not stall the city, but they never replace lessons. <a class="figref" href="#fig-6-2">Fig 6.2</a></p>
+        <p>The design problem with a learning game is that the fun part (building) and the useful part (drilling) pull in opposite directions. The economy is the bridge. Lessons are the only reliable source of coins, buildings are the sink, and the gate to each new district checks <strong>level, wallet and mastery</strong> of the current words. Streaks and challenges add a little income so a bad day does not stall the city, but they never replace lessons. <a class="figref" href="#fig-7-2">Fig 7.2</a></p>
       </div>
 
-      <figure class="fig" id="fig-6-2">
-        <div class="fig__frame" data-n="FIG 6.2">
+      <figure class="fig" id="fig-7-2">
+        <div class="fig__frame" data-n="FIG 7.2">
           <svg viewBox="0 0 720 240" role="img" aria-label="Sources and sinks diagram: lesson rewards, streaks and challenges flow into a coin wallet; buildings, upgrades and district unlocks flow out, with a gate on the unlock line that checks level, wallet and mastery.">
             <text class="k r" x="210" y="84">lesson rewards</text>
             <text class="sm r" x="210" y="124">streaks</text>
@@ -966,7 +1481,7 @@ Result Table::Apply(PlayerId who, <b>const</b> Action&amp; a)
             <text class="sm c" x="360" y="224">lessons are the only reliable source; buildings are the sink</text>
           </svg>
         </div>
-        <figcaption><b>Fig 6.2</b> Sources on the left, sinks on the right, one gate. The thick lines are the ones that matter: lessons in, buildings out. Everything else is seasoning.</figcaption>
+        <figcaption><b>Fig 7.2</b> Sources on the left, sinks on the right, one gate. The thick lines are the ones that matter: lessons in, buildings out. Everything else is seasoning.</figcaption>
       </figure>
 
       <div class="sketch">
@@ -984,11 +1499,11 @@ Word NextDrill(Vocabulary v) =&gt;
 
       <div class="prose">
         <h3>AI and shaders, solo</h3>
-        <p>The city’s inhabitants go about their day on their own paths and schedules, so the place feels alive between lessons, and the drill selector weighs the words you have been missing so repetition lands where it is needed. The look is custom shaders: the build-up when a new building rises, and a stylized city that reads on a small screen. Every system in the beta, from content spawning to audio, came from the same keyboard. <a class="figref" href="#fig-6-3">Fig 6.3</a></p>
+        <p>The city’s inhabitants go about their day on their own paths and schedules, so the place feels alive between lessons, and the drill selector weighs the words you have been missing so repetition lands where it is needed. The look is custom shaders: the build-up when a new building rises, and a stylized city that reads on a small screen. Every system in the beta, from content spawning to audio, came from the same keyboard. <a class="figref" href="#fig-7-3">Fig 7.3</a></p>
       </div>
 
-      <figure class="fig" id="fig-6-3">
-        <div class="fig__frame" data-n="FIG 6.3">
+      <figure class="fig" id="fig-7-3">
+        <div class="fig__frame" data-n="FIG 7.3">
           <svg viewBox="0 0 720 246" role="img" aria-label="A three-by-three map of the game's systems, each marked as written by the author: gameplay loop, drill AI, city AI, shaders, economy, UI, audio, content spawning, resource systems.">
             <rect class="box" x="20" y="20" width="220" height="60" rx="4"/><rect class="fa" x="218" y="32" width="8" height="8"/><text class="k" x="34" y="46">Gameplay loop</text><text class="sm" x="34" y="66">drills, city, progression</text>
             <rect class="box" x="250" y="20" width="220" height="60" rx="4"/><rect class="fa" x="448" y="32" width="8" height="8"/><text class="k" x="264" y="46">Drill AI</text><text class="sm" x="264" y="66">weighs the words you miss</text>
@@ -1002,7 +1517,7 @@ Word NextDrill(Vocabulary v) =&gt;
             <rect class="fa" x="20" y="232" width="8" height="8"/><text class="sm" x="36" y="240">written by me: all nine</text>
           </svg>
         </div>
-        <figcaption><b>Fig 6.3</b> The systems map of the beta build. Every cell has the same mark, because every cell had the same author.</figcaption>
+        <figcaption><b>Fig 7.3</b> The systems map of the beta build. Every cell has the same mark, because every cell had the same author.</figcaption>
       </figure>
 
       <div class="ledger">

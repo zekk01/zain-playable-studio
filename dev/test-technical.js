@@ -6,7 +6,7 @@ fs.mkdirSync('dev/shots', { recursive: true });
 
 const results = [];
 const check = (name, ok, extra = '') => { results.push({ name, ok, extra }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
-const SECTIONS = ['pit-protocol', 'unseen-blade', 'target-destroyed', 'lala-poker', 'holographic-pipeline', 'abjadpolis'];
+const SECTIONS = ['pit-protocol', 'unseen-blade', 'target-destroyed', 'lala-poker', 'primal-echo', 'holographic-pipeline', 'abjadpolis'];
 
 (async () => {
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
@@ -48,9 +48,9 @@ const SECTIONS = ['pit-protocol', 'unseen-blade', 'target-destroyed', 'lala-poke
     }, SECTIONS);
 
     check(`${name}: page title`, /under the hood/i.test(doc.title), doc.title);
-    check(`${name}: six dossiers in order`, JSON.stringify(doc.secs) === JSON.stringify(SECTIONS), JSON.stringify(doc.secs));
-    check(`${name}: contents lists six links that resolve`, doc.toc.length === 6 && doc.tocResolves, JSON.stringify(doc.toc));
-    check(`${name}: contents has a drawn glyph per entry`, doc.glyphs >= 6, String(doc.glyphs));
+    check(`${name}: seven dossiers in order`, JSON.stringify(doc.secs) === JSON.stringify(SECTIONS), JSON.stringify(doc.secs));
+    check(`${name}: contents lists seven links that resolve`, doc.toc.length === 7 && doc.tocResolves, JSON.stringify(doc.toc));
+    check(`${name}: contents has a drawn glyph per entry`, doc.glyphs >= 7, String(doc.glyphs));
     for (const s of doc.perSection) {
       if (!s) { check(`${name}: section missing`, false); continue; }
       check(`${name}: ${s.id} has ≥2 numbered SVG figures with captions`, s.figures >= 2 && s.figsOk, `${s.figures} figures`);

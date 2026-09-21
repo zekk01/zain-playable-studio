@@ -23,7 +23,7 @@ The site is fully static. Everything except `node_modules/` and `dev/shots/` can
 | Path | What it is |
 |---|---|
 | `index.html` | The page: hero, career campaign, City Crafters spotlight, Lala Poker, the book, beyond the build, footer |
-| `technical.html` | **Under the hood**: technical breakdowns of six systems (Pit Protocol, Unseen Blade, Target Destroyed, Lala Poker, the Swave holographic pipeline, AbjadPolis) with hand-drawn SVG figures and code sketches. Content is authored directly in this file; `css/technical.css` and `js/technical.js` belong to it. Linked from the nav, the hero, studio marker 06, the project dialogs (`tech` field in `js/data.js`) and the footer |
+| `technical.html` | **Under the hood**: technical breakdowns of seven systems (Pit Protocol, Unseen Blade, Target Destroyed, Lala Poker, Primal Echo’s creature AI, traversal and inventory, the Swave holographic pipeline, AbjadPolis) with hand-drawn SVG figures and code sketches. Content is authored directly in this file; `css/technical.css` and `js/technical.js` belong to it. Linked from the nav, the hero, studio marker 06, the project dialogs (`tech` field in `js/data.js`) and the footer |
 | `js/data.js` | **All content lives here.** Companies, projects, images, links, book, reels, the City Crafters spotlight, and the side quests (DR3 and Gaya Wallet, sister companies shown at the end). Edit this to change the site. |
 | `js/scene.js` | Three.js studio scene (hero: desk, lab bay with a holographic world-builder, sofa with the City Crafters miniature, book, poker table) and the poker card scene |
 | `js/cityscene.js` | Three.js turntable of four City Crafters dioramas (pit lane, hologram tower, blind blade, jet) |

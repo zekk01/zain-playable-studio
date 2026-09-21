@@ -182,7 +182,7 @@ export const companies = [
     site: 'https://www.feralflamestudios.com/',
     projects: [
       {
-        id: 'creature-ai', title: 'Creature AI', tag: 'PRIMAL ECHO · UNREAL / C++', hook: 'Behaviour with a reason behind it.',
+        id: 'creature-ai', tech: 'technical.html#primal-echo', title: 'Creature AI', tag: 'PRIMAL ECHO · UNREAL / C++', hook: 'Behaviour with a reason behind it.',
         contribution: 'Designed and implemented AI with Behavior Trees and the Environment Query System, plus physics-based hunting loops for a brutal action-survival game set 80,000 years ago inside a colossal alien machine.',
         challenge: 'Pack behaviour, needs, aggression, and terrain navigation work together. The player needs readable behaviour even when the simulation is complex.',
         outcome: 'Implemented gameplay systems and contributed to technical prototyping.',
@@ -196,7 +196,7 @@ export const companies = [
         links: [{ label: 'Feral Flame Studios', href: 'https://www.feralflamestudios.com/' }],
       },
       {
-        id: 'traversal', title: 'Traversal & inventory', tag: 'PRIMAL ECHO · GAMEPLAY SYSTEMS', hook: 'Give the player more ways forward.',
+        id: 'traversal', tech: 'technical.html#primal-echo', title: 'Traversal & inventory', tag: 'PRIMAL ECHO · GAMEPLAY SYSTEMS', hook: 'Give the player more ways forward.',
         contribution: 'Built climbing, wall-jumping, inventory, and interaction systems using C++ and Blueprint, and tuned parkour-style traversal through the megastructure.',
         challenge: 'Movement and interaction systems need consistent rules, readable feedback, and dependable behaviour across different environments.',
         outcome: 'Implemented reusable gameplay systems and coordinated internal and external contributors.',
